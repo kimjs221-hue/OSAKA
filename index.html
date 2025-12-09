@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>소아물리치료 게임 모드 퀴즈 템플릿</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #222b45, #050814);
+      color: #f7f9fc;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 16px;
+    }
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      background: rgba(8, 10, 26, 0.96);
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    header {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: linear-gradient(90deg, #141e30, #243b55);
+    }
+    header .title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    header h1 span.badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffdd57;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    header p {
+      font-size: 11px;
+      color: #cbd5f5;
+      opacity: 0.9;
+    }
+    .mode-toggle {
+      display: inline-flex;
+      padding: 2px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.35);
+    }
+    .mode-toggle button {
+      border: none;
+      background: transparent;
+      color: #cbd5ff;
+      font-size: 11px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      min-width: 70px;
+      transition: 0.18s ease;
+    }
+    .mode-toggle button.active {
+      background: #ff4f6a;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(255, 79, 106, 0.6);
+    }
+    .layout {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+    }
+    .left-pane {
+      flex: 2.2;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .right-pane {
+      flex: 1.2;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: radial-gradient(circle at top left, #111827, #020617);
+    }
+    .panel {
+      background: radial-gradient(circle at top left, #10152d, #050817);
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .panel-header h2 {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #9ca3ff;
+    }
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    select,
+    button,
+    input[type="text"] {
+      font-family: inherit;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 255, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      font-size: 12px;
+      padding: 6px 10px;
+      outline: none;
+    }
+    select {
+      padding-right: 26px;
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #9ca3ff 50%),
+        linear-gradient(135deg, #9ca3ff 50%, transparent 50%);
+      background-position: calc(100% - 12px) 9px, calc(100% - 7px) 9px;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+    button {
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+    button.primary {
+      background: linear-gradient(135deg, #ff4f6a, #ff914d);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 6px 16px rgba(248, 113, 113, 0.6);
+    }
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 9px 22px rgba(248, 113, 113, 0.8);
+    }
+    button.secondary {
+      border-color: rgba(148, 163, 255, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+    }
+    button.secondary:hover {
+      background: rgba(30, 64, 175, 0.7);
+    }
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+    #questionMeta {
+      font-size: 11px;
+      color: #9ca3ff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    #questionText {
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    ul.options {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .option-item {
+      border-radius: 10px;
+      padding: 7px 9px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 255, 0.5);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+    .option-item.correct {
+      border-color: #4ade80;
+      background: rgba(34, 197, 94, 0.12);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+    }
+    .option-item.wrong {
+      border-color: #fb7185;
+      background: rgba(248, 113, 113, 0.12);
+      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
+    }
+    .option-label {
+      flex-shrink: 0;
+      font-weight: 600;
+      color: #c7d2fe;
+      min-width: 16px;
+    }
+    .option-text {
+      flex: 1;
+    }
+    .option-item input {
+      margin-top: 3px;
+      accent-color: #ff4f6a;
+    }
+    .answer-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    #recallInput {
+      flex: 1;
+    }
+    #feedback {
+      font-size: 12px;
+      min-height: 18px;
+    }
+    #feedback.correct {
+      color: #4ade80;
+    }
+    #feedback.wrong {
+      color: #fb7185;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .stat-card {
+      background: radial-gradient(circle at top, #020617, #020617);
+      border-radius: 10px;
+      padding: 6px 8px;
+      border: 1px solid rgba(148, 163, 255, 0.4);
+      font-size: 11px;
+    }
+    .stat-label {
+      opacity: 0.7;
+      margin-bottom: 2px;
+    }
+    .stat-value {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    .tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 255, 0.4);
+      white-space: nowrap;
+    }
+    .wrong-list {
+      max-height: 250px;
+      overflow-y: auto;
+      margin-top: 6px;
+      padding-right: 4px;
+    }
+    .wrong-item {
+      font-size: 11px;
+      padding: 6px 6px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(248, 113, 113, 0.6);
+    }
+    .wrong-item strong {
+      color: #fecaca;
+    }
+    .mini {
+      font-size: 10px;
+      opacity: 0.7;
+    }
+    @media (max-width: 820px) {
+      .layout {
+        flex-direction: column;
+      }
+      .left-pane {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 16px;
+      }
+      .panel {
+        padding: 10px 11px;
+      }
+      #questionText {
+        font-size: 14px;
+      }
+      .option-item {
+        font-size: 12px;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title-group">
+        <h1>
+          소아물리치료 문제은행
+          <span class="badge">게임 모드 템플릿</span>
+        </h1>
+        <p>문제 데이터는 직접 채워 넣는 버전</p>
+      </div>
+      <div class="mode-toggle">
+        <button id="modeQuiz" class="active">객관식 퀴즈</button>
+        <button id="modeRecall">암기 모드</button>
+      </div>
+    </header>
+    <div class="layout">
+      <div class="left-pane">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>🎮 문제 영역</h2>
+            <span class="chip" id="categoryChip">소아물리치료</span>
+          </div>
+          <div class="controls-row">
+            <select id="categorySelect">
+              <option value="ALL">소아물리치료 (전체)</option>
+            </select>
+            <button class="secondary" id="shuffleBtn">섞어서 다시 시작</button>
+          </div>
+          <div id="questionMeta">
+            <span id="qIndex">문제 0 / 0</span>
+            <span id="qInfo">난이도 : 국시</span>
+          </div>
+          <div id="questionText">
+            문제 데이터가 없습니다. questionBank에 문제를 추가해 주세요.
+          </div>
+          <ul class="options" id="optionsList"></ul>
+          <div class="answer-row" id="recallRow" style="display:none;">
+            <input
+              type="text"
+              id="recallInput"
+              placeholder="키워드 입력 (정답 전체 말고 핵심어만 써도 인정)"
+            />
+            <button class="secondary" id="recallCheckBtn">체크</button>
+          </div>
+          <div class="controls-row">
+            <button class="primary" id="checkBtn">정답 확인</button>
+            <button class="secondary" id="nextBtn" disabled>다음 문제</button>
+          </div>
+          <div id="feedback"></div>
+        </div>
+      </div>
+      <div class="right-pane">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>📊 진행 상황</h2>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">진행률</div>
+              <div class="stat-value" id="statProgress">0%</div>
+              <div class="mini" id="statCount">0 / 0문제</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">정답률</div>
+              <div class="stat-value" id="statAccuracy">0%</div>
+              <div class="mini" id="statScore">0점</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">연속 정답</div>
+              <div class="stat-value" id="statCombo">0</div>
+              <div class="mini" id="statBestCombo">최고 0연속</div>
+            </div>
+          </div>
+          <div class="tag-row">
+            <span class="tag">국가고시 대비</span>
+            <span class="tag">소아물리치료 전용</span>
+            <span class="tag">오답 자동 저장</span>
+            <span class="tag">암기모드 키워드 인식</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <h2>📚 오답 노트</h2>
+          </div>
+          <div class="mini">틀린 문제들이 자동으로 쌓입니다. (현재는 문제 없음)</div>
+          <div class="wrong-list" id="wrongList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== 소아물리치료 전용 설정 =====
+    const DEFAULT_CATEGORY = "소아물리치료";
+
+    // 🔹 이 배열만 편집하면 됨! (문제 추가 영역)
+    const rawQuestions = [
+  // 1~10: 척추·신경계 검사
+  {
+    question:
+      "Straight Leg Raise(SLR, 직거상 검사)가 양성일 때 가장 가능성이 높은 병변은 무엇인가?",
+    options: [
+      "넙다리곧은근(rectus femoris)의 단축",
+      "좌골신경(sciatic nerve)의 신경긴장 또는 뿌리병증",
+      "엉덩넙다리인대(iliofemoral ligament)의 단축",
+      "천장관절(sacroiliac joint)의 불안정성",
+      "대퇴골두 무혈성 괴사"
+    ],
+    answer: 2,
+    explanation:
+      "SLR(직거상 검사)는 좌골신경과 요추신경근의 긴장·압박 여부를 평가하는 대표적인 신경긴장 검사이다.",
+    keywords: ["SLR", "직거상검사", "좌골신경", "요추신경근", "신경긴장"]
+  },
+  {
+    question:
+      "Bragard(브라가르드) 검사는 Straight Leg Raise(SLR) 검사에 어떤 요소를 추가하여 민감도를 높이는가?",
+    options: [
+      "엉덩관절 벌림",
+      "엉덩관절 가쪽돌림",
+      "발등굽힘(dorsiflexion)",
+      "발바닥굽힘(plantarflexion)",
+      "무릎 굽힘"
+    ],
+    answer: 3,
+    explanation:
+      "Bragard 검사는 SLR에서 통증이 유발된 각도에서 약간 낮추고 발등굽힘을 추가하여 좌골신경 긴장을 더욱 증가시키는 검사이다.",
+    keywords: ["Bragard", "발등굽힘", "좌골신경", "신경긴장"]
+  },
+  {
+    question:
+      "Slump Test(슬럼프 검사)의 주 평가 대상은 무엇인가?",
+    options: [
+      "천장관절 불안정성",
+      "경추 신경근병증",
+      "요추 신경근 및 경막(neural tissue)의 긴장",
+      "후관절(facet joint) 증후군",
+      "엉덩관절 충돌 증후군"
+    ],
+    answer: 3,
+    explanation:
+      "Slump 검사는 앉은 자세에서 척추 굴곡, 경추 굴곡, 무릎 폄, 발등굽힘 등을 통해 신경계 전체의 긴장을 평가하는 검사이다.",
+    keywords: ["Slump", "신경긴장", "요추신경근", "경막"]
+  },
+  {
+    question:
+      "Kemp Test(켐프 검사)가 가장 유용한 병변 평가는 무엇인가?",
+    options: [
+      "후관절(facet joint) 병변",
+      "추간판탈출증(HNP)",
+      "척수관 협착증",
+      "천장관절 염좌",
+      "요추 불안정성"
+    ],
+    answer: 1,
+    explanation:
+      "Kemp 검사는 요추를 폄·가쪽굽힘·가쪽돌림하여 후관절에 부담을 주는 검사로, 후관절 증후군 평가에 사용된다.",
+    keywords: ["Kemp", "후관절", "facet", "요추"]
+  },
+  {
+    question:
+      "Spurling Test(스펄링 검사)의 양성 소견은 어떤 상태를 의미하는가?",
+    options: [
+      "경추 척수병증",
+      "경추 신경근(radicular) 병변",
+      "경추 불안정성",
+      "경추 후관절염",
+      "흉곽출구증후군"
+    ],
+    answer: 2,
+    explanation:
+      "Spurling 검사는 경추 신전·가쪽굽힘·축성압박을 통해 동측 팔로 방사되는 통증이 있으면 경추 신경근병증을 시사한다.",
+    keywords: ["Spurlling", "경추신경근", "radiculopathy"]
+  },
+  {
+    question:
+      "Cervical Distraction Test(경추 견인 검사)에서 팔로 방사되는 통증이 감소할 경우 무엇을 시사하는가?",
+    options: [
+      "척수병증",
+      "경추 신경근 압박",
+      "흉곽출구증후군",
+      "후관절 증후군",
+      "근막통증증후군"
+    ],
+    answer: 2,
+    explanation:
+      "견인 시 방사통이 감소하면 신경근 압박이 줄어든 것으로 해석하여 경추 신경근병증을 시사한다.",
+    keywords: ["cervical distraction", "경추견인", "신경근압박"]
+  },
+  {
+    question:
+      "Babinski(바빈스키) 반사 양성 소견(엄지발가락 폄, 나머지 발가락 벌어짐)은 어떤 병변을 의미하는가?",
+    options: [
+      "하위운동신경원(LMN) 병변",
+      "상위운동신경원(UMN) 병변",
+      "말초신경병증",
+      "근육질환",
+      "소뇌병변"
+    ],
+    answer: 2,
+    explanation:
+      "성인에서 바빈스키 양성은 상위운동신경원(UMN) 병변의 대표적인 징후이다.",
+    keywords: ["Babinski", "바빈스키", "UMN", "상위운동신경원"]
+  },
+  {
+    question:
+      "Hoffman(호프만) 징후는 어느 부위의 상위운동신경원(UMN) 병변을 의심하게 하는가?",
+    options: [
+      "요추",
+      "흉추",
+      "경추",
+      "말초신경총",
+      "소뇌"
+    ],
+    answer: 3,
+    explanation:
+      "호프만 징후는 경추 수준의 UMN 병변을 의심하게 하는 상지의 병적 반사이다.",
+    keywords: ["Hoffman", "호프만", "경추", "UMN"]
+  },
+  {
+    question:
+      "Romberg(롬버그) 검사는 주로 어떤 기능을 평가하는가?",
+    options: [
+      "소뇌 기능",
+      "전정기관 기능만 단독으로",
+      "고유수용성 감각과 평형",
+      "시각기능",
+      "피질척수로 기능"
+    ],
+    answer: 3,
+    explanation:
+      "Romberg 검사는 눈을 감았을 때 자세 유지능력을 평가하여 고유감각 및 전정·시각 의존도를 평가한다.",
+    keywords: ["Romberg", "롬버그", "평형", "고유수용성"]
+  },
+  {
+    question:
+      "Clonus(간대성 경련) 검사는 어떤 신경계 이상과 가장 관련이 깊은가?",
+    options: [
+      "말초신경병증",
+      "하위운동신경원 병변",
+      "상위운동신경원 병변과 경직",
+      "소뇌실조",
+      "기저핵질환"
+    ],
+    answer: 3,
+    explanation:
+      "지속적인 발목 또는 무릎의 간대성 경련성 움직임은 UMN 병변과 경직(spasticity)과 관련이 있다.",
+    keywords: ["Clonus", "간대성경련", "UMN", "경직"]
+  },
+
+  // 11~20: 어깨 검사
+  {
+    question:
+      "Neer Impingement(니어 충돌) 검사는 주로 어떤 구조의 충돌을 평가하는가?",
+    options: [
+      "봉우리빗장인대(Acromioclavicular ligament)",
+      "가시위근힘줄 및 견봉하 공간 구조물",
+      "오구돌기와 위팔뼈머리 사이",
+      "위관절테위팔인대",
+      "관절오목 테두리 손상"
+    ],
+    answer: 2,
+    explanation:
+      "Neer 검사는 견봉하 공간에서 가시위근힘줄과 점액낭 등의 충돌 여부를 평가한다.",
+    keywords: ["Neer", "니어", "충돌증후군", "가시위근"]
+  },
+  {
+    question:
+      "Hawkins–Kennedy(호킨스-케네디) 검사의 주 목적은 무엇인가?",
+    options: [
+      "회전근개 파열 정도 평가",
+      "견봉쇄골관절(AC joint) 불안정성",
+      "견봉하 충돌(어깨 충돌 증후군)",
+      "어깨관절 앞불안정성",
+      "위팔두갈래근 장두건 파열"
+    ],
+    answer: 3,
+    explanation:
+      "호킨스-케네디 검사는 어깨를 90° 굽힘 후 안쪽돌림하여 견봉하 충돌을 유발하는 검사이다.",
+    keywords: ["Hawkins-Kennedy", "호킨스케네디", "충돌증후군"]
+  },
+  {
+    question:
+      "Drop Arm Test(팔 떨어뜨리기 검사, 드롭암)의 양성 소견은 어떤 병변을 가장 잘 시사하는가?",
+    options: [
+      "가시아래근(infraspinatus) 파열",
+      "가시위근(supraspinatus) 파열",
+      "어깨밑근(subscapularis) 파열",
+      "위팔두갈래근 장두건염",
+      "AC 관절염"
+    ],
+    answer: 2,
+    explanation:
+      "드롭암 양성은 팔을 천천히 내리지 못하고 갑자기 떨어뜨리는 소견으로, 가시위근 파열을 강하게 시사한다.",
+    keywords: ["Drop Arm", "가시위근", "회전근개파열"]
+  },
+  {
+    question:
+      "External Rotation Lag Sign(가쪽돌림 지연 징후)의 양성은 어떤 구조의 약화 또는 파열을 의미하는가?",
+    options: [
+      "가시위근",
+      "가시아래근 및 작은원근",
+      "어깨밑근",
+      "넓은등근",
+      "큰가슴근"
+    ],
+    answer: 2,
+    explanation:
+      "가쪽돌림 지연 징후 양성은 외회전 근육인 가시아래근과 작은원근의 파열 또는 중증 약화를 의미한다.",
+    keywords: ["ER lag", "가시아래근", "작은원근", "회전근개"]
+  },
+  {
+    question:
+      "Speed Test(스피드 검사)는 주로 어떤 구조의 병변을 평가하는가?",
+    options: [
+      "위팔두갈래근 장두건(biceps long head tendon)",
+      "가시위근힘줄",
+      "관절오목 테두리",
+      "봉우리빗장관절",
+      "어깨밑근 힘줄"
+    ],
+    answer: 1,
+    explanation:
+      "Speed 검사는 어깨 굽힘 저항 시 위팔두갈래근 장두건 부위의 통증을 유발하여 건병변을 평가한다.",
+    keywords: ["Speed", "스피드", "이두건", "장두건염"]
+  },
+  {
+    question:
+      "Yergason Test(요가슨 검사)는 어떤 문제를 평가하는 데 가장 적합한가?",
+    options: [
+      "가시위근의 부분 파열",
+      "어깨밑근의 약화",
+      "이두건이홈(bicipital groove) 내 장두건의 활차 안정성",
+      "AC 관절 손상",
+      "견봉하 점액낭염"
+    ],
+    answer: 3,
+    explanation:
+      "Yergason 검사는 전완을 뒤침시키는 동안 이두건이홈 부위 통증 또는 건의 탈구를 통해 장두건 활차 안정성을 평가한다.",
+    keywords: ["Yergason", "요가슨", "이두건이홈", "활차"]
+  },
+  {
+    question:
+      "Apprehension Test(불안 검사)에서 어깨가 외전·가쪽돌림 자세에서 불안을 보이는 경우 어떤 병변을 시사하는가?",
+    options: [
+      "어깨 뒤불안정성",
+      "어깨 앞불안정성 또는 전방 탈구 경향",
+      "AC 관절 불안정성",
+      "회전근개 파열",
+      "상완초두골 골절"
+    ],
+    answer: 2,
+    explanation:
+      "Apprehension Test는 외전·가쪽돌림에서 전방 탈구에 대한 불안을 유발하여 전방 불안정성을 평가한다.",
+    keywords: ["Apprehension", "어깨앞불안정성", "전방탈구"]
+  },
+  {
+    question:
+      "Sulcus Sign(홈 징후, Sulcus sign)은 어떤 방향의 불안정성을 평가하는가?",
+    options: [
+      "앞쪽 불안정성",
+      "뒤쪽 불안정성",
+      "아래쪽 불안정성",
+      "수평면 상의 불안정성",
+      "회전 불안정성"
+    ],
+    answer: 3,
+    explanation:
+      "견관절에 아래 방향 견인을 가했을 때 견봉 아래로 홈이 형성되면 아래쪽(inferior) 불안정성을 시사한다.",
+    keywords: ["Sulcus sign", "아래불안정성", "견관절"]
+  },
+  {
+    question:
+      "Cross-body Adduction Test(가로 모음 검사)는 주로 어느 구조의 병변을 평가하는가?",
+    options: [
+      "관절오목 테두리",
+      "AC 관절(봉우리빗장관절)",
+      "회전근개",
+      "이두건 장두",
+      "견봉하 점액낭"
+    ],
+    answer: 2,
+    explanation:
+      "수평내전 시 AC 관절 부위 통증이 유발되면 AC 관절 병변을 시사한다.",
+    keywords: ["Cross-body adduction", "AC 관절", "봉우리빗장관절"]
+  },
+  {
+    question:
+      "O'Brien Test(오브라이언 검사, Active Compression Test)의 양성 소견은 주로 어떤 병변을 의미하는가?",
+    options: [
+      "가시위근 파열",
+      "SLAP 병변(상부 관절오목 테두리 병변)",
+      "어깨밑근 파열",
+      "AC 관절염",
+      "이두건 단두 파열"
+    ],
+    answer: 2,
+    explanation:
+      "O'Brien 검사는 어깨 굽힘·모음·안쪽돌림 자세에서 저항 시 통증, 가쪽돌림 시 통증 감소가 SLAP 병변과 연관된다.",
+    keywords: ["O'Brien", "오브라이언", "SLAP", "관절오목테두리"]
+  },
+
+  // 21~30: 고관절 검사
+  {
+    question:
+      "FABER Test(Flexion-Abduction-External Rotation, 굽힘-벌림-가쪽돌림, FABER/패트릭 검사)는 주로 어떤 구조를 평가하는가?",
+    options: [
+      "대퇴골두와 비구 관절 테두리만",
+      "천장관절(SI joint)과 엉덩관절 양쪽",
+      "엉덩허리근 단축",
+      "궁둥신경 포착",
+      "대퇴사두근 단축"
+    ],
+    answer: 2,
+    explanation:
+      "FABER 검사는 통증 위치에 따라 SI joint 또는 엉덩관절 병변을 시사한다.",
+    keywords: ["FABER", "패트릭", "엉덩관절", "천장관절"]
+  },
+  {
+    question:
+      "FADIR Test(Flexion-Adduction-Internal Rotation, 굽힘-모음-안쪽돌림)는 어떤 병변 의심 시 가장 적절한 검사인가?",
+    options: [
+      "대퇴사두근 파열",
+      "고관절 이완성",
+      "대퇴비구 충돌(FAI, Femoroacetabular impingement)",
+      "좌골신경 포착",
+      "햄스트링 단축"
+    ],
+    answer: 3,
+    explanation:
+      "FADIR 검사는 FAI(대퇴비구 충돌)나 관절 테두리 병변에 의해 고관절 굴곡·모음·내회전 시 통증을 유발한다.",
+    keywords: ["FADIR", "FAI", "대퇴비구충돌"]
+  },
+  {
+    question:
+      "Thomas Test(토마스 검사)는 어떤 근육 또는 구조의 단축을 평가하는가?",
+    options: [
+      "햄스트링",
+      "장요근(iliopsoas, 엉덩허리근)",
+      "중둔근",
+      "대둔근",
+      "장경인대"
+    ],
+    answer: 2,
+    explanation:
+      "토마스 검사는 한쪽 고관절을 굽혀 요추 전만을 없앤 뒤 반대쪽 다리의 들림 여부로 장요근 단축을 평가한다.",
+    keywords: ["Thomas", "토마스", "장요근", "고관절굽힘근"]
+  },
+  {
+    question:
+      "Staheli(스테헬리) 검사는 엉덩관절의 어떤 상태를 평가하기 위한 검사인가?",
+    options: [
+      "벌림 구축",
+      "가쪽돌림 구축",
+      "굽힘 구축(고관절 굴곡 구축)",
+      "안쪽돌림 구축",
+      "신전 구축"
+    ],
+    answer: 3,
+    explanation:
+      "Staheli 검사는 엎드린 자세에서 고관절을 신전시켜 허벅지와 침대가 이루는 각도로 굽힘 구축 정도를 평가한다.",
+    keywords: ["Staheli", "스테헬리", "고관절굽힘구축"]
+  },
+  {
+    question:
+      "Craig Test(크레이그 검사)는 무엇을 측정하기 위한 검사인가?",
+    options: [
+      "대퇴골 경사각(inclination)",
+      "대퇴골 전염각(anteversion)",
+      "정강뼈 비틀림각",
+      "엉덩넙다리인대 긴장",
+      "두덩넙다리인대 긴장"
+    ],
+    answer: 2,
+    explanation:
+      "크레이그 검사는 대전자를 가장 측면에서 촉지되는 위치에서 경골과 수직선의 각도를 측정하여 대퇴골 전염각을 추정한다.",
+    keywords: ["Craig", "크레이그", "전염각", "대퇴골앞경사"]
+  },
+  {
+    question:
+      "Trendelenburg(트렌델렌버그) 징후 양성은 어떤 근육의 약화와 관련이 깊은가?",
+    options: [
+      "대둔근",
+      "중둔근",
+      "소둔근",
+      "장요근",
+      "넙다리근막긴장근"
+    ],
+    answer: 2,
+    explanation:
+      "지지측 중둔근 약화 시 반대측 골반이 떨어지는 Trendelenburg 징후가 나타난다.",
+    keywords: ["Trendelenburg", "트렌델렌버그", "중둔근"]
+  },
+  {
+    question:
+      "Ober Test(오버 검사)는 어떤 구조의 단축을 평가하는가?",
+    options: [
+      "대둔근",
+      "장경인대(IT band)와 넙다리근막긴장근(TFL)",
+      "햄스트링",
+      "장요근",
+      "넙다리곧은근"
+    ],
+    answer: 2,
+    explanation:
+      "Ober 검사는 옆으로 누운 자세에서 다리를 뒤로 빼고 내리는 과정에서 장경인대와 TFL의 단축 여부를 평가한다.",
+    keywords: ["Ober", "오버", "장경인대", "TFL"]
+  },
+  {
+    question:
+      "Ely Test(일리 검사)는 어떤 근육의 단축을 확인하는 데 사용되는가?",
+    options: [
+      "대둔근",
+      "중둔근",
+      "넙다리곧은근(rectus femoris)",
+      "반막근",
+      "장요근"
+    ],
+    answer: 3,
+    explanation:
+      "Ely 검사는 엎드린 자세에서 무릎을 굽힐 때 골반이 들리면 넙다리곧은근 단축을 의미한다.",
+    keywords: ["Ely", "일리", "넙다리곧은근단축"]
+  },
+  {
+    question:
+      "90–90 Hamstring Test(90–90 햄스트링 검사)는 어떤 내용을 평가하는가?",
+    options: [
+      "넙다리곧은근의 단축",
+      "장요근의 단축",
+      "햄스트링의 단축",
+      "장경인대 긴장",
+      "중둔근 약화"
+    ],
+    answer: 3,
+    explanation:
+      "엉덩관절과 무릎을 90° 굽힘 상태에서 무릎을 펴게 하여 햄스트링 단축 여부를 평가한다.",
+    keywords: ["90-90", "햄스트링", "단축검사"]
+  },
+
+  // 31~40: 무릎·발목 검사
+  {
+    question:
+      "Lachman Test(라크만 검사)는 어떤 인대의 손상을 평가하는 가장 민감한 검사로 알려져 있는가?",
+    options: [
+      "뒤십자인대(PCL)",
+      "앞십자인대(ACL)",
+      "안쪽곁인대(MCL)",
+      "가쪽곁인대(LCL)",
+      "슬개대퇴인대"
+    ],
+    answer: 2,
+    explanation:
+      "Lachman 검사는 무릎 20~30° 굽힘 상태에서 정강뼈의 전방 전위를 평가하여 ACL 손상 여부를 확인한다.",
+    keywords: ["Lachman", "라크만", "ACL", "전방십자인대"]
+  },
+  {
+    question:
+      "Anterior Drawer Test(앞당김/전방서랍 검사)는 어느 구조 손상을 평가하는가?",
+    options: [
+      "앞십자인대(ACL)",
+      "뒤십자인대(PCL)",
+      "안쪽곁인대(MCL)",
+      "가쪽곁인대(LCL)",
+      "반달연골"
+    ],
+    answer: 1,
+    explanation:
+      "무릎 90° 굽힘에서 정강뼈를 앞쪽으로 당겨 ACL 기능을 평가한다.",
+    keywords: ["Anterior drawer", "전방서랍", "ACL"]
+  },
+  {
+    question:
+      "Posterior Drawer Test(뒤당김/후방서랍 검사)는 어떤 인대의 손상을 의심할 때 사용하는가?",
+    options: [
+      "앞십자인대",
+      "뒤십자인대",
+      "안쪽곁인대",
+      "가쪽곁인대",
+      "슬개대퇴인대"
+    ],
+    answer: 2,
+    explanation:
+      "정강뼈를 뒤로 밀어 PCL 기능을 평가하는 대표적인 검사이다.",
+    keywords: ["Posterior drawer", "후방서랍", "PCL"]
+  },
+  {
+    question:
+      "Pivot Shift Test(피벗 쉬프트 검사)는 어떤 기능적 이상을 평가하는가?",
+    options: [
+      "정적 앞십자인대 안정성",
+      "동적 앞십자인대 불안정성",
+      "뒤십자인대 기능",
+      "MCL 기능",
+      "슬개대퇴 관절 불안정성"
+    ],
+    answer: 2,
+    explanation:
+      "Pivot shift는 굽힘 시 정강뼈의 전방 전위가 갑자기 교정되는 현상을 통해 ACL의 기능적(동적) 불안정성을 평가한다.",
+    keywords: ["Pivot shift", "ACL", "동적불안정성"]
+  },
+  {
+    question:
+      "McMurray(맥머리) 검사의 양성 소견은 보통 무엇을 의미하는가?",
+    options: [
+      "십자인대 파열",
+      "반달연골(meniscus) 파열",
+      "슬개대퇴 통증증후군",
+      "MCL 손상",
+      "LCL 손상"
+    ],
+    answer: 2,
+    explanation:
+      "맥머리 검사는 무릎 굽힘·폄과 회전을 이용해 반달연골에 압박을 주어 통증 또는 '딱' 소리를 유발하면 양성이다.",
+    keywords: ["McMurray", "반달연골", "meniscus"]
+  },
+  {
+    question:
+      "Apley Compression/Distraction Test(애플리 압박/견인 검사)에서 압박 시 통증, 견인 시 감소되는 결과는 무엇을 시사하는가?",
+    options: [
+      "십자인대 손상",
+      "반달연골 손상",
+      "MCL 손상",
+      "LCL 손상",
+      "슬개대퇴관절 연골연화증"
+    ],
+    answer: 2,
+    explanation:
+      "압박 시 통증 증가, 견인 시 감소는 반달연골 손상을 시사한다.",
+    keywords: ["Apley", "애플리", "반달연골"]
+  },
+  {
+    question:
+      "Thessaly(테살리) 검사는 무엇을 평가하기 위한 검사인가?",
+    options: [
+      "십자인대 파열",
+      "반달연골 손상",
+      "슬개대퇴 관절염",
+      "MCL 긴장",
+      "LCL 긴장"
+    ],
+    answer: 2,
+    explanation:
+      "테살리 검사는 한 다리로 선 상태에서 무릎 약간 굽힌 상태로 회전하여 반달연골 병변 여부를 평가한다.",
+    keywords: ["Thessaly", "테살리", "반달연골"]
+  },
+  {
+    question:
+      "Patellar Apprehension Test(슬개골 불안 검사)의 양성은 어떤 상태를 시사하는가?",
+    options: [
+      "슬개건염",
+      "슬개골 탈구 경향(외측 불안정성)",
+      "십자인대 불안정성",
+      "반달연골 파열",
+      "슬개대퇴 연골연화증만"
+    ],
+    answer: 2,
+    explanation:
+      "슬개골을 가쪽으로 밀었을 때 환자가 불안을 느끼거나 저항하는 경우 슬개골 외측 불안정성을 시사한다.",
+    keywords: ["Patellar apprehension", "슬개골불안", "탈구경향"]
+  },
+  {
+    question:
+      "Clarke Test(클라크 검사, Patellar Grind Test)는 주로 어떤 질환을 평가하는가?",
+    options: [
+      "슬개대퇴 관절 연골연화증(chondromalacia patella)",
+      "십자인대 손상",
+      "반달연골 손상",
+      "MCL 손상",
+      "슬개건 파열"
+    ],
+    answer: 1,
+    explanation:
+      "슬개골을 아래로 누른 상태에서 대퇴사두근 수축 시 통증이 있으면 슬개대퇴 관절의 연골연화증을 의심한다.",
+    keywords: ["Clarke", "클라크", "슬개대퇴", "연골연화증"]
+  },
+  {
+    question:
+      "Thompson(톰슨) 검사는 어떤 구조의 파열을 확인하기 위한 검사인가?",
+    options: [
+      "전경골근",
+      "아킬레스건",
+      "비복근",
+      "슬개건",
+      "장비골근"
+    ],
+    answer: 2,
+    explanation:
+      "종아리를 눌렀을 때 발바닥굽힘이 일어나지 않으면 아킬레스건 파열을 의미한다.",
+    keywords: ["Thompson", "톰슨", "아킬레스건파열"]
+  },
+
+  // 41~50: 손목·발목·전정·소아반사
+  {
+    question:
+      "Phalen(팔렌) 검사는 어느 신경의 포착으로 인한 증후군을 평가하는가?",
+    options: [
+      "요골신경(radial nerve)",
+      "정중신경(median nerve) 수근관 증후군",
+      "척골신경(ulnar nerve) 주관증후군",
+      "근피신경",
+      "후골간신경"
+    ],
+    answer: 2,
+    explanation:
+      "손목을 완전히 굽힌 자세를 유지할 때 정중신경 분포 부위의 저림을 유발하면 수근관증후군을 시사한다.",
+    keywords: ["Phalen", "팔렌", "정중신경", "수근관증후군"]
+  },
+  {
+    question:
+      "Tinel(티넬) 징후가 손목의 수근관 부위에서 양성일 때 의미하는 것은?",
+    options: [
+      "요골신경 포착",
+      "척골신경 포착",
+      "정중신경 재생 또는 압박",
+      "근피신경 손상",
+      "상완신경총 손상"
+    ],
+    answer: 3,
+    explanation:
+      "티넬 징후는 신경 타진 시 해당 신경 분포 부위로 방사되는 저림을 유발하면 압박 또는 재생을 의미한다.",
+    keywords: ["Tinel", "티넬", "정중신경", "수근관"]
+  },
+  {
+    question:
+      "Finkelstein(핑켈스타인) 검사는 어떤 질환 평가에 사용되는가?",
+    options: [
+      "방아쇠수지(trigger finger)",
+      "드꿰르벵 건초염(De Quervain tenosynovitis)",
+      "수근관증후군",
+      "주관터널증후군",
+      "구시상과염"
+    ],
+    answer: 2,
+    explanation:
+      "엄지를 굽혀 손가락으로 감싼 뒤 척측편위 시 요측 손목 통증이 증가하면 De Quervain 건초염을 시사한다.",
+    keywords: ["Finkelstein", "핑켈스타인", "DeQuervain"]
+  },
+  {
+    question:
+      "Allen(알렌) 검사는 주로 무엇을 평가하는가?",
+    options: [
+      "정중신경 기능",
+      "요골·척골 동맥의 순환 및 측부순환",
+      "손목 인대 안정성",
+      "손가락 굽힘근 힘",
+      "손가락 신전근 힘"
+    ],
+    answer: 2,
+    explanation:
+      "알렌 검사는 요골·척골 동맥을 압박 후 한쪽씩 개방하여 손바닥 혈류 회복을 관찰함으로써 순환을 평가한다.",
+    keywords: ["Allen", "알렌", "요골동맥", "척골동맥", "순환"]
+  },
+  {
+    question:
+      "Talar Tilt Test(거목경사 검사)는 주로 어느 인대 손상을 평가하는가?",
+    options: [
+      "앞목말종아리인대(ATFL)",
+      "뒤목말종아리인대(PTFL)",
+      "목말종아리인대(CFL, calcaneofibular)",
+      "삼각인대(deltoid ligament)",
+      "종비인대"
+    ],
+    answer: 3,
+    explanation:
+      "Talar tilt에서 거골을 가쪽/안쪽으로 기울여 CFL 등 측부인대 손상을 평가한다.",
+    keywords: ["Talar tilt", "거목경사", "CFL", "측부인대"]
+  },
+  {
+    question:
+      "발목 Anterior Drawer Test(앞당김 검사)의 양성 소견은 어떤 인대 손상을 시사하는가?",
+    options: [
+      "앞목말종아리인대(ATFL)",
+      "뒤목말종아리인대(PTFL)",
+      "목말종아리인대(CFL)",
+      "삼각인대",
+      "종입방인대"
+    ],
+    answer: 1,
+    explanation:
+      "발목 전방 당김검사는 주로 ATFL 손상(가장 흔한 발목 염좌)을 평가한다.",
+    keywords: ["발목 anterior drawer", "ATFL", "전거비인대"]
+  },
+  {
+    question:
+      "Windlass(윈드라스) 검사는 어떤 질환을 평가하는 데 주로 사용되는가?",
+    options: [
+      "족저근막염(plantar fasciitis)",
+      "아킬레스 건염",
+      "비골건염",
+      "발목 불안정성",
+      "종골 골절"
+    ],
+    answer: 1,
+    explanation:
+      "발가락 특히 엄지발가락의 신전 시 족저근막에 장력이 증가하고 통증이 유발되면 족저근막염을 시사한다.",
+    keywords: ["Windlass", "윈드라스", "족저근막염"]
+  },
+  {
+    question:
+      "Dix–Hallpike(딕스-홀파이크) 검사는 어떤 질환을 진단하기 위한 대표적인 검사인가?",
+    options: [
+      "전정신경염",
+      "양성돌발두위현훈(BPPV, 후반고리관)",
+      "메니에르병",
+      "중추성 어지럼",
+      "편두통성 어지럼"
+    ],
+    answer: 2,
+    explanation:
+      "Dix–Hallpike는 후반고리관 BPPV를 유발하여 방향특이성을 가진 안진과 어지럼을 관찰하는 검사이다.",
+    keywords: ["Dix-Hallpike", "BPPV", "후반고리관", "어지럼"]
+  },
+  {
+    question:
+      "Roll Test(롤 검사)는 주로 어떤 형태의 BPPV를 평가하는가?",
+    options: [
+      "후반고리관 BPPV",
+      "수평반고리관(horizontal canal) BPPV",
+      "전반고리관 BPPV",
+      "양측성 전정기능저하",
+      "중추성 어지럼"
+    ],
+    answer: 2,
+    explanation:
+      "Roll Test는 누운 자세에서 머리를 좌우로 회전시키며 수평반고리관 BPPV를 평가하는 검사이다.",
+    keywords: ["Roll test", "수평반고리관", "BPPV"]
+  },
+  {
+    question:
+      "Moro Reflex(모로 반사)는 정상 영아에서 언제까지 보이는 것이 정상인가?",
+    options: [
+      "출생 직후부터 평생 지속된다",
+      "생후 1개월까지",
+      "생후 3~4개월까지",
+      "생후 6~8개월까지",
+      "생후 1세까지"
+    ],
+    answer: 3,
+    explanation:
+      "모로 반사는 생후 약 3~4개월경에 통합되는 원시반사이며, 이후에도 지속되면 중추신경계 이상을 의심한다.",
+    keywords: ["Moro", "모로반사", "원시반사"]
+  },
+  {
+    question:
+      "ATNR(비대칭성긴장성목반사)가 지속될 경우 어떤 기능에 가장 큰 영향을 줄 수 있는가?",
+    options: [
+      "고개 들기",
+      "걷기 패턴",
+      "상지의 미세운동과 손 사용",
+      "삼킴 기능",
+      "눈-머리 협응"
+    ],
+    answer: 3,
+    explanation:
+      "ATNR이 소실되지 않으면 머리 방향에 따라 상지 굽힘/폄 패턴이 과하게 나타나 손 사용과 미세운동 발달에 장애를 줄 수 있다.",
+    keywords: ["ATNR", "비대칭성긴장성목반사", "소아"]
+  }
+];
+
+
+    // 🔹 여기서 id, category 자동 부여
+    const questionBank = rawQuestions.map((q, idx) => ({
+      id: idx + 1,
+      category: DEFAULT_CATEGORY,
+      ...q
+    }));
+
+    // ===== 상태 관리 =====
+    let mode = "quiz"; // "quiz" or "recall"
+    let currentIndex = 0;
+    let filteredQuestions = [...questionBank];
+    let score = 0;
+    let correctCount = 0;
+    let answeredCount = 0;
+    let combo = 0;
+    let bestCombo = 0;
+    let wrongNote = [];
+
+    const categorySelect = document.getElementById("categorySelect");
+    const categoryChip = document.getElementById("categoryChip");
+    const questionTextEl = document.getElementById("questionText");
+    const optionsListEl = document.getElementById("optionsList");
+    const qIndexEl = document.getElementById("qIndex");
+    const feedbackEl = document.getElementById("feedback");
+    const checkBtn = document.getElementById("checkBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const shuffleBtn = document.getElementById("shuffleBtn");
+    const statProgressEl = document.getElementById("statProgress");
+    const statCountEl = document.getElementById("statCount");
+    const statAccuracyEl = document.getElementById("statAccuracy");
+    const statScoreEl = document.getElementById("statScore");
+    const statComboEl = document.getElementById("statCombo");
+    const statBestComboEl = document.getElementById("statBestCombo");
+    const wrongListEl = document.getElementById("wrongList");
+    const modeQuizBtn = document.getElementById("modeQuiz");
+    const modeRecallBtn = document.getElementById("modeRecall");
+    const recallRow = document.getElementById("recallRow");
+    const recallInput = document.getElementById("recallInput");
+    const recallCheckBtn = document.getElementById("recallCheckBtn");
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function resetStats() {
+      score = 0;
+      correctCount = 0;
+      answeredCount = 0;
+      combo = 0;
+      bestCombo = 0;
+      wrongNote = [];
+      updateStats();
+      renderWrongList();
+    }
+
+    // 🔹 카테고리는 이제 소아물리 하나라서 아주 단순화
+    function applyFilter() {
+      filteredQuestions = [...questionBank];
+      categoryChip.textContent = DEFAULT_CATEGORY;
+      shuffleArray(filteredQuestions);
+      currentIndex = 0;
+      resetStats();
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      if (filteredQuestions.length === 0) {
+        questionTextEl.textContent =
+          "해당 파트에 등록된 문제가 없습니다. questionBank에 문제를 추가해 주세요.";
+        optionsListEl.innerHTML = "";
+        qIndexEl.textContent = "문제 0 / 0";
+        feedbackEl.textContent = "";
+        checkBtn.disabled = true;
+        nextBtn.disabled = true;
+        return;
+      }
+      checkBtn.disabled = false;
+      const q = filteredQuestions[currentIndex];
+      qIndexEl.textContent = `문제 ${currentIndex + 1} / ${filteredQuestions.length}`;
+      questionTextEl.textContent = q.question;
+      feedbackEl.textContent = "";
+      feedbackEl.className = "";
+      nextBtn.disabled = true;
+      optionsListEl.innerHTML = "";
+
+      if (mode === "quiz") {
+        optionsListEl.style.display = "flex";
+        recallRow.style.display = "none";
+        q.options.forEach((opt, idx) => {
+          const li = document.createElement("li");
+          li.className = "option-item";
+          li.dataset.index = idx + 1;
+          li.innerHTML = `
+            <span class="option-label">${idx + 1}.</span>
+            <div class="option-text">
+              <label>
+                <input type="radio" name="option" value="${idx + 1}" />
+                ${opt}
+              </label>
+            </div>
+          `;
+          li.addEventListener("click", () => {
+            const radio = li.querySelector("input[type=radio]");
+            radio.checked = true;
+          });
+          optionsListEl.appendChild(li);
+        });
+      } else {
+        // 암기모드
+        optionsListEl.style.display = "none";
+        recallRow.style.display = "flex";
+        recallInput.value = "";
+      }
+    }
+
+    function getSelectedOption() {
+      const radios = document.querySelectorAll("input[name='option']");
+      for (const r of radios) {
+        if (r.checked) return parseInt(r.value, 10);
+      }
+      return null;
+    }
+
+    function markOptions(correctIdx, chosenIdx) {
+      const items = optionsListEl.querySelectorAll(".option-item");
+      items.forEach((item) => {
+        const idx = parseInt(item.dataset.index, 10);
+        item.classList.remove("correct", "wrong");
+        if (idx === correctIdx) {
+          item.classList.add("correct");
+        }
+        if (chosenIdx && idx === chosenIdx && chosenIdx !== correctIdx) {
+          item.classList.add("wrong");
+        }
+      });
+    }
+
+    function addWrongNote(question, chosen) {
+      if (wrongNote.find((w) => w.id === question.id)) return;
+      wrongNote.push({
+        id: question.id,
+        category: question.category,
+        question: question.question,
+        correct: question.options ? question.options[question.answer - 1] : "",
+        explanation: question.explanation || "",
+        chosen
+      });
+      renderWrongList();
+    }
+
+    function renderWrongList() {
+      wrongListEl.innerHTML = "";
+      if (wrongNote.length === 0) {
+        wrongListEl.innerHTML =
+          '<div class="mini" style="margin-top:4px;">오답이 아직 없습니다. 틀린 문제들이 여기 쌓입니다.</div>';
+        return;
+      }
+      wrongNote.forEach((w, idx) => {
+        const div = document.createElement("div");
+        div.className = "wrong-item";
+        div.innerHTML = `
+          <div class="mini">#${idx + 1} · ${w.category}</div>
+          <div><strong>Q.</strong> ${w.question}</div>
+          <div><strong>정답:</strong> ${w.correct}</div>
+          <div class="mini"><strong>해설:</strong> ${w.explanation}</div>
+        `;
+        wrongListEl.appendChild(div);
+      });
+    }
+
+    function updateStats() {
+      const total = filteredQuestions.length || 1;
+      const progress = Math.round((currentIndex / total) * 100);
+      statProgressEl.textContent = `${progress}%`;
+      statCountEl.textContent = `${currentIndex} / ${total}문제`;
+      const accuracy =
+        answeredCount === 0
+          ? 0
+          : Math.round((correctCount / answeredCount) * 100);
+      statAccuracyEl.textContent = `${accuracy}%`;
+      statScoreEl.textContent = `${score}점`;
+      statComboEl.textContent = combo.toString();
+      statBestComboEl.textContent = `최고 ${bestCombo}연속`;
+    }
+
+    function checkQuizAnswer() {
+      const q = filteredQuestions[currentIndex];
+      const selected = getSelectedOption();
+      if (!selected) {
+        feedbackEl.textContent = "보기를 선택해줘!";
+        feedbackEl.className = "wrong";
+        return;
+      }
+      const isCorrect = selected === q.answer;
+      answeredCount++;
+      if (isCorrect) {
+        feedbackEl.textContent = "정답! 👍";
+        feedbackEl.className = "correct";
+        correctCount++;
+        combo++;
+        score += 5;
+        if (combo > bestCombo) bestCombo = combo;
+      } else {
+        feedbackEl.textContent = `오답 😢 정답은 ${q.answer}번: ${q.options[q.answer - 1]}`;
+        feedbackEl.className = "wrong";
+        score = Math.max(0, score - 1);
+        addWrongNote(q, q.options[selected - 1]);
+        combo = 0;
+      }
+      markOptions(q.answer, selected);
+      nextBtn.disabled = false;
+      updateStats();
+    }
+
+    function normalize(text) {
+      return text.toString().trim().replace(/\s+/g, "").toLowerCase();
+    }
+
+    function checkRecallAnswer() {
+      const q = filteredQuestions[currentIndex];
+      const userInput = normalize(recallInput.value);
+      if (!userInput) {
+        feedbackEl.textContent = "키워드를 하나 이상 적어줘!";
+        feedbackEl.className = "wrong";
+        return;
+      }
+      let keyList = [];
+      if (q.keywords && q.keywords.length > 0) {
+        keyList = q.keywords;
+      } else if (q.options && q.options[q.answer - 1]) {
+        keyList = q.options[q.answer - 1]
+          .split(/[\s·,()]+/)
+          .filter((w) => w.length >= 2);
+      }
+      const hit = keyList.some((k) =>
+        userInput.includes(normalize(k))
+      );
+      answeredCount++;
+      if (hit) {
+        feedbackEl.textContent = "키워드 인정! 정답 처리 ✅";
+        feedbackEl.className = "correct";
+        correctCount++;
+        combo++;
+        score += 5;
+        if (combo > bestCombo) bestCombo = combo;
+      } else {
+        feedbackEl.textContent =
+          "핵심 키워드가 부족해… 해설 보고 다시 외우자 😢";
+        feedbackEl.className = "wrong";
+        addWrongNote(q, userInput);
+        combo = 0;
+        score = Math.max(0, score - 1);
+      }
+      updateStats();
+      nextBtn.disabled = false;
+    }
+
+    function gotoNext() {
+      if (currentIndex < filteredQuestions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+        updateStats();
+      } else {
+        feedbackEl.textContent =
+          "모든 문제를 풀었어요! 🎉 문제를 더 추가하거나 다시 섞어서 복습해봐.";
+        feedbackEl.className = "correct";
+        nextBtn.disabled = true;
+      }
+    }
+
+    checkBtn.addEventListener("click", () => {
+      if (filteredQuestions.length === 0) {
+        feedbackEl.textContent =
+          "먼저 questionBank에 문제를 추가해야 합니다.";
+        feedbackEl.className = "wrong";
+        return;
+      }
+      if (mode === "quiz") {
+        checkQuizAnswer();
+      } else {
+        checkRecallAnswer();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      gotoNext();
+    });
+
+    shuffleBtn.addEventListener("click", () => {
+      applyFilter();
+    });
+
+    categorySelect.addEventListener("change", () => {
+      applyFilter();
+    });
+
+    modeQuizBtn.addEventListener("click", () => {
+      mode = "quiz";
+      modeQuizBtn.classList.add("active");
+      modeRecallBtn.classList.remove("active");
+      recallRow.style.display = "none";
+      optionsListEl.style.display = "flex";
+      renderQuestion();
+    });
+
+    modeRecallBtn.addEventListener("click", () => {
+      mode = "recall";
+      modeRecallBtn.classList.add("active");
+      modeQuizBtn.classList.remove("active");
+      renderQuestion();
+    });
+
+    recallCheckBtn.addEventListener("click", () => {
+      if (filteredQuestions.length === 0) {
+        feedbackEl.textContent =
+          "먼저 questionBank에 문제를 추가해야 합니다.";
+        feedbackEl.className = "wrong";
+        return;
+      }
+      checkRecallAnswer();
+    });
+
+    if (recallInput) {
+      recallInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          if (filteredQuestions.length === 0) {
+            feedbackEl.textContent =
+              "먼저 questionBank에 문제를 추가해야 합니다.";
+            feedbackEl.className = "wrong";
+            return;
+          }
+          checkRecallAnswer();
+        }
+      });
+    }
+
+    // 🔹 초기 로딩
+    applyFilter();
+    updateStats();
+    renderWrongList();
+  </script>
+</body>
+</html>
