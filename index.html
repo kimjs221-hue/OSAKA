@@ -1,1566 +1,1196 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
-  <title>검사법 게임 모드 퀴즈 템플릿</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>2026 오사카 여행 올인원 가이드 (11.08 출발)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Pretendard Font -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #222b45, #050814);
-      color: #f7f9fc;
-      min-height: 100vh;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-      padding: 16px;
+      font-family: 'Pretendard', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
-    .app {
-      width: 100%;
-      max-width: 1100px;
-      background: rgba(8, 10, 26, 0.96);
-      border-radius: 18px;
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+    /* Custom Scrollbar for horizontal tabs */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
     }
-    header {
-      padding: 14px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: linear-gradient(90deg, #141e30, #243b55);
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
-    header .title-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    /* Boarding Pass Cutout Effect */
+    .ticket-notch-left {
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
     }
-    header h1 {
-      font-size: 18px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    header h1 span.badge {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffdd57;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    header p {
-      font-size: 11px;
-      color: #cbd5f5;
-      opacity: 0.9;
-    }
-    .mode-toggle {
-      display: inline-flex;
-      padding: 2px;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
-    }
-    .mode-toggle button {
-      border: none;
-      background: transparent;
-      color: #cbd5ff;
-      font-size: 11px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      cursor: pointer;
-      min-width: 70px;
-      transition: 0.18s ease;
-    }
-    .mode-toggle button.active {
-      background: #ff4f6a;
-      color: #fff;
-      box-shadow: 0 0 12px rgba(255, 79, 106, 0.6);
-    }
-    .layout {
-      display: flex;
-      flex: 1;
-      min-height: 0;
-    }
-    .left-pane {
-      flex: 2.2;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .right-pane {
-      flex: 1.2;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: radial-gradient(circle at top left, #111827, #020617);
-    }
-    .panel {
-      background: radial-gradient(circle at top left, #10152d, #050817);
-      border-radius: 14px;
-      padding: 12px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    }
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .panel-header h2 {
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .chip {
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #9ca3ff;
-    }
-    .controls-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    select,
-    button,
-    input[type="text"] {
-      font-family: inherit;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 255, 0.7);
-      background: rgba(15, 23, 42, 0.9);
-      color: #e5e7eb;
-      font-size: 12px;
-      padding: 6px 10px;
-      outline: none;
-    }
-    select {
-      padding-right: 26px;
-      appearance: none;
-      background-image: linear-gradient(45deg, transparent 50%, #9ca3ff 50%),
-        linear-gradient(135deg, #9ca3ff 50%, transparent 50%);
-      background-position: calc(100% - 12px) 9px, calc(100% - 7px) 9px;
-      background-size: 5px 5px, 5px 5px;
-      background-repeat: no-repeat;
-    }
-    button {
-      cursor: pointer;
-      transition: 0.18s ease;
-    }
-    button.primary {
-      background: linear-gradient(135deg, #ff4f6a, #ff914d);
-      border: none;
-      color: #fff;
-      font-weight: 600;
-      box-shadow: 0 6px 16px rgba(248, 113, 113, 0.6);
-    }
-    button.primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 9px 22px rgba(248, 113, 113, 0.8);
-    }
-    button.secondary {
-      border-color: rgba(148, 163, 255, 0.8);
-      background: rgba(15, 23, 42, 0.9);
-      color: #e5e7eb;
-    }
-    button.secondary:hover {
-      background: rgba(30, 64, 175, 0.7);
-    }
-    button:disabled {
-      opacity: 0.55;
-      cursor: default;
-      box-shadow: none;
-      transform: none;
-    }
-    #questionMeta {
-      font-size: 11px;
-      color: #9ca3ff;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 4px;
-    }
-    #questionText {
-      font-size: 15px;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-    ul.options {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    .option-item {
-      border-radius: 10px;
-      padding: 7px 9px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 255, 0.5);
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: 0.15s ease;
-    }
-    .option-item.correct {
-      border-color: #4ade80;
-      background: rgba(34, 197, 94, 0.12);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
-    }
-    .option-item.wrong {
-      border-color: #fb7185;
-      background: rgba(248, 113, 113, 0.12);
-      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
-    }
-    .option-label {
-      flex-shrink: 0;
-      font-weight: 600;
-      color: #c7d2fe;
-      min-width: 16px;
-    }
-    .option-text {
-      flex: 1;
-    }
-    .option-item input {
-      margin-top: 3px;
-      accent-color: #ff4f6a;
-    }
-    .answer-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    #recallInput {
-      flex: 1;
-    }
-    #feedback {
-      font-size: 12px;
-      min-height: 18px;
-    }
-    #feedback.correct {
-      color: #4ade80;
-    }
-    #feedback.wrong {
-      color: #fb7185;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
-      margin-top: 4px;
-    }
-    .stat-card {
-      background: radial-gradient(circle at top, #020617, #020617);
-      border-radius: 10px;
-      padding: 6px 8px;
-      border: 1px solid rgba(148, 163, 255, 0.4);
-      font-size: 11px;
-    }
-    .stat-label {
-      opacity: 0.7;
-      margin-bottom: 2px;
-    }
-    .stat-value {
-      font-size: 14px;
-      font-weight: 700;
-    }
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 6px;
-    }
-    .tag {
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 255, 0.4);
-      white-space: nowrap;
-    }
-    .wrong-list {
-      max-height: 250px;
-      overflow-y: auto;
-      margin-top: 6px;
-      padding-right: 4px;
-    }
-    .wrong-item {
-      font-size: 11px;
-      padding: 6px 6px;
-      border-radius: 8px;
-      margin-bottom: 4px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(248, 113, 113, 0.6);
-    }
-    .wrong-item strong {
-      color: #fecaca;
-    }
-    .mini {
-      font-size: 10px;
-      opacity: 0.7;
-    }
-    @media (max-width: 820px) {
-      .layout {
-        flex-direction: column;
-      }
-      .left-pane {
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      }
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .stats-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-    }
-    @media (max-width: 480px) {
-      header h1 {
-        font-size: 16px;
-      }
-      .panel {
-        padding: 10px 11px;
-      }
-      #questionText {
-        font-size: 14px;
-      }
-      .option-item {
-        font-size: 12px;
-      }
-      .stats-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
+    .ticket-notch-right {
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
     }
   </style>
 </head>
-<body>
-  <div class="app">
-    <header>
-      <div class="title-group">
-        <h1>
-          검사법 문제은행
-          <span class="badge">게임 모드 템플릿</span>
-        </h1>
-        <p>문제 데이터는 직접 채워 넣는 버전</p>
-      </div>
-      <div class="mode-toggle">
-        <button id="modeQuiz" class="active">객관식 퀴즈</button>
-        <button id="modeRecall">암기 모드</button>
-      </div>
-    </header>
-    <div class="layout">
-      <div class="left-pane">
-        <div class="panel">
-          <div class="panel-header">
-            <h2>🎮 문제 영역</h2>
-            <span class="chip" id="categoryChip">검사법</span>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-24 transition-colors duration-200">
+
+  <!-- Toast Notification for Clipboard Copy -->
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
+    <div class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 text-sm font-semibold">
+      <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 dark:text-emerald-600"></i>
+      <span id="toast-msg">복사되었습니다!</span>
+    </div>
+  </div>
+
+  <!-- Top Sticky Header -->
+  <header class="sticky top-0 z-30 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
+          <i data-lucide="plane-takeoff" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-base sm:text-lg leading-tight">2026 오사카 올인원 가이드</h1>
+            <span id="d-day-badge" class="px-2 py-0.5 text-xs font-extrabold rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+              D-Day 계산중
+            </span>
           </div>
-          <div class="controls-row">
-            <select id="categorySelect">
-              <option value="ALL">검사법 (전체)</option>
-            </select>
-            <button class="secondary" id="shuffleBtn">섞어서 다시 시작</button>
-          </div>
-          <div id="questionMeta">
-            <span id="qIndex">문제 0 / 0</span>
-            <span id="qInfo">난이도 : 국시</span>
-          </div>
-          <div id="questionText">
-            문제 데이터가 없습니다. questionBank에 문제를 추가해 주세요.
-          </div>
-          <ul class="options" id="optionsList"></ul>
-          <div class="answer-row" id="recallRow" style="display:none;">
-            <input
-              type="text"
-              id="recallInput"
-              placeholder="키워드 입력 (정답 전체 말고 핵심어만 써도 인정)"
-            />
-            <button class="secondary" id="recallCheckBtn">체크</button>
-          </div>
-          <div class="controls-row">
-            <button class="primary" id="checkBtn">정답 확인</button>
-            <button class="secondary" id="nextBtn" disabled>다음 문제</button>
-          </div>
-          <div id="feedback"></div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">2026.11.08 (일) 12:40 출발 · 도미 인 오사카 다니마치</p>
         </div>
       </div>
-      <div class="right-pane">
-        <div class="panel">
-          <div class="panel-header">
-            <h2>📊 진행 상황</h2>
-          </div>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-label">진행률</div>
-              <div class="stat-value" id="statProgress">0%</div>
-              <div class="mini" id="statCount">0 / 0문제</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">정답률</div>
-              <div class="stat-value" id="statAccuracy">0%</div>
-              <div class="mini" id="statScore">0점</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">연속 정답</div>
-              <div class="stat-value" id="statCombo">0</div>
-              <div class="mini" id="statBestCombo">최고 0연속</div>
-            </div>
-          </div>
-          <div class="tag-row">
-            <span class="tag">국가고시 대비</span>
-            <span class="tag">검사법 전용</span>
-            <span class="tag">오답 자동 저장</span>
-            <span class="tag">암기모드 키워드 인식</span>
-          </div>
+
+      <div class="flex items-center gap-1.5">
+        <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" aria-label="테마 변경">
+          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-5xl mx-auto px-4">
+      <nav class="flex space-x-1 overflow-x-auto no-scrollbar py-1.5" aria-label="Tabs">
+        <button onclick="switchTab('tab-roadmap')" id="btn-tab-roadmap" class="tab-btn active-tab whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+          <i data-lucide="map-pin" class="w-4 h-4"></i>
+          1일차 로드맵 & 구글맵
+        </button>
+        <button onclick="switchTab('tab-checklist')" id="btn-tab-checklist" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+          <i data-lucide="check-square" class="w-4 h-4"></i>
+          숙소·필수 준비물
+        </button>
+        <button onclick="switchTab('tab-vjw')" id="btn-tab-vjw" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+          <i data-lucide="qr-code" class="w-4 h-4"></i>
+          비지트 재팬 웹
+        </button>
+        <button onclick="switchTab('tab-wallet')" id="btn-tab-wallet" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+          <i data-lucide="credit-card" class="w-4 h-4"></i>
+          트래블월렛 & 교통
+        </button>
+        <button onclick="switchTab('tab-esim')" id="btn-tab-esim" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
+          <i data-lucide="smartphone" class="w-4 h-4"></i>
+          eSIM 구매 & 설정
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-5xl mx-auto px-4 pt-4 space-y-6">
+
+    <!-- Flight Boarding Pass & Quick Info Card (Always visible on top) -->
+    <section class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+      <!-- Top Bar -->
+      <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 px-5 py-3 text-white flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-xs font-extrabold bg-white/20 rounded-md backdrop-blur-sm">AIR BUSAN</span>
+          <span class="font-bold text-sm sm:text-base">에어부산 BX331</span>
+          <span class="text-xs text-blue-100">(일반석 Q · 위탁수하물 15kg)</span>
         </div>
-        <div class="panel">
-          <div class="panel-header">
-            <h2>📚 오답 노트</h2>
-          </div>
-          <div class="mini">틀린 문제들이 자동으로 쌓입니다. (현재는 문제 없음)</div>
-          <div class="wrong-list" id="wrongList"></div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-blue-100">예약번호:</span>
+          <button onclick="copyText('KIBNSL', '항공권 예약번호(KIBNSL)가 복사되었습니다.')" class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1 rounded-lg text-xs font-mono font-bold flex items-center gap-1">
+            KIBNSL <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          </button>
         </div>
       </div>
+
+      <!-- Ticket Body -->
+      <div class="p-4 sm:p-5">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+          <!-- Flight Route -->
+          <div class="lg:col-span-7 flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200/70 dark:border-slate-800">
+            <div class="text-left">
+              <span class="text-xs font-semibold text-blue-600 dark:text-blue-400 block">출발 · 2026.11.08 (일)</span>
+              <div class="text-2xl sm:text-3xl font-black tracking-tight mt-0.5">12:40</div>
+              <div class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">ICN 인천</div>
+              <span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 rounded-md">제2여객터미널 (T2)</span>
+            </div>
+
+            <div class="flex flex-col items-center px-2 sm:px-4">
+              <span class="text-[11px] font-semibold text-slate-400">비행 2시간 00분</span>
+              <div class="w-20 sm:w-28 flex items-center my-1.5">
+                <div class="h-2 w-2 rounded-full bg-blue-600"></div>
+                <div class="flex-1 h-0.5 border-b-2 border-dashed border-blue-400 dark:border-blue-600 mx-1"></div>
+                <i data-lucide="plane" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
+                <div class="flex-1 h-0.5 border-b-2 border-dashed border-blue-400 dark:border-blue-600 mx-1"></div>
+                <div class="h-2 w-2 rounded-full bg-indigo-600"></div>
+              </div>
+              <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">직항 · 수하물 15kg</span>
+            </div>
+
+            <div class="text-right">
+              <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 block">도착 · 2026.11.08 (일)</span>
+              <div class="text-2xl sm:text-3xl font-black tracking-tight mt-0.5">14:40</div>
+              <div class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">KIX 간사이</div>
+              <span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 rounded-md">제1터미널 (T1)</span>
+            </div>
+          </div>
+
+          <!-- Hotel Quick Action Box -->
+          <div class="lg:col-span-5 flex flex-col justify-between bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/60 rounded-xl p-3.5 space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">숙소 (Hotel)</span>
+                <h2 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">도미 인 오사카 다니마치</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400">天然温泉 浪華の湯 ドーミーイン大阪谷町</p>
+              </div>
+              <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="shrink-0 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm transition">
+                <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 숙소 길찾기
+              </a>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button onclick="copyText('大阪府大阪市中央区内本町２丁目１−9', '숙소 일본어 주소가 복사되었습니다.')" class="flex-1 min-w-[120px] py-1.5 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium flex items-center justify-center gap-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400"></i> 일본어 주소 복사
+              </button>
+              <button onclick="copyText('天然温泉 浪華の湯 ドーミーイン大阪谷町', '숙소 일본어 이름이 복사되었습니다.')" class="flex-1 min-w-[120px] py-1.5 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium flex items-center justify-center gap-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400"></i> 호텔명 복사
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: DAY 1 ROADMAP & GOOGLE MAPS         -->
+    <!-- ========================================== -->
+    <div id="tab-roadmap" class="tab-content space-y-6">
+      
+      <!-- GPS Navigation Helper Banner -->
+      <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <div class="p-2 rounded-xl bg-blue-600 text-white shrink-0 mt-0.5">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm sm:text-base text-blue-950 dark:text-blue-200">실시간 현재 위치 연동 구글맵 길찾기 안내</h3>
+            <p class="text-xs text-blue-800/80 dark:text-blue-300/80 mt-0.5 leading-relaxed">
+              각 일정의 <span class="font-bold underline">"📍 현재 위치에서 길찾기"</span> 버튼을 누르면 스마트폰 GPS 기준 현재 서 있는 위치에서 해당 목적지까지 최적의 지하철/도보 경로가 구글맵 앱으로 즉시 실행됩니다. 완료한 일정은 체크박스를 눌러 표시해 보세요!
+            </p>
+          </div>
+        </div>
+        <button onclick="resetTimelineProgress()" class="self-end sm:self-center shrink-0 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline px-2 py-1">
+          진행률 초기화
+        </button>
+      </div>
+
+      <!-- Timeline Steps Container -->
+      <div class="relative pl-4 sm:pl-6 border-l-2 border-blue-200 dark:border-slate-800 space-y-6">
+
+        <!-- STEP 1: 동암역 -> 인천공항 T2 -->
+        <div class="relative group" data-step="step-1">
+          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-blue-600 ring-4 ring-white dark:ring-slate-950"></div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-extrabold text-xs rounded-lg">08:50 - 09:40</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">자차 이동 (약 45~50분)</span>
+              </div>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
+                <input type="checkbox" onchange="toggleStep('step-1')" id="chk-step-1" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+                완료
+              </label>
+            </div>
+
+            <h3 class="font-bold text-base sm:text-lg mt-2">🚗 인천 동암역 출발 → 인천공항 제2여객터미널 주차장</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+              경인고속도로(서인천IC) 및 인천국제공항고속도로를 이용해 이동합니다. 에어부산은 <strong class="text-rose-600 dark:text-rose-400">반드시 제2여객터미널(T2)</strong>로 진입해야 합니다! 장기주차장 이용 시 주차 후 터미널까지 셔틀버스 이동 시간(15~20분)이 추가되므로 <strong>09:40까지 주차 완료</strong>를 권장합니다.
+            </p>
+
+            <div class="mt-3 p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/50 text-xs text-amber-900 dark:text-amber-200">
+              💡 <strong>한국 내 내비게이션 팁:</strong> 대한민국 내에서는 법률상 구글맵 자동차 길찾기가 제한됩니다. 동암역에서 출발할 때는 아래 <strong>네이버 지도 / 카카오맵</strong> 버튼을 누르거나 차량 내비게이션에 <strong>"인천공항 제2여객터미널 단기/장기주차장"</strong>을 검색하세요.
+            </div>
+
+            <!-- Action Map Buttons -->
+            <div class="mt-3.5 flex flex-wrap gap-2">
+              <a href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B5%AD%EC%A0%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C2%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90%20%EC%A3%BC%EC%B0%A8%EC%9E%A5" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                <i data-lucide="navigation-2" class="w-3.5 h-3.5"></i> 네이버지도: T2 주차장 검색
+              </a>
+              <a href="https://map.kakao.com/?q=%EC%9D%B8%EC%B2%9C%EA%B5%AD%EC%A0%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C2%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90%20%EC%A3%BC%EC%B0%A8%EC%9E%A5" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                <i data-lucide="map" class="w-3.5 h-3.5"></i> 카카오맵: T2 주차장 검색
+              </a>
+              <a href="https://www.google.com/maps/dir/?api=1&destination=Incheon+International+Airport+Terminal+2&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i> 구글맵 위치 확인 (T2)
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: 출국 수속 -->
+        <div class="relative group" data-step="step-2">
+          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-blue-600 ring-4 ring-white dark:ring-slate-950"></div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-extrabold text-xs rounded-lg">10:00 - 12:10</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">인천공항 T2 출국장</span>
+              </div>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
+                <input type="checkbox" onchange="toggleStep('step-2')" id="chk-step-2" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+                완료
+              </label>
+            </div>
+
+            <h3 class="font-bold text-base sm:text-lg mt-2">🛂 탑승 수속 · 수하물 위탁(15kg) 및 출국 심사</h3>
+            <ul class="mt-2 space-y-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 list-disc list-inside">
+              <li>에어부산 카운터에서 위탁수하물(무료 15kg) 위탁 (보조배터리·전자담배는 반드시 기내 휴대!)</li>
+              <li><strong>인천공항 스마트패스(ICN Smartpass)</strong> 앱 사전 등록 시 안면인식으로 빠른 출국장 입장 가능</li>
+              <li>출국 심사 통과 후 대기하다가 <strong>12:10까지</strong> 해당 탑승구 앞에서 탑승 대기</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- STEP 3: 비행 및 간사이공항 입국 -->
+        <div class="relative group" data-step="step-3">
+          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-indigo-600 ring-4 ring-white dark:ring-slate-950"></div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-extrabold text-xs rounded-lg">12:40 - 15:40</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">비행 2시간 + 입국 수속 1시간</span>
+              </div>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
+                <input type="checkbox" onchange="toggleStep('step-3')" id="chk-step-3" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+                완료
+              </label>
+            </div>
+
+            <h3 class="font-bold text-base sm:text-lg mt-2">✈️ 간사이 국제공항(KIX T1) 도착 및 난카이 전철역 이동</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+              14:40 착륙 직후 비행기 안에서 <strong>해외 eSIM 활성화 및 데이터 로밍 ON</strong>을 켭니다. 입국 심사 시 <strong>Visit Japan Web QR코드</strong>를 제시하고, 수하물을 찾은 뒤 1층 도착로비에서 에스컬레이터로 <strong>2층 연결 통로</strong>로 올라가 다리를 건너면 바로 <strong>간사이공항역(난카이 전철/JR)</strong>이 나옵니다.
+            </p>
+
+            <div class="mt-3.5 flex flex-wrap gap-2">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=Kansai+Airport+Station&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 간사이공항역(전철) 길찾기
+              </a>
+              <button onclick="switchTab('tab-vjw')" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                <i data-lucide="qr-code" class="w-3.5 h-3.5 text-indigo-500"></i> 비지트 재팬 입력정보 보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: 간사이공항 -> 도미 인 오사카 다니마치 지하철 이동 (핵심 구간) -->
+        <div class="relative group" data-step="step-4">
+          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-rose-600 ring-4 ring-white dark:ring-slate-950"></div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border-2 border-blue-500/80 dark:border-blue-500/60 shadow-md transition">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-extrabold text-xs rounded-lg">15:50 - 16:55</span>
+                <span class="text-xs font-bold px-2 py-0.5 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded">핵심 지하철 이동 (환승 1회 · 총 60분)</span>
+              </div>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
+                <input type="checkbox" onchange="toggleStep('step-4')" id="chk-step-4" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+                완료
+              </label>
+            </div>
+
+            <h3 class="font-bold text-base sm:text-lg mt-2">🚇 간사이공항역 → 숙소(도미 인 오사카 다니마치) 지하철 완벽 로드맵</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              복잡한 난바역 환승 대신 <strong>덴가차야역(Tengachaya)</strong>에서 환승하면 캐리어를 끌고 평지로 바로 갈아탈 수 있어 가장 빠르고 쾌적합니다!
+            </p>
+
+            <!-- Sub-steps for Transit -->
+            <div class="mt-3 space-y-2.5">
+              <!-- Sub 1 -->
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-extrabold text-orange-600 dark:text-orange-400">1구간 · 난카이 전철 (주황색 간판)</span>
+                  <span class="text-[11px] font-semibold text-slate-500">약 34~40분 소요</span>
+                </div>
+                <p class="text-xs sm:text-sm font-bold mt-1">간사이공항역 탑승 → <span class="text-orange-600 dark:text-orange-400 underline">덴가차야역 (Tengachaya / 天下茶屋駅)</span> 하차</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  • <strong>난카이 공항급행(Airport Express)</strong>: 예약 없이 트래블월렛 터치결제 또는 교통카드(ICOCA)로 바로 개찰구 찍고 탑승 (970엔, 약 40분)<br/>
+                  • <strong>특급 라피트(Rapi:t)</strong>: 지정석 좌석 열차, 클룩/마이리얼트립 등에서 QR바우처 구매 후 좌석 지정 (약 34분)
+                </p>
+              </div>
+
+              <!-- Sub 2 -->
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-extrabold text-amber-800 dark:text-amber-400">2구간 · 오사카 메트로 사카이스지선 (갈색 노선 · K)</span>
+                  <span class="text-[11px] font-semibold text-slate-500">5정거장 · 약 11분 소요</span>
+                </div>
+                <p class="text-xs sm:text-sm font-bold mt-1">덴가차야역 환승 → <span class="text-amber-700 dark:text-amber-400 underline">사카이스지혼마치역 (Sakaisuji-Hommachi / 堺筋本町駅)</span> 하차</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  • 덴가차야역 에스컬레이터/엘리베이터로 내려와 개찰구를 나가면 바로 정면에 <strong>Osaka Metro 사카이스지선(갈색 K 노선)</strong> 입구가 있습니다.<br/>
+                  • 북쪽 방향(덴진바시스지로쿠초메/기타센리 행) 열차 탑승 후 5번째 역인 <strong>사카이스지혼마치역(K15)</strong>에서 하차합니다.
+                </p>
+              </div>
+
+              <!-- Sub 3 -->
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">3구간 · 도보 이동 (약 6~7분)</span>
+                  <span class="text-[11px] font-semibold text-slate-500">평지 직진 위주</span>
+                </div>
+                <p class="text-xs sm:text-sm font-bold mt-1">사카이스지혼마치역 <span class="text-emerald-600 dark:text-emerald-400">12번 출구(또는 1번 출구)</span> → 도미 인 오사카 다니마치</p>
+                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  • 역에서 나와 동쪽(오사카성 방향)으로 약 450m 걸어가면 호텔 도착! (대안: 주오선으로 1정거장 더 가서 <strong>다니마치 4초메역 4번 출구</strong>에서 도보 4분 이동도 가능)
+                </p>
+              </div>
+            </div>
+
+            <!-- Google Maps Direct Navigation Buttons -->
+            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
+              <div class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">👇 클릭 시 현재 내 위치에서 바로 구글맵 경로 안내가 시작됩니다:</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
+                  <i data-lucide="navigation" class="w-4 h-4"></i> 📍 현위치 → 숙소 전체 지하철 길찾기
+                </a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=Tengachaya+Station+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                  <i data-lucide="train" class="w-4 h-4 text-orange-500"></i> 📍 현위치 → 1차 환승 '덴가차야역'
+                </a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=Sakaisuji-Hommachi+Station+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                  <i data-lucide="train" class="w-4 h-4 text-amber-600"></i> 📍 현위치 → 하차역 '사카이스지혼마치역'
+                </a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
+                  <i data-lucide="footprints" class="w-4 h-4"></i> 📍 역 출구(현위치) → 숙소 도보 길찾기
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: 숙소 체크인 -->
+        <div class="relative group" data-step="step-5">
+          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-amber-500 ring-4 ring-white dark:ring-slate-950"></div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-extrabold text-xs rounded-lg">17:00 - 17:30</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">체크인 및 휴식</span>
+              </div>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
+                <input type="checkbox" onchange="toggleStep('step-5')" id="chk-step-5" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+                완료
+              </label>
+            </div>
+
+            <h3 class="font-bold text-base sm:text-lg mt-2">🏨 도미 인 오사카 다니마치 체크인 & 숙소 포인트</h3>
+            <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800">
+                <span class="font-bold text-amber-600 dark:text-amber-400 block">♨️ 13층 천연온천 대욕장</span>
+                15:00~익일 10:00 운영 (사우나 포함). 객실 내 비치된 타월을 지참해 올라갑니다.
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800">
+                <span class="font-bold text-rose-600 dark:text-rose-400 block">🍜 무료 야식 요나키 소바</span>
+                매일 밤 <strong>21:30 ~ 23:00</strong> 레스토랑에서 투숙객 전원 무료 간장 라멘 제공!
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800">
+                <span class="font-bold text-blue-600 dark:text-blue-400 block">🍦 무료 아이스크림/요구르트</span>
+                대욕장 앞에서 밤에는 아이스크림, 아침에는 유산균 음료를 무료로 꺼내 먹을 수 있습니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 6: 첫날 저녁 코스 (A/B 선택형) -->
+        <div class="relative group" data-step="step-6">
+          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-purple-600 ring-4 ring-white dark:ring-slate-950"></div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-extrabold text-xs rounded-lg">17:30 - 21:30</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">첫날 저녁 일정 (원하는 코스 선택)</span>
+              </div>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
+                <input type="checkbox" onchange="toggleStep('step-6')" id="chk-step-6" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+                완료
+              </label>
+            </div>
+
+            <h3 class="font-bold text-base sm:text-lg mt-2">🌃 첫날 저녁 추천 동선 & 스시 맛집 (현재 위치 구글맵 연동)</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              컨디션에 따라 <strong>코스 A(도보 오사카성 야경 산책)</strong> 또는 <strong>코스 B(도톤보리·신사이바시 번화가 & 스시 맛집)</strong>를 선택해 버튼을 눌러 바로 이동하세요.
+            </p>
+
+            <!-- Course Switcher -->
+            <div class="mt-3 grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+              <button onclick="switchEveningCourse('B')" id="btn-course-B" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm transition">
+                🍣 코스 B: 도톤보리 & 신사이바시 스시
+              </button>
+              <button onclick="switchEveningCourse('A')" id="btn-course-A" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition">
+                🏯 코스 A: 오사카성 야경 산책
+              </button>
+            </div>
+
+            <!-- COURSE B CONTENT (Default) -->
+            <div id="course-B-content" class="mt-4 space-y-3">
+              <div class="p-3.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/70 dark:border-blue-900/50">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span class="text-[11px] font-extrabold text-blue-600 dark:text-blue-400">번화가 야경 핵심 스팟 (지하철 2정거장 · 3분)</span>
+                    <h4 class="font-bold text-sm sm:text-base">도톤보리 (글리코상) & 신사이바시 상점가</h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">사카이스지혼마치역에서 사카이스지선 탑승 → 닛폰바시역(2정거장) 하차 후 도보 이동</p>
+                  </div>
+                  <div class="flex gap-1.5">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=Dotonbori+Glico+Sign+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm transition">
+                      <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> 📍 도톤보리 길찾기
+                    </a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=Umeda+Sky+Building+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1 transition">
+                      <i data-lucide="building-2" class="w-3.5 h-3.5"></i> 📍 우메다 스카이빌딩
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-xs font-bold text-slate-500 dark:text-slate-400 pt-1">🍣 신사이바시·미나미 첫날 저녁 추천 스시집 5선 (21:30 호텔 야식 라멘을 위해 18:00~19:00 식사 추천!)</div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                <!-- Sushi 1 -->
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm">1. 스시로 신사이바시점</span>
+                      <span class="text-[11px] px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-bold">가성비 회전초밥</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">한국어 패드 주문 지원, 원하는 접시만큼 조절해 먹기 좋아 밤에 호텔 요나키 소바 먹을 배를 남기기 최적! (10:30~23:00)</p>
+                  </div>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=Sushiro+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 스시로 길찾기
+                  </a>
+                </div>
+
+                <!-- Sushi 2 -->
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm">2. 우오신 (어심) 신사이바시점</span>
+                      <span class="text-[11px] px-2 py-0.5 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 rounded font-bold">대왕 네타 스시</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">밥이 안 보일 정도로 큼직하고 두툼한 생선회를 올려주는 현지 인기 스시집. 생맥주와 궁합 최고! (주말 11:30~23:00)</p>
+                  </div>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=Uoshin+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 우오신 길찾기
+                  </a>
+                </div>
+
+                <!-- Sushi 3 -->
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm">3. Sushi YOSAKURA Shinsaibashi</span>
+                      <span class="text-[11px] px-2 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded font-bold">고평점 정통 스시</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">신사이바시 중심가에서 정갈하고 수준 높은 스시를 맛볼 수 있는 곳. 저녁 18:00~22:00 운영.</p>
+                  </div>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=Sushi+YOSAKURA+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
+                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 YOSAKURA 길찾기
+                  </a>
+                </div>
+
+                <!-- Sushi 4 & 5 -->
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
+                  <div>
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-sm">4. Sushi Akasu / 스시 엔(En)</span>
+                      <span class="text-[11px] px-2 py-0.5 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded font-bold">에도마에/오마카세</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">붉은 식초 샤리를 쓰는 Akasu 또는 히가시신사이바시의 아늑한 스시 엔 (모두 18:00~23:00 운영).</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=Sushi+Akasu+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
+                      📍 Akasu 길찾기
+                    </a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=Shinsaibashi+Sushi+En+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
+                      📍 스시 엔 길찾기
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- COURSE A CONTENT (Hidden by default) -->
+            <div id="course-A-content" class="hidden mt-4 space-y-3">
+              <div class="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50">
+                <span class="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400">숙소에서 도보 15~20분 힐링 산책 코스</span>
+                <h4 class="font-bold text-sm sm:text-base mt-0.5">오테몬(정문) → 오사카 성 공원 → 오사카성 천수각 라이트업 야경</h4>
+                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                  전철을 탈 필요 없이 도미 인 오사카 다니마치에서 동쪽으로 걸어가면 바로 오사카성 정문(오테몬)이 나옵니다. 천수각 내부 박물관은 18:00에 마감되지만, 일몰 후 조명이 켜진 천수각과 해자(연못) 야경은 24시간 무료로 산책하며 감상할 수 있습니다.
+                </p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=Otemon+Gate+Osaka+Castle&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                    <i data-lucide="footprints" class="w-3.5 h-3.5"></i> 📍 1. 오테몬(정문) 도보 길찾기
+                  </a>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=Osaka+Castle+Main+Keep&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
+                    <i data-lucide="castle" class="w-3.5 h-3.5"></i> 📍 2. 오사카성 천수각 도보 길찾기
+                  </a>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=JO-TERRACE+OSAKA&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                    <i data-lucide="utensils" class="w-3.5 h-3.5"></i> 📍 3. 조 테라스(식당/카페) 길찾기
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- STEP 7: 숙소 복귀 & 요나키 소바 & 온천 -->
+        <div class="relative group" data-step="step-7">
+          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-emerald-600 ring-4 ring-white dark:ring-slate-950"></div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-extrabold text-xs rounded-lg">21:30 - 23:00</span>
+                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">1일차 마무리</span>
+              </div>
+              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
+                <input type="checkbox" onchange="toggleStep('step-7')" id="chk-step-7" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
+                완료
+              </label>
+            </div>
+
+            <h3 class="font-bold text-base sm:text-lg mt-2">🍜 숙소 복귀 · 무료 요나키 소바 & 천연온천 힐링</h3>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
+              숙소 앞 세븐일레븐이나 패밀리마트에서 내일 아침 간식/음료를 사서 복귀합니다. <strong>21:30~23:00</strong> 사이에 무료 야식 소바를 먹고, 천연온천 대욕장에서 첫날 피로를 싹 푼 뒤 무료 아이스크림으로 완벽하게 하루를 마무리하세요!
+            </p>
+            <div class="mt-3">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition">
+                <i data-lucide="home" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 숙소(도미 인 다니마치)로 복귀 길찾기
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: PACKING & AIRBNB/HOTEL CHECKLIST    -->
+    <!-- ========================================== -->
+    <div id="tab-checklist" class="tab-content hidden space-y-6">
+      <!-- Progress Header -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="font-bold text-base sm:text-lg">🎒 출국 필수 준비물 & 숙소(에어비앤비/셀프체류형) 꿀템</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">체크한 내역은 브라우저에 자동 저장됩니다. 나만의 준비물도 추가해 보세요!</p>
+          </div>
+          <div class="text-right">
+            <span id="checklist-percent" class="text-2xl font-black text-blue-600 dark:text-blue-400">0%</span>
+            <button onclick="resetChecklist()" class="block text-[11px] text-slate-400 hover:text-rose-500 underline ml-auto">초기화</button>
+          </div>
+        </div>
+        <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div id="checklist-bar" class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-300" style="width: 0%"></div>
+        </div>
+
+        <!-- Add Custom Item -->
+        <form onsubmit="addCustomItem(event)" class="mt-4 flex gap-2">
+          <input type="text" id="custom-item-input" placeholder="추가할 준비물을 입력하세요 (예: 카메라 충전기, 우산)" class="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shrink-0 transition">
+            + 추가
+          </button>
+        </form>
+      </div>
+
+      <!-- Checklist Categories Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="checklist-container">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: VISIT JAPAN WEB PERFECT GUIDE       -->
+    <!-- ========================================== -->
+    <div id="tab-vjw" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <span class="px-2.5 py-0.5 text-xs font-extrabold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-md">필수 사전 등록</span>
+            <h2 class="font-bold text-lg sm:text-xl mt-1">📲 비지트 재팬 웹 (Visit Japan Web) 1분 복사 가이드</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">입국심사와 세관신고를 통합 QR코드 하나로 통과합니다. 아래 복사 버튼을 눌러 그대로 붙여넣으세요!</p>
+          </div>
+          <a href="https://services.digital.go.jp/ko/visit-japan-web/" target="_blank" rel="noopener noreferrer" class="shrink-0 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
+            <i data-lucide="external-link" class="w-4 h-4"></i> 공식 사이트 바로가기
+          </a>
+        </div>
+
+        <!-- Warning Box -->
+        <div class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-900 dark:text-rose-200 space-y-1">
+          <div class="font-bold flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i> 주의사항 (필독!)
+          </div>
+          <p>• 비지트 재팬 웹은 <strong>100% 무료</strong>이며 별도의 앱이 아닌 <strong>웹사이트(digital.go.jp)</strong>에서 등록합니다. 앱스토어의 유료 사칭 앱에 절대 결제하지 마세요!</p>
+          <p>• 간사이공항 도착 직후 와이파이나 로밍 연결이 지연될 수 있으니, 발급된 <strong>QR코드를 반드시 휴대폰 사진첩에 캡처(스크린샷)</strong>해 두세요.</p>
+        </div>
+
+        <!-- Copy-Paste Table for VJW -->
+        <div>
+          <h3 class="font-bold text-sm sm:text-base mb-3">📋 이번 여행(11/08 BX331 & 도미 인 오사카 다니마치) 입력값 그대로 복사하기</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-slate-400 block">탑승 항공기 편명 (항공사: BX / 편명: 331)</span>
+                <span class="font-mono font-bold text-sm sm:text-base">BX331</span>
+              </div>
+              <button onclick="copyText('331', '편명(331)이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 편명 복사
+              </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-slate-400 block">일본 도착 예정일 / 출발지</span>
+                <span class="font-mono font-bold text-sm sm:text-base">2026-11-08 (ICN 인천)</span>
+              </div>
+              <button onclick="copyText('2026-11-08', '도착일이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 날짜 복사
+              </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-slate-400 block">숙소 우편번호 (숫자만 입력 후 자동입력 클릭!)</span>
+                <span class="font-mono font-bold text-sm sm:text-base text-blue-600 dark:text-blue-400">5400026</span>
+              </div>
+              <button onclick="copyText('5400026', '우편번호(5400026)가 복사되었습니다.')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-700 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 우편번호 복사
+              </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-slate-400 block">도도부현 / 시구정촌 (우편번호 검색시 자동완성)</span>
+                <span class="font-bold text-xs sm:text-sm">OSAKA / CHUO-KU OSAKA-SHI</span>
+              </div>
+              <button onclick="copyText('CHUO-KU OSAKA-SHI', '시구정촌이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 복사
+              </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-slate-400 block">정·초메·번지·호 (상세주소 영문)</span>
+                <span class="font-mono font-bold text-sm sm:text-base">2-1-9 Uchihonmachi</span>
+              </div>
+              <button onclick="copyText('2-1-9 Uchihonmachi', '상세주소(2-1-9 Uchihonmachi)가 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 상세주소 복사
+              </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-slate-400 block">호텔명 / 숙소명 (영문)</span>
+                <span class="font-mono font-bold text-sm sm:text-base">Dormy Inn Osaka Tanimachi</span>
+              </div>
+              <button onclick="copyText('Dormy Inn Osaka Tanimachi', '호텔 영문명이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 호텔명 복사
+              </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between sm:col-span-2">
+              <div>
+                <span class="text-[11px] text-slate-400 block">일본 내 연락 가능한 전화번호 (호텔 전화번호)</span>
+                <span class="font-mono font-bold text-sm sm:text-base">0669455489</span>
+              </div>
+              <button onclick="copyText('0669455489', '호텔 전화번호(0669455489)가 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 전화번호 복사
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: TRAVEL WALLET & TRANSIT GUIDE       -->
+    <!-- ========================================== -->
+    <div id="tab-wallet" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+        <div>
+          <span class="px-2.5 py-0.5 text-xs font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded-md">환전·결제·지하철 올인원</span>
+          <h2 class="font-bold text-lg sm:text-xl mt-1">💳 트래블월렛(Travel Wallet) 오사카 200% 활용 가이드</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">환전 수수료 0%, 해외 결제 수수료 0%, 오사카 지하철 터치 탑승까지 완벽 정리!</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Card 1 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
+            <h3 class="font-bold text-sm sm:text-base">오사카 지하철 & 난카이 전철 터치 탑승!</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              <strong>난카이 전철(공항급행)</strong>과 <strong>오사카 메트로(사카이스지선, 주오선, 다니마치선 등 전 노선)</strong> 개찰구에서 이코카(ICOCA) 교통카드 없이도 <strong>트래블월렛 실물 카드(컨택리스 와이파이 로고)</strong>를 개찰구 흰색/은색 리더기에 터치해 바로 탑승할 수 있습니다!
+            </p>
+            <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[11px] text-blue-800 dark:text-blue-200">
+              💡 팁: 일반 승차권 넣는 개찰구 중 <strong>와이파이 모양(컨택리스 패드)</strong>이 붙어 있는 개찰구를 이용하세요.
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">2</div>
+            <h3 class="font-bold text-sm sm:text-base">현지 ATM 엔화(현금) 인출은 '세븐일레븐' 또는 '이온(AEON)'</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              일본은 전통 시장(구로몬 시장), 일부 개인 라멘집, 자판기, 코인락커에서 현금이 필요합니다. <strong>세븐일레븐 내 Seven Bank ATM</strong> 또는 <strong>이온(AEON) ATM</strong>을 이용하면 한국어 지원 및 출금 수수료 혜택을 받을 수 있습니다.
+            </p>
+            <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-[11px] text-emerald-800 dark:text-emerald-200">
+              ⚠️ 로손(Lawson), 패밀리마트(E-net) ATM은 기기 수수료(110~220엔)가 부과될 수 있으며, 인출 시 통화 선택 화면이 나오면 무조건 <strong>JPY(엔화)</strong>를 선택하세요!
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 space-y-2">
+            <div class="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold">3</div>
+            <h3 class="font-bold text-sm sm:text-base">출국 전 필수 점검 3가지</h3>
+            <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+              <li>트래블월렛 앱 → <strong>실물 카드 ON(활성화)</strong> 및 <strong>해외 오프라인 결제 허용</strong> 켜두기</li>
+              <li>ATM 출금을 위해 <strong>카드 비밀번호(4자리)</strong> 미리 확인해 두기</li>
+              <li>비상시를 대비해 <strong>토스뱅크 외화통장 카드 / 트래블로그 / 일반 VISA·Master 신용카드 1장</strong>을 서브 카드로 함께 챙기기</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: ESIM COMPARISON & SETUP GUIDE       -->
+    <!-- ========================================== -->
+    <div id="tab-esim" class="tab-content hidden space-y-6">
+      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
+        <div>
+          <span class="px-2.5 py-0.5 text-xs font-extrabold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded-md">유심 교체 없이 QR로 끝</span>
+          <h2 class="font-bold text-lg sm:text-xl mt-1">📶 일본 eSIM 추천 구매처 & 스마트폰 설정 완벽 가이드</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">한국 유심은 그대로 두고(문자 수신 무료), 데이터만 일본 현지망으로 빠르고 쾌적하게 쓰는 방법!</p>
+        </div>
+
+        <!-- eSIM Providers Comparison -->
+        <div>
+          <h3 class="font-bold text-sm sm:text-base mb-3">🛒 대표 일본 eSIM 구매처 비교 (클릭 시 이동)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            
+            <a href="https://www.wifidosirak.com/" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-blue-500 transition flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400">한국어 카톡 상담 최고</span>
+                <h4 class="font-bold text-sm mt-0.5">도시락 eSIM</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">SoftBank/KDDI 로컬망 및 듀얼망 상품 다양. 초보자도 카카오톡 고객센터 연결이 빨라 안심.</p>
+              </div>
+              <span class="text-xs font-bold text-blue-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
+            </a>
+
+            <a href="https://www.klook.com/ko/" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-orange-500 transition flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400">가성비 & 앱 내 즉시 활성화</span>
+                <h4 class="font-bold text-sm mt-0.5">클룩(Klook) / 마이리얼트립</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">라피트 열차권이나 주유패스 살 때 함께 구매하기 좋으며, '로컬망(SoftBank/KDDI) 완전 무제한' 가격이 저렴함.</p>
+              </div>
+              <span class="text-xs font-bold text-orange-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
+            </a>
+
+            <a href="https://www.usimsa.com/" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">국내 대표 eSIM 플랫폼</span>
+                <h4 class="font-bold text-sm mt-0.5">유심사 (USIMSA) / 핀다이렉트</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">네이버 스마트스토어 및 전용 앱으로 구매 즉시 1분 내 QR코드 발급. 일 2GB/3GB/무제한 선택 폭 넓음.</p>
+              </div>
+              <span class="text-xs font-bold text-emerald-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
+            </a>
+
+            <a href="https://www.airalo.com/ko" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-purple-500 transition flex flex-col justify-between">
+              <div>
+                <span class="text-[11px] font-bold text-purple-600 dark:text-purple-400">글로벌 1위 eSIM 앱</span>
+                <h4 class="font-bold text-sm mt-0.5">에어알로 (Airalo)</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">QR 스캔 없이 앱에서 버튼 하나로 바로 설치 가능. KDDI + SoftBank 듀얼망 지원으로 음영지역 최소화.</p>
+              </div>
+              <span class="text-xs font-bold text-purple-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
+            </a>
+
+          </div>
+        </div>
+
+        <!-- Step by Step Setup Guide (Galaxy / iPhone) -->
+        <div class="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/60 space-y-3">
+          <h3 class="font-bold text-sm sm:text-base text-indigo-950 dark:text-indigo-200">📱 실패 없는 eSIM 등록 & 간사이공항 착륙 후 활성화 4단계</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <span class="font-extrabold text-blue-600 dark:text-blue-400 block mb-1">STEP 1. 출국 전 (한국 집 또는 인천공항 와이파이 상태)</span>
+              • <strong>갤럭시(Z폴드 등):</strong> 설정 → 연결 → SIM 관리자 → <strong>[+ eSIM 추가]</strong> → 구매한 QR코드 스캔<br/>
+              • <strong>아이폰:</strong> 설정 → 셀룰러 → <strong>[eSIM 추가]</strong> → QR코드 스캔<br/>
+              • 등록이 완료되면 이름을 '일본여행'으로 바꾸고, 한국에서는 일단 <strong>eSIM을 OFF(꺼짐)</strong> 해둡니다.
+            </div>
+
+            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <span class="font-extrabold text-indigo-600 dark:text-indigo-400 block mb-1">STEP 2. 간사이공항 착륙 직후 (비행기 안)</span>
+              • 설정 → 연결 → SIM 관리자에서 <strong>등록해둔 eSIM을 ON(켜기)</strong> 합니다.<br/>
+              • 같은 화면 하단의 <strong>[모바일 데이터]</strong> 항목을 주회선(SIM 1)에서 <strong>[eSIM 1 (일본여행)]</strong>으로 변경합니다.
+            </div>
+
+            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <span class="font-extrabold text-emerald-600 dark:text-emerald-400 block mb-1">STEP 3. 데이터 로밍 켜기 (가장 중요!)</span>
+              • eSIM이 일본 통신사 전파를 잡으려면 <strong>설정 → 연결 → 해외 로밍 → [데이터 로밍]을 ON(켜기)</strong> 해야 합니다.<br/>
+              • 안심하세요! 앞 단계에서 '모바일 데이터'를 eSIM으로 지정했기 때문에 한국 유심에는 데이터 요금이 부과되지 않습니다.
+            </div>
+
+            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+              <span class="font-extrabold text-amber-600 dark:text-amber-400 block mb-1">STEP 4. 한국 카드 결제 문자 & 본인인증 받기</span>
+              • 기존 한국 유심(SIM 1)은 끄지 말고 켜둔 상태로 두면, 일본에서도 <strong>한국 문자(SMS) 수신은 100% 무료</strong>입니다! (단, 한국 유심으로 전화를 걸거나 받으면 로밍 통화료가 나오니 주의하세요.)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sticky Bottom Quick Map Bar (Easy one-handed access while walking with luggage) -->
+  <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-3 py-2 shadow-lg">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+      <span class="text-[11px] font-extrabold text-slate-400 shrink-0 hidden sm:inline">원클릭 현위치 길찾기:</span>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=Kansai+Airport+Station&travelmode=walking" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 text-xs font-bold text-center flex items-center justify-center gap-1">
+        <i data-lucide="train" class="w-3.5 h-3.5 text-blue-600"></i> 간사이공항역
+      </a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=Tengachaya+Station+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 text-xs font-bold text-center flex items-center justify-center gap-1">
+        <i data-lucide="repeat" class="w-3.5 h-3.5 text-orange-500"></i> 덴가차야(환승)
+      </a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold text-center flex items-center justify-center gap-1 shadow-sm">
+        <i data-lucide="hotel" class="w-3.5 h-3.5"></i> 도미 인(숙소)
+      </a>
+      <a href="https://www.google.com/maps/dir/?api=1&destination=Dotonbori+Glico+Sign+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 text-xs font-bold text-center flex items-center justify-center gap-1">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-500"></i> 도톤보리
+      </a>
     </div>
   </div>
 
   <script>
-    // ===== 검사법 전용 설정 =====
-    const DEFAULT_CATEGORY = "검사법";
+    // Initialize Lucide icons
+    lucide.createIcons();
 
-    // 🔹 이 배열만 편집하면 됨! (문제 추가 영역)
-    const rawQuestions = [
-  // 1~10: 척추·신경계 검사
-  {
-    question:
-      "Straight Leg Raise(SLR, 직거상 검사)가 양성일 때 가장 가능성이 높은 병변은 무엇인가?",
-    options: [
-      "넙다리곧은근(rectus femoris)의 단축",
-      "좌골신경(sciatic nerve)의 신경긴장 또는 뿌리병증",
-      "엉덩넙다리인대(iliofemoral ligament)의 단축",
-      "천장관절(sacroiliac joint)의 불안정성",
-      "대퇴골두 무혈성 괴사"
-    ],
-    answer: 2,
-    explanation:
-      "SLR(직거상 검사)는 좌골신경과 요추신경근의 긴장·압박 여부를 평가하는 대표적인 신경긴장 검사이다.",
-    keywords: ["SLR", "직거상검사", "좌골신경", "요추신경근", "신경긴장"]
-  },
-  {
-    question:
-      "Bragard(브라가르드) 검사는 Straight Leg Raise(SLR) 검사에 어떤 요소를 추가하여 민감도를 높이는가?",
-    options: [
-      "엉덩관절 벌림",
-      "엉덩관절 가쪽돌림",
-      "발등굽힘(dorsiflexion)",
-      "발바닥굽힘(plantarflexion)",
-      "무릎 굽힘"
-    ],
-    answer: 3,
-    explanation:
-      "Bragard 검사는 SLR에서 통증이 유발된 각도에서 약간 낮추고 발등굽힘을 추가하여 좌골신경 긴장을 더욱 증가시키는 검사이다.",
-    keywords: ["Bragard", "발등굽힘", "좌골신경", "신경긴장"]
-  },
-  {
-    question:
-      "Slump Test(슬럼프 검사)의 주 평가 대상은 무엇인가?",
-    options: [
-      "천장관절 불안정성",
-      "경추 신경근병증",
-      "요추 신경근 및 경막(neural tissue)의 긴장",
-      "후관절(facet joint) 증후군",
-      "엉덩관절 충돌 증후군"
-    ],
-    answer: 3,
-    explanation:
-      "Slump 검사는 앉은 자세에서 척추 굴곡, 경추 굴곡, 무릎 폄, 발등굽힘 등을 통해 신경계 전체의 긴장을 평가하는 검사이다.",
-    keywords: ["Slump", "신경긴장", "요추신경근", "경막"]
-  },
-  {
-    question:
-      "Kemp Test(켐프 검사)가 가장 유용한 병변 평가는 무엇인가?",
-    options: [
-      "후관절(facet joint) 병변",
-      "추간판탈출증(HNP)",
-      "척수관 협착증",
-      "천장관절 염좌",
-      "요추 불안정성"
-    ],
-    answer: 1,
-    explanation:
-      "Kemp 검사는 요추를 폄·가쪽굽힘·가쪽돌림하여 후관절에 부담을 주는 검사로, 후관절 증후군 평가에 사용된다.",
-    keywords: ["Kemp", "후관절", "facet", "요추"]
-  },
-  {
-    question:
-      "Spurling Test(스펄링 검사)의 양성 소견은 어떤 상태를 의미하는가?",
-    options: [
-      "경추 척수병증",
-      "경추 신경근(radicular) 병변",
-      "경추 불안정성",
-      "경추 후관절염",
-      "흉곽출구증후군"
-    ],
-    answer: 2,
-    explanation:
-      "Spurling 검사는 경추 신전·가쪽굽힘·축성압박을 통해 동측 팔로 방사되는 통증이 있으면 경추 신경근병증을 시사한다.",
-    keywords: ["Spurlling", "경추신경근", "radiculopathy"]
-  },
-  {
-    question:
-      "Cervical Distraction Test(경추 견인 검사)에서 팔로 방사되는 통증이 감소할 경우 무엇을 시사하는가?",
-    options: [
-      "척수병증",
-      "경추 신경근 압박",
-      "흉곽출구증후군",
-      "후관절 증후군",
-      "근막통증증후군"
-    ],
-    answer: 2,
-    explanation:
-      "견인 시 방사통이 감소하면 신경근 압박이 줄어든 것으로 해석하여 경추 신경근병증을 시사한다.",
-    keywords: ["cervical distraction", "경추견인", "신경근압박"]
-  },
-  {
-    question:
-      "Babinski(바빈스키) 반사 양성 소견(엄지발가락 폄, 나머지 발가락 벌어짐)은 어떤 병변을 의미하는가?",
-    options: [
-      "하위운동신경원(LMN) 병변",
-      "상위운동신경원(UMN) 병변",
-      "말초신경병증",
-      "근육질환",
-      "소뇌병변"
-    ],
-    answer: 2,
-    explanation:
-      "성인에서 바빈스키 양성은 상위운동신경원(UMN) 병변의 대표적인 징후이다.",
-    keywords: ["Babinski", "바빈스키", "UMN", "상위운동신경원"]
-  },
-  {
-    question:
-      "Hoffman(호프만) 징후는 어느 부위의 상위운동신경원(UMN) 병변을 의심하게 하는가?",
-    options: [
-      "요추",
-      "흉추",
-      "경추",
-      "말초신경총",
-      "소뇌"
-    ],
-    answer: 3,
-    explanation:
-      "호프만 징후는 경추 수준의 UMN 병변을 의심하게 하는 상지의 병적 반사이다.",
-    keywords: ["Hoffman", "호프만", "경추", "UMN"]
-  },
-  {
-    question:
-      "Romberg(롬버그) 검사는 주로 어떤 기능을 평가하는가?",
-    options: [
-      "소뇌 기능",
-      "전정기관 기능만 단독으로",
-      "고유수용성 감각과 평형",
-      "시각기능",
-      "피질척수로 기능"
-    ],
-    answer: 3,
-    explanation:
-      "Romberg 검사는 눈을 감았을 때 자세 유지능력을 평가하여 고유감각 및 전정·시각 의존도를 평가한다.",
-    keywords: ["Romberg", "롬버그", "평형", "고유수용성"]
-  },
-  {
-    question:
-      "Clonus(간대성 경련) 검사는 어떤 신경계 이상과 가장 관련이 깊은가?",
-    options: [
-      "말초신경병증",
-      "하위운동신경원 병변",
-      "상위운동신경원 병변과 경직",
-      "소뇌실조",
-      "기저핵질환"
-    ],
-    answer: 3,
-    explanation:
-      "지속적인 발목 또는 무릎의 간대성 경련성 움직임은 UMN 병변과 경직(spasticity)과 관련이 있다.",
-    keywords: ["Clonus", "간대성경련", "UMN", "경직"]
-  },
+    // 1. D-Day Calculation (Target: 2026-11-08 12:40 KST)
+    function updateDDay() {
+      const targetDate = new Date('2026-11-08T00:00:00+09:00');
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diffTime = targetDate - todayStart;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const badge = document.getElementById('d-day-badge');
+      if (diffDays > 0) {
+        badge.textContent = `D-${diffDays}`;
+      } else if (diffDays === 0) {
+        badge.textContent = `D-DAY 출발일!`;
+      } else {
+        badge.textContent = `여행 D+${Math.abs(diffDays)}`;
+      }
+    }
+    updateDDay();
 
-  // 11~20: 어깨 검사
-  {
-    question:
-      "Neer Impingement(니어 충돌) 검사는 주로 어떤 구조의 충돌을 평가하는가?",
-    options: [
-      "봉우리빗장인대(Acromioclavicular ligament)",
-      "가시위근힘줄 및 견봉하 공간 구조물",
-      "오구돌기와 위팔뼈머리 사이",
-      "위관절테위팔인대",
-      "관절오목 테두리 손상"
-    ],
-    answer: 2,
-    explanation:
-      "Neer 검사는 견봉하 공간에서 가시위근힘줄과 점액낭 등의 충돌 여부를 평가한다.",
-    keywords: ["Neer", "니어", "충돌증후군", "가시위근"]
-  },
-  {
-    question:
-      "Hawkins–Kennedy(호킨스-케네디) 검사의 주 목적은 무엇인가?",
-    options: [
-      "회전근개 파열 정도 평가",
-      "견봉쇄골관절(AC joint) 불안정성",
-      "견봉하 충돌(어깨 충돌 증후군)",
-      "어깨관절 앞불안정성",
-      "위팔두갈래근 장두건 파열"
-    ],
-    answer: 3,
-    explanation:
-      "호킨스-케네디 검사는 어깨를 90° 굽힘 후 안쪽돌림하여 견봉하 충돌을 유발하는 검사이다.",
-    keywords: ["Hawkins-Kennedy", "호킨스케네디", "충돌증후군"]
-  },
-  {
-    question:
-      "Drop Arm Test(팔 떨어뜨리기 검사, 드롭암)의 양성 소견은 어떤 병변을 가장 잘 시사하는가?",
-    options: [
-      "가시아래근(infraspinatus) 파열",
-      "가시위근(supraspinatus) 파열",
-      "어깨밑근(subscapularis) 파열",
-      "위팔두갈래근 장두건염",
-      "AC 관절염"
-    ],
-    answer: 2,
-    explanation:
-      "드롭암 양성은 팔을 천천히 내리지 못하고 갑자기 떨어뜨리는 소견으로, 가시위근 파열을 강하게 시사한다.",
-    keywords: ["Drop Arm", "가시위근", "회전근개파열"]
-  },
-  {
-    question:
-      "External Rotation Lag Sign(가쪽돌림 지연 징후)의 양성은 어떤 구조의 약화 또는 파열을 의미하는가?",
-    options: [
-      "가시위근",
-      "가시아래근 및 작은원근",
-      "어깨밑근",
-      "넓은등근",
-      "큰가슴근"
-    ],
-    answer: 2,
-    explanation:
-      "가쪽돌림 지연 징후 양성은 외회전 근육인 가시아래근과 작은원근의 파열 또는 중증 약화를 의미한다.",
-    keywords: ["ER lag", "가시아래근", "작은원근", "회전근개"]
-  },
-  {
-    question:
-      "Speed Test(스피드 검사)는 주로 어떤 구조의 병변을 평가하는가?",
-    options: [
-      "위팔두갈래근 장두건(biceps long head tendon)",
-      "가시위근힘줄",
-      "관절오목 테두리",
-      "봉우리빗장관절",
-      "어깨밑근 힘줄"
-    ],
-    answer: 1,
-    explanation:
-      "Speed 검사는 어깨 굽힘 저항 시 위팔두갈래근 장두건 부위의 통증을 유발하여 건병변을 평가한다.",
-    keywords: ["Speed", "스피드", "이두건", "장두건염"]
-  },
-  {
-    question:
-      "Yergason Test(요가슨 검사)는 어떤 문제를 평가하는 데 가장 적합한가?",
-    options: [
-      "가시위근의 부분 파열",
-      "어깨밑근의 약화",
-      "이두건이홈(bicipital groove) 내 장두건의 활차 안정성",
-      "AC 관절 손상",
-      "견봉하 점액낭염"
-    ],
-    answer: 3,
-    explanation:
-      "Yergason 검사는 전완을 뒤침시키는 동안 이두건이홈 부위 통증 또는 건의 탈구를 통해 장두건 활차 안정성을 평가한다.",
-    keywords: ["Yergason", "요가슨", "이두건이홈", "활차"]
-  },
-  {
-    question:
-      "Apprehension Test(불안 검사)에서 어깨가 외전·가쪽돌림 자세에서 불안을 보이는 경우 어떤 병변을 시사하는가?",
-    options: [
-      "어깨 뒤불안정성",
-      "어깨 앞불안정성 또는 전방 탈구 경향",
-      "AC 관절 불안정성",
-      "회전근개 파열",
-      "상완초두골 골절"
-    ],
-    answer: 2,
-    explanation:
-      "Apprehension Test는 외전·가쪽돌림에서 전방 탈구에 대한 불안을 유발하여 전방 불안정성을 평가한다.",
-    keywords: ["Apprehension", "어깨앞불안정성", "전방탈구"]
-  },
-  {
-    question:
-      "Sulcus Sign(홈 징후, Sulcus sign)은 어떤 방향의 불안정성을 평가하는가?",
-    options: [
-      "앞쪽 불안정성",
-      "뒤쪽 불안정성",
-      "아래쪽 불안정성",
-      "수평면 상의 불안정성",
-      "회전 불안정성"
-    ],
-    answer: 3,
-    explanation:
-      "견관절에 아래 방향 견인을 가했을 때 견봉 아래로 홈이 형성되면 아래쪽(inferior) 불안정성을 시사한다.",
-    keywords: ["Sulcus sign", "아래불안정성", "견관절"]
-  },
-  {
-    question:
-      "Cross-body Adduction Test(가로 모음 검사)는 주로 어느 구조의 병변을 평가하는가?",
-    options: [
-      "관절오목 테두리",
-      "AC 관절(봉우리빗장관절)",
-      "회전근개",
-      "이두건 장두",
-      "견봉하 점액낭"
-    ],
-    answer: 2,
-    explanation:
-      "수평내전 시 AC 관절 부위 통증이 유발되면 AC 관절 병변을 시사한다.",
-    keywords: ["Cross-body adduction", "AC 관절", "봉우리빗장관절"]
-  },
-  {
-    question:
-      "O'Brien Test(오브라이언 검사, Active Compression Test)의 양성 소견은 주로 어떤 병변을 의미하는가?",
-    options: [
-      "가시위근 파열",
-      "SLAP 병변(상부 관절오목 테두리 병변)",
-      "어깨밑근 파열",
-      "AC 관절염",
-      "이두건 단두 파열"
-    ],
-    answer: 2,
-    explanation:
-      "O'Brien 검사는 어깨 굽힘·모음·안쪽돌림 자세에서 저항 시 통증, 가쪽돌림 시 통증 감소가 SLAP 병변과 연관된다.",
-    keywords: ["O'Brien", "오브라이언", "SLAP", "관절오목테두리"]
-  },
+    // 2. Dark / Light Theme Toggle
+    function initTheme() {
+      const savedTheme = localStorage.getItem('osaka_theme_2026');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.contains('dark');
+      localStorage.setItem('osaka_theme_2026', isDark ? 'dark' : 'light');
+    }
+    initTheme();
 
-  // 21~30: 고관절 검사
-  {
-    question:
-      "FABER Test(Flexion-Abduction-External Rotation, 굽힘-벌림-가쪽돌림, FABER/패트릭 검사)는 주로 어떤 구조를 평가하는가?",
-    options: [
-      "대퇴골두와 비구 관절 테두리만",
-      "천장관절(SI joint)과 엉덩관절 양쪽",
-      "엉덩허리근 단축",
-      "궁둥신경 포착",
-      "대퇴사두근 단축"
-    ],
-    answer: 2,
-    explanation:
-      "FABER 검사는 통증 위치에 따라 SI joint 또는 엉덩관절 병변을 시사한다.",
-    keywords: ["FABER", "패트릭", "엉덩관절", "천장관절"]
-  },
-  {
-    question:
-      "FADIR Test(Flexion-Adduction-Internal Rotation, 굽힘-모음-안쪽돌림)는 어떤 병변 의심 시 가장 적절한 검사인가?",
-    options: [
-      "대퇴사두근 파열",
-      "고관절 이완성",
-      "대퇴비구 충돌(FAI, Femoroacetabular impingement)",
-      "좌골신경 포착",
-      "햄스트링 단축"
-    ],
-    answer: 3,
-    explanation:
-      "FADIR 검사는 FAI(대퇴비구 충돌)나 관절 테두리 병변에 의해 고관절 굴곡·모음·내회전 시 통증을 유발한다.",
-    keywords: ["FADIR", "FAI", "대퇴비구충돌"]
-  },
-  {
-    question:
-      "Thomas Test(토마스 검사)는 어떤 근육 또는 구조의 단축을 평가하는가?",
-    options: [
-      "햄스트링",
-      "장요근(iliopsoas, 엉덩허리근)",
-      "중둔근",
-      "대둔근",
-      "장경인대"
-    ],
-    answer: 2,
-    explanation:
-      "토마스 검사는 한쪽 고관절을 굽혀 요추 전만을 없앤 뒤 반대쪽 다리의 들림 여부로 장요근 단축을 평가한다.",
-    keywords: ["Thomas", "토마스", "장요근", "고관절굽힘근"]
-  },
-  {
-    question:
-      "Staheli(스테헬리) 검사는 엉덩관절의 어떤 상태를 평가하기 위한 검사인가?",
-    options: [
-      "벌림 구축",
-      "가쪽돌림 구축",
-      "굽힘 구축(고관절 굴곡 구축)",
-      "안쪽돌림 구축",
-      "신전 구축"
-    ],
-    answer: 3,
-    explanation:
-      "Staheli 검사는 엎드린 자세에서 고관절을 신전시켜 허벅지와 침대가 이루는 각도로 굽힘 구축 정도를 평가한다.",
-    keywords: ["Staheli", "스테헬리", "고관절굽힘구축"]
-  },
-  {
-    question:
-      "Craig Test(크레이그 검사)는 무엇을 측정하기 위한 검사인가?",
-    options: [
-      "대퇴골 경사각(inclination)",
-      "대퇴골 전염각(anteversion)",
-      "정강뼈 비틀림각",
-      "엉덩넙다리인대 긴장",
-      "두덩넙다리인대 긴장"
-    ],
-    answer: 2,
-    explanation:
-      "크레이그 검사는 대전자를 가장 측면에서 촉지되는 위치에서 경골과 수직선의 각도를 측정하여 대퇴골 전염각을 추정한다.",
-    keywords: ["Craig", "크레이그", "전염각", "대퇴골앞경사"]
-  },
-  {
-    question:
-      "Trendelenburg(트렌델렌버그) 징후 양성은 어떤 근육의 약화와 관련이 깊은가?",
-    options: [
-      "대둔근",
-      "중둔근",
-      "소둔근",
-      "장요근",
-      "넙다리근막긴장근"
-    ],
-    answer: 2,
-    explanation:
-      "지지측 중둔근 약화 시 반대측 골반이 떨어지는 Trendelenburg 징후가 나타난다.",
-    keywords: ["Trendelenburg", "트렌델렌버그", "중둔근"]
-  },
-  {
-    question:
-      "Ober Test(오버 검사)는 어떤 구조의 단축을 평가하는가?",
-    options: [
-      "대둔근",
-      "장경인대(IT band)와 넙다리근막긴장근(TFL)",
-      "햄스트링",
-      "장요근",
-      "넙다리곧은근"
-    ],
-    answer: 2,
-    explanation:
-      "Ober 검사는 옆으로 누운 자세에서 다리를 뒤로 빼고 내리는 과정에서 장경인대와 TFL의 단축 여부를 평가한다.",
-    keywords: ["Ober", "오버", "장경인대", "TFL"]
-  },
-  {
-    question:
-      "Ely Test(일리 검사)는 어떤 근육의 단축을 확인하는 데 사용되는가?",
-    options: [
-      "대둔근",
-      "중둔근",
-      "넙다리곧은근(rectus femoris)",
-      "반막근",
-      "장요근"
-    ],
-    answer: 3,
-    explanation:
-      "Ely 검사는 엎드린 자세에서 무릎을 굽힐 때 골반이 들리면 넙다리곧은근 단축을 의미한다.",
-    keywords: ["Ely", "일리", "넙다리곧은근단축"]
-  },
-  {
-    question:
-      "90–90 Hamstring Test(90–90 햄스트링 검사)는 어떤 내용을 평가하는가?",
-    options: [
-      "넙다리곧은근의 단축",
-      "장요근의 단축",
-      "햄스트링의 단축",
-      "장경인대 긴장",
-      "중둔근 약화"
-    ],
-    answer: 3,
-    explanation:
-      "엉덩관절과 무릎을 90° 굽힘 상태에서 무릎을 펴게 하여 햄스트링 단축 여부를 평가한다.",
-    keywords: ["90-90", "햄스트링", "단축검사"]
-  },
+    // 3. Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
 
-  // 31~40: 무릎·발목 검사
-  {
-    question:
-      "Lachman Test(라크만 검사)는 어떤 인대의 손상을 평가하는 가장 민감한 검사로 알려져 있는가?",
-    options: [
-      "뒤십자인대(PCL)",
-      "앞십자인대(ACL)",
-      "안쪽곁인대(MCL)",
-      "가쪽곁인대(LCL)",
-      "슬개대퇴인대"
-    ],
-    answer: 2,
-    explanation:
-      "Lachman 검사는 무릎 20~30° 굽힘 상태에서 정강뼈의 전방 전위를 평가하여 ACL 손상 여부를 확인한다.",
-    keywords: ["Lachman", "라크만", "ACL", "전방십자인대"]
-  },
-  {
-    question:
-      "Anterior Drawer Test(앞당김/전방서랍 검사)는 어느 구조 손상을 평가하는가?",
-    options: [
-      "앞십자인대(ACL)",
-      "뒤십자인대(PCL)",
-      "안쪽곁인대(MCL)",
-      "가쪽곁인대(LCL)",
-      "반달연골"
-    ],
-    answer: 1,
-    explanation:
-      "무릎 90° 굽힘에서 정강뼈를 앞쪽으로 당겨 ACL 기능을 평가한다.",
-    keywords: ["Anterior drawer", "전방서랍", "ACL"]
-  },
-  {
-    question:
-      "Posterior Drawer Test(뒤당김/후방서랍 검사)는 어떤 인대의 손상을 의심할 때 사용하는가?",
-    options: [
-      "앞십자인대",
-      "뒤십자인대",
-      "안쪽곁인대",
-      "가쪽곁인대",
-      "슬개대퇴인대"
-    ],
-    answer: 2,
-    explanation:
-      "정강뼈를 뒤로 밀어 PCL 기능을 평가하는 대표적인 검사이다.",
-    keywords: ["Posterior drawer", "후방서랍", "PCL"]
-  },
-  {
-    question:
-      "Pivot Shift Test(피벗 쉬프트 검사)는 어떤 기능적 이상을 평가하는가?",
-    options: [
-      "정적 앞십자인대 안정성",
-      "동적 앞십자인대 불안정성",
-      "뒤십자인대 기능",
-      "MCL 기능",
-      "슬개대퇴 관절 불안정성"
-    ],
-    answer: 2,
-    explanation:
-      "Pivot shift는 굽힘 시 정강뼈의 전방 전위가 갑자기 교정되는 현상을 통해 ACL의 기능적(동적) 불안정성을 평가한다.",
-    keywords: ["Pivot shift", "ACL", "동적불안정성"]
-  },
-  {
-    question:
-      "McMurray(맥머리) 검사의 양성 소견은 보통 무엇을 의미하는가?",
-    options: [
-      "십자인대 파열",
-      "반달연골(meniscus) 파열",
-      "슬개대퇴 통증증후군",
-      "MCL 손상",
-      "LCL 손상"
-    ],
-    answer: 2,
-    explanation:
-      "맥머리 검사는 무릎 굽힘·폄과 회전을 이용해 반달연골에 압박을 주어 통증 또는 '딱' 소리를 유발하면 양성이다.",
-    keywords: ["McMurray", "반달연골", "meniscus"]
-  },
-  {
-    question:
-      "Apley Compression/Distraction Test(애플리 압박/견인 검사)에서 압박 시 통증, 견인 시 감소되는 결과는 무엇을 시사하는가?",
-    options: [
-      "십자인대 손상",
-      "반달연골 손상",
-      "MCL 손상",
-      "LCL 손상",
-      "슬개대퇴관절 연골연화증"
-    ],
-    answer: 2,
-    explanation:
-      "압박 시 통증 증가, 견인 시 감소는 반달연골 손상을 시사한다.",
-    keywords: ["Apley", "애플리", "반달연골"]
-  },
-  {
-    question:
-      "Thessaly(테살리) 검사는 무엇을 평가하기 위한 검사인가?",
-    options: [
-      "십자인대 파열",
-      "반달연골 손상",
-      "슬개대퇴 관절염",
-      "MCL 긴장",
-      "LCL 긴장"
-    ],
-    answer: 2,
-    explanation:
-      "테살리 검사는 한 다리로 선 상태에서 무릎 약간 굽힌 상태로 회전하여 반달연골 병변 여부를 평가한다.",
-    keywords: ["Thessaly", "테살리", "반달연골"]
-  },
-  {
-    question:
-      "Patellar Apprehension Test(슬개골 불안 검사)의 양성은 어떤 상태를 시사하는가?",
-    options: [
-      "슬개건염",
-      "슬개골 탈구 경향(외측 불안정성)",
-      "십자인대 불안정성",
-      "반달연골 파열",
-      "슬개대퇴 연골연화증만"
-    ],
-    answer: 2,
-    explanation:
-      "슬개골을 가쪽으로 밀었을 때 환자가 불안을 느끼거나 저항하는 경우 슬개골 외측 불안정성을 시사한다.",
-    keywords: ["Patellar apprehension", "슬개골불안", "탈구경향"]
-  },
-  {
-    question:
-      "Clarke Test(클라크 검사, Patellar Grind Test)는 주로 어떤 질환을 평가하는가?",
-    options: [
-      "슬개대퇴 관절 연골연화증(chondromalacia patella)",
-      "십자인대 손상",
-      "반달연골 손상",
-      "MCL 손상",
-      "슬개건 파열"
-    ],
-    answer: 1,
-    explanation:
-      "슬개골을 아래로 누른 상태에서 대퇴사두근 수축 시 통증이 있으면 슬개대퇴 관절의 연골연화증을 의심한다.",
-    keywords: ["Clarke", "클라크", "슬개대퇴", "연골연화증"]
-  },
-  {
-    question:
-      "Thompson(톰슨) 검사는 어떤 구조의 파열을 확인하기 위한 검사인가?",
-    options: [
-      "전경골근",
-      "아킬레스건",
-      "비복근",
-      "슬개건",
-      "장비골근"
-    ],
-    answer: 2,
-    explanation:
-      "종아리를 눌렀을 때 발바닥굽힘이 일어나지 않으면 아킬레스건 파열을 의미한다.",
-    keywords: ["Thompson", "톰슨", "아킬레스건파열"]
-  },
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+      });
 
-  // 41~50: 손목·발목·전정·소아반사
-  {
-    question:
-      "Phalen(팔렌) 검사는 어느 신경의 포착으로 인한 증후군을 평가하는가?",
-    options: [
-      "요골신경(radial nerve)",
-      "정중신경(median nerve) 수근관 증후군",
-      "척골신경(ulnar nerve) 주관증후군",
-      "근피신경",
-      "후골간신경"
-    ],
-    answer: 2,
-    explanation:
-      "손목을 완전히 굽힌 자세를 유지할 때 정중신경 분포 부위의 저림을 유발하면 수근관증후군을 시사한다.",
-    keywords: ["Phalen", "팔렌", "정중신경", "수근관증후군"]
-  },
-  {
-    question:
-      "Tinel(티넬) 징후가 손목의 수근관 부위에서 양성일 때 의미하는 것은?",
-    options: [
-      "요골신경 포착",
-      "척골신경 포착",
-      "정중신경 재생 또는 압박",
-      "근피신경 손상",
-      "상완신경총 손상"
-    ],
-    answer: 3,
-    explanation:
-      "티넬 징후는 신경 타진 시 해당 신경 분포 부위로 방사되는 저림을 유발하면 압박 또는 재생을 의미한다.",
-    keywords: ["Tinel", "티넬", "정중신경", "수근관"]
-  },
-  {
-    question:
-      "Finkelstein(핑켈스타인) 검사는 어떤 질환 평가에 사용되는가?",
-    options: [
-      "방아쇠수지(trigger finger)",
-      "드꿰르벵 건초염(De Quervain tenosynovitis)",
-      "수근관증후군",
-      "주관터널증후군",
-      "구시상과염"
-    ],
-    answer: 2,
-    explanation:
-      "엄지를 굽혀 손가락으로 감싼 뒤 척측편위 시 요측 손목 통증이 증가하면 De Quervain 건초염을 시사한다.",
-    keywords: ["Finkelstein", "핑켈스타인", "DeQuervain"]
-  },
-  {
-    question:
-      "Allen(알렌) 검사는 주로 무엇을 평가하는가?",
-    options: [
-      "정중신경 기능",
-      "요골·척골 동맥의 순환 및 측부순환",
-      "손목 인대 안정성",
-      "손가락 굽힘근 힘",
-      "손가락 신전근 힘"
-    ],
-    answer: 2,
-    explanation:
-      "알렌 검사는 요골·척골 동맥을 압박 후 한쪽씩 개방하여 손바닥 혈류 회복을 관찰함으로써 순환을 평가한다.",
-    keywords: ["Allen", "알렌", "요골동맥", "척골동맥", "순환"]
-  },
-  {
-    question:
-      "Talar Tilt Test(거목경사 검사)는 주로 어느 인대 손상을 평가하는가?",
-    options: [
-      "앞목말종아리인대(ATFL)",
-      "뒤목말종아리인대(PTFL)",
-      "목말종아리인대(CFL, calcaneofibular)",
-      "삼각인대(deltoid ligament)",
-      "종비인대"
-    ],
-    answer: 3,
-    explanation:
-      "Talar tilt에서 거골을 가쪽/안쪽으로 기울여 CFL 등 측부인대 손상을 평가한다.",
-    keywords: ["Talar tilt", "거목경사", "CFL", "측부인대"]
-  },
-  {
-    question:
-      "발목 Anterior Drawer Test(앞당김 검사)의 양성 소견은 어떤 인대 손상을 시사하는가?",
-    options: [
-      "앞목말종아리인대(ATFL)",
-      "뒤목말종아리인대(PTFL)",
-      "목말종아리인대(CFL)",
-      "삼각인대",
-      "종입방인대"
-    ],
-    answer: 1,
-    explanation:
-      "발목 전방 당김검사는 주로 ATFL 손상(가장 흔한 발목 염좌)을 평가한다.",
-    keywords: ["발목 anterior drawer", "ATFL", "전거비인대"]
-  },
-  {
-    question:
-      "Windlass(윈드라스) 검사는 어떤 질환을 평가하는 데 주로 사용되는가?",
-    options: [
-      "족저근막염(plantar fasciitis)",
-      "아킬레스 건염",
-      "비골건염",
-      "발목 불안정성",
-      "종골 골절"
-    ],
-    answer: 1,
-    explanation:
-      "발가락 특히 엄지발가락의 신전 시 족저근막에 장력이 증가하고 통증이 유발되면 족저근막염을 시사한다.",
-    keywords: ["Windlass", "윈드라스", "족저근막염"]
-  },
-  {
-    question:
-      "Dix–Hallpike(딕스-홀파이크) 검사는 어떤 질환을 진단하기 위한 대표적인 검사인가?",
-    options: [
-      "전정신경염",
-      "양성돌발두위현훈(BPPV, 후반고리관)",
-      "메니에르병",
-      "중추성 어지럼",
-      "편두통성 어지럼"
-    ],
-    answer: 2,
-    explanation:
-      "Dix–Hallpike는 후반고리관 BPPV를 유발하여 방향특이성을 가진 안진과 어지럼을 관찰하는 검사이다.",
-    keywords: ["Dix-Hallpike", "BPPV", "후반고리관", "어지럼"]
-  },
-  {
-    question:
-      "Roll Test(롤 검사)는 주로 어떤 형태의 BPPV를 평가하는가?",
-    options: [
-      "후반고리관 BPPV",
-      "수평반고리관(horizontal canal) BPPV",
-      "전반고리관 BPPV",
-      "양측성 전정기능저하",
-      "중추성 어지럼"
-    ],
-    answer: 2,
-    explanation:
-      "Roll Test는 누운 자세에서 머리를 좌우로 회전시키며 수평반고리관 BPPV를 평가하는 검사이다.",
-    keywords: ["Roll test", "수평반고리관", "BPPV"]
-  },
-  {
-    question:
-      "Moro Reflex(모로 반사)는 정상 영아에서 언제까지 보이는 것이 정상인가?",
-    options: [
-      "출생 직후부터 평생 지속된다",
-      "생후 1개월까지",
-      "생후 3~4개월까지",
-      "생후 6~8개월까지",
-      "생후 1세까지"
-    ],
-    answer: 3,
-    explanation:
-      "모로 반사는 생후 약 3~4개월경에 통합되는 원시반사이며, 이후에도 지속되면 중추신경계 이상을 의심한다.",
-    keywords: ["Moro", "모로반사", "원시반사"]
-  },
-  {
-    question:
-      "ATNR(비대칭성긴장성목반사)가 지속될 경우 어떤 기능에 가장 큰 영향을 줄 수 있는가?",
-    options: [
-      "고개 들기",
-      "걷기 패턴",
-      "상지의 미세운동과 손 사용",
-      "삼킴 기능",
-      "눈-머리 협응"
-    ],
-    answer: 3,
-    explanation:
-      "ATNR이 소실되지 않으면 머리 방향에 따라 상지 굽힘/폄 패턴이 과하게 나타나 손 사용과 미세운동 발달에 장애를 줄 수 있다.",
-    keywords: ["ATNR", "비대칭성긴장성목반사", "소아"]
-  }
-];
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
+        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // Set initial active tab style
+    switchTab('tab-roadmap');
 
+    // 4. Evening Course A/B Switcher
+    function switchEveningCourse(course) {
+      const contentA = document.getElementById('course-A-content');
+      const contentB = document.getElementById('course-B-content');
+      const btnA = document.getElementById('btn-course-A');
+      const btnB = document.getElementById('btn-course-B');
 
-    // 🔹 여기서 id, category 자동 부여
-    const questionBank = rawQuestions.map((q, idx) => ({
-      id: idx + 1,
-      category: DEFAULT_CATEGORY,
-      ...q
-    }));
-
-    // ===== 상태 관리 =====
-    let mode = "quiz"; // "quiz" or "recall"
-    let currentIndex = 0;
-    let filteredQuestions = [...questionBank];
-    let score = 0;
-    let correctCount = 0;
-    let answeredCount = 0;
-    let combo = 0;
-    let bestCombo = 0;
-    let wrongNote = [];
-
-    const categorySelect = document.getElementById("categorySelect");
-    const categoryChip = document.getElementById("categoryChip");
-    const questionTextEl = document.getElementById("questionText");
-    const optionsListEl = document.getElementById("optionsList");
-    const qIndexEl = document.getElementById("qIndex");
-    const feedbackEl = document.getElementById("feedback");
-    const checkBtn = document.getElementById("checkBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const shuffleBtn = document.getElementById("shuffleBtn");
-    const statProgressEl = document.getElementById("statProgress");
-    const statCountEl = document.getElementById("statCount");
-    const statAccuracyEl = document.getElementById("statAccuracy");
-    const statScoreEl = document.getElementById("statScore");
-    const statComboEl = document.getElementById("statCombo");
-    const statBestComboEl = document.getElementById("statBestCombo");
-    const wrongListEl = document.getElementById("wrongList");
-    const modeQuizBtn = document.getElementById("modeQuiz");
-    const modeRecallBtn = document.getElementById("modeRecall");
-    const recallRow = document.getElementById("recallRow");
-    const recallInput = document.getElementById("recallInput");
-    const recallCheckBtn = document.getElementById("recallCheckBtn");
-
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+      if (course === 'A') {
+        contentA.classList.remove('hidden');
+        contentB.classList.add('hidden');
+        btnA.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm transition';
+        btnB.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition';
+      } else {
+        contentB.classList.remove('hidden');
+        contentA.classList.add('hidden');
+        btnB.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm transition';
+        btnA.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition';
       }
     }
 
-    function resetStats() {
-      score = 0;
-      correctCount = 0;
-      answeredCount = 0;
-      combo = 0;
-      bestCombo = 0;
-      wrongNote = [];
-      updateStats();
-      renderWrongList();
-    }
-
-    // 🔹 카테고리는 이제 소아물리 하나라서 아주 단순화
-    function applyFilter() {
-      filteredQuestions = [...questionBank];
-      categoryChip.textContent = DEFAULT_CATEGORY;
-      shuffleArray(filteredQuestions);
-      currentIndex = 0;
-      resetStats();
-      renderQuestion();
-    }
-
-    function renderQuestion() {
-      if (filteredQuestions.length === 0) {
-        questionTextEl.textContent =
-          "해당 파트에 등록된 문제가 없습니다. questionBank에 문제를 추가해 주세요.";
-        optionsListEl.innerHTML = "";
-        qIndexEl.textContent = "문제 0 / 0";
-        feedbackEl.textContent = "";
-        checkBtn.disabled = true;
-        nextBtn.disabled = true;
-        return;
+    // 5. Clipboard Copy with Toast
+    let toastTimeout;
+    function copyText(text, message) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showToast(message || '복사되었습니다!');
+      } catch (err) {
+        showToast('복사에 실패했습니다.');
       }
-      checkBtn.disabled = false;
-      const q = filteredQuestions[currentIndex];
-      qIndexEl.textContent = `문제 ${currentIndex + 1} / ${filteredQuestions.length}`;
-      questionTextEl.textContent = q.question;
-      feedbackEl.textContent = "";
-      feedbackEl.className = "";
-      nextBtn.disabled = true;
-      optionsListEl.innerHTML = "";
+      document.body.removeChild(textarea);
+    }
 
-      if (mode === "quiz") {
-        optionsListEl.style.display = "flex";
-        recallRow.style.display = "none";
-        q.options.forEach((opt, idx) => {
-          const li = document.createElement("li");
-          li.className = "option-item";
-          li.dataset.index = idx + 1;
-          li.innerHTML = `
-            <span class="option-label">${idx + 1}.</span>
-            <div class="option-text">
-              <label>
-                <input type="radio" name="option" value="${idx + 1}" />
-                ${opt}
-              </label>
-            </div>
-          `;
-          li.addEventListener("click", () => {
-            const radio = li.querySelector("input[type=radio]");
-            radio.checked = true;
-          });
-          optionsListEl.appendChild(li);
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('opacity-0', '-translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', '-translate-y-2');
+      }, 2200);
+    }
+
+    // 6. Timeline Step Completion (LocalStorage)
+    const TIMELINE_KEY = 'osaka_2026_timeline_steps';
+    function loadTimelineSteps() {
+      const saved = JSON.parse(localStorage.getItem(TIMELINE_KEY) || '{}');
+      Object.keys(saved).forEach(stepId => {
+        const chk = document.getElementById('chk-' + stepId);
+        const card = document.querySelector(`[data-step="${stepId}"] > div:nth-child(2)`);
+        if (chk && saved[stepId]) {
+          chk.checked = true;
+          if (card) card.classList.add('opacity-60');
+        }
+      });
+    }
+    function toggleStep(stepId) {
+      const saved = JSON.parse(localStorage.getItem(TIMELINE_KEY) || '{}');
+      const chk = document.getElementById('chk-' + stepId);
+      const card = document.querySelector(`[data-step="${stepId}"] > div:nth-child(2)`);
+      if (chk) {
+        saved[stepId] = chk.checked;
+        if (card) {
+          card.classList.toggle('opacity-60', chk.checked);
+        }
+      }
+      localStorage.setItem(TIMELINE_KEY, JSON.stringify(saved));
+    }
+    function resetTimelineProgress() {
+      localStorage.removeItem(TIMELINE_KEY);
+      document.querySelectorAll('[id^="chk-step-"]').forEach(chk => {
+        chk.checked = false;
+      });
+      document.querySelectorAll('[data-step] > div:nth-child(2)').forEach(card => {
+        card.classList.remove('opacity-60');
+      });
+      showToast('타임라인 완료 표시가 초기화되었습니다.');
+    }
+    loadTimelineSteps();
+
+    // 7. Interactive Packing & Airbnb/Hotel Checklist
+    const CHECKLIST_STORAGE_KEY = 'osaka_2026_checklist_v1';
+    const defaultChecklist = [
+      {
+        category: '🛂 출입국 & 결제 필수품',
+        items: [
+          { id: 'c1', text: '여권 (유효기간 6개월 이상 남았는지 확인)', checked: false },
+          { id: 'c2', text: 'Visit Japan Web 통합 QR코드 캡처본 (사진첩 저장)', checked: false },
+          { id: 'c3', text: '에어부산 E-티켓 (예약번호 KIBNSL) 및 호텔 바우처', checked: false },
+          { id: 'c4', text: '트래블월렛 실물 카드 + 비상용 서브 해외결제 카드', checked: false },
+          { id: 'c5', text: '해외 eSIM 사전 구매 및 QR코드 준비', checked: false },
+          { id: 'c6', text: '인천공항 스마트패스(Smartpass) 사전 등록', checked: false },
+        ]
+      },
+      {
+        category: '🏠 숙소·에어비앤비 감성 생활 꿀템 (강력 추천!)',
+        items: [
+          { id: 'a1', text: '110V 돼지코 어댑터 여러 개 또는 110V용 멀티탭 (폰·워치·보조배터리 동시 충전)', checked: false },
+          { id: 'a2', text: '편안한 실내 슬리퍼 / 크록스 (숙소 내 이동 및 근처 편의점 마실용)', checked: false },
+          { id: 'a3', text: '일회용 나무젓가락·포크·스푼 & 미니 물티슈 (숙소에서 편의점/마트 야식 먹을 때 필수)', checked: false },
+          { id: 'a4', text: '일회용 수세미(세제 내장형) 1~2장 (텀블러나 컵, 과일 씻을 때 cực도로 유용)', checked: false },
+          { id: 'a5', text: '지퍼백(중/대) & 비닐봉투 여러 장 (숙소 쓰레기 분리수거, 젖은 옷, 영수증 정리)', checked: false },
+          { id: 'a6', text: '접이식 옷걸이 2~3개 & 미니 빨래집게/세탁망 (양말·속옷 건조 및 코인세탁기 이용)', checked: false },
+          { id: 'a7', text: '가습 마스크 또는 미니 휴대용 가습기 (일본 숙소 특유의 건조한 난방 대비)', checked: false },
+        ]
+      },
+      {
+        category: '🧴 세면도구 & 상비약·케어',
+        items: [
+          { id: 'm1', text: '개인 칫솔/치약, 클렌징폼, 스킨/로션, 립밤, 마스크팩', checked: false },
+          { id: 'm2', text: '휴족시간 / 파스 (하루 1.5만~2만 보 도보 여행 피로 회복)', checked: false },
+          { id: 'm3', text: '상비약 (소화제, 진통제, 지사제, 감기약, 일회용 밴드)', checked: false },
+          { id: 'm4', text: '작은 목욕 바구니 또는 방수 파우치 (도미 인 13층 대욕장 갈 때 소지품 담기)', checked: false },
+        ]
+      },
+      {
+        category: '🔋 전자기기 & 쇼핑 편의용품',
+        items: [
+          { id: 'e1', text: '보조배터리 (반드시 위탁수하물 말고 기내에 들고 타기!)', checked: false },
+          { id: 'e2', text: '동전지갑 (100엔·500엔 동전이 많이 생기므로 분리 수납 필수)', checked: false },
+          { id: 'e3', text: '접이식 장바구니 / 튼튼한 에코백 (돈키호테, 편의점 봉투 유료 대비)', checked: false },
+          { id: 'e4', text: '3단 접이식 우산 또는 우비 & 11월 초 오사카 가을 겉옷(가디건/경량패딩)', checked: false },
+        ]
+      }
+    ];
+
+    function getChecklistData() {
+      const saved = localStorage.getItem(CHECKLIST_STORAGE_KEY);
+      if (saved) {
+        try { return JSON.parse(saved); } catch (e) {}
+      }
+      return JSON.parse(JSON.stringify(defaultChecklist));
+    }
+
+    function saveChecklistData(data) {
+      localStorage.setItem(CHECKLIST_STORAGE_KEY, JSON.stringify(data));
+      renderChecklist();
+    }
+
+    function renderChecklist() {
+      const data = getChecklistData();
+      const container = document.getElementById('checklist-container');
+      container.innerHTML = '';
+
+      let total = 0;
+      let checkedCount = 0;
+
+      data.forEach((group, gIdx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3';
+        
+        const title = document.createElement('h3');
+        title.className = 'font-bold text-sm sm:text-base border-b border-slate-100 dark:border-slate-800 pb-2';
+        title.textContent = group.category;
+        card.appendChild(title);
+
+        const list = document.createElement('div');
+        list.className = 'space-y-2';
+
+        group.items.forEach((item, iIdx) => {
+          total++;
+          if (item.checked) checkedCount++;
+
+          const row = document.createElement('label');
+          row.className = `flex items-start gap-2.5 p-2 rounded-xl cursor-pointer select-none transition ${item.checked ? 'bg-slate-50 dark:bg-slate-800/40 text-slate-400 line-through' : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'}`;
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = item.checked;
+          checkbox.className = 'mt-0.5 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 shrink-0';
+          checkbox.onchange = () => {
+            data[gIdx].items[iIdx].checked = checkbox.checked;
+            saveChecklistData(data);
+          };
+
+          const span = document.createElement('span');
+          span.className = 'text-xs sm:text-sm leading-snug flex-1';
+          span.textContent = item.text;
+
+          row.appendChild(checkbox);
+          row.appendChild(span);
+          list.appendChild(row);
         });
-      } else {
-        // 암기모드
-        optionsListEl.style.display = "none";
-        recallRow.style.display = "flex";
-        recallInput.value = "";
-      }
-    }
 
-    function getSelectedOption() {
-      const radios = document.querySelectorAll("input[name='option']");
-      for (const r of radios) {
-        if (r.checked) return parseInt(r.value, 10);
-      }
-      return null;
-    }
-
-    function markOptions(correctIdx, chosenIdx) {
-      const items = optionsListEl.querySelectorAll(".option-item");
-      items.forEach((item) => {
-        const idx = parseInt(item.dataset.index, 10);
-        item.classList.remove("correct", "wrong");
-        if (idx === correctIdx) {
-          item.classList.add("correct");
-        }
-        if (chosenIdx && idx === chosenIdx && chosenIdx !== correctIdx) {
-          item.classList.add("wrong");
-        }
+        card.appendChild(list);
+        container.appendChild(card);
       });
+
+      const pct = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
+      document.getElementById('checklist-percent').textContent = `${pct}%`;
+      document.getElementById('checklist-bar').style.width = `${pct}%`;
     }
 
-    function addWrongNote(question, chosen) {
-      if (wrongNote.find((w) => w.id === question.id)) return;
-      wrongNote.push({
-        id: question.id,
-        category: question.category,
-        question: question.question,
-        correct: question.options ? question.options[question.answer - 1] : "",
-        explanation: question.explanation || "",
-        chosen
+    function addCustomItem(e) {
+      e.preventDefault();
+      const input = document.getElementById('custom-item-input');
+      const val = input.value.trim();
+      if (!val) return;
+      const data = getChecklistData();
+      data[1].items.push({
+        id: 'custom_' + Date.now(),
+        text: val,
+        checked: false
       });
-      renderWrongList();
+      input.value = '';
+      saveChecklistData(data);
+      showToast('준비물이 추가되었습니다!');
     }
 
-    function renderWrongList() {
-      wrongListEl.innerHTML = "";
-      if (wrongNote.length === 0) {
-        wrongListEl.innerHTML =
-          '<div class="mini" style="margin-top:4px;">오답이 아직 없습니다. 틀린 문제들이 여기 쌓입니다.</div>';
-        return;
-      }
-      wrongNote.forEach((w, idx) => {
-        const div = document.createElement("div");
-        div.className = "wrong-item";
-        div.innerHTML = `
-          <div class="mini">#${idx + 1} · ${w.category}</div>
-          <div><strong>Q.</strong> ${w.question}</div>
-          <div><strong>정답:</strong> ${w.correct}</div>
-          <div class="mini"><strong>해설:</strong> ${w.explanation}</div>
-        `;
-        wrongListEl.appendChild(div);
-      });
+    function resetChecklist() {
+      localStorage.removeItem(CHECKLIST_STORAGE_KEY);
+      renderChecklist();
+      showToast('체크리스트가 초기화되었습니다.');
     }
 
-    function updateStats() {
-      const total = filteredQuestions.length || 1;
-      const progress = Math.round((currentIndex / total) * 100);
-      statProgressEl.textContent = `${progress}%`;
-      statCountEl.textContent = `${currentIndex} / ${total}문제`;
-      const accuracy =
-        answeredCount === 0
-          ? 0
-          : Math.round((correctCount / answeredCount) * 100);
-      statAccuracyEl.textContent = `${accuracy}%`;
-      statScoreEl.textContent = `${score}점`;
-      statComboEl.textContent = combo.toString();
-      statBestComboEl.textContent = `최고 ${bestCombo}연속`;
-    }
-
-    function checkQuizAnswer() {
-      const q = filteredQuestions[currentIndex];
-      const selected = getSelectedOption();
-      if (!selected) {
-        feedbackEl.textContent = "보기를 선택해줘!";
-        feedbackEl.className = "wrong";
-        return;
-      }
-      const isCorrect = selected === q.answer;
-      answeredCount++;
-      if (isCorrect) {
-        feedbackEl.textContent = "정답! 👍";
-        feedbackEl.className = "correct";
-        correctCount++;
-        combo++;
-        score += 5;
-        if (combo > bestCombo) bestCombo = combo;
-      } else {
-        feedbackEl.textContent = `오답 😢 정답은 ${q.answer}번: ${q.options[q.answer - 1]}`;
-        feedbackEl.className = "wrong";
-        score = Math.max(0, score - 1);
-        addWrongNote(q, q.options[selected - 1]);
-        combo = 0;
-      }
-      markOptions(q.answer, selected);
-      nextBtn.disabled = false;
-      updateStats();
-    }
-
-    function normalize(text) {
-      return text.toString().trim().replace(/\s+/g, "").toLowerCase();
-    }
-
-    function checkRecallAnswer() {
-      const q = filteredQuestions[currentIndex];
-      const userInput = normalize(recallInput.value);
-      if (!userInput) {
-        feedbackEl.textContent = "키워드를 하나 이상 적어줘!";
-        feedbackEl.className = "wrong";
-        return;
-      }
-      let keyList = [];
-      if (q.keywords && q.keywords.length > 0) {
-        keyList = q.keywords;
-      } else if (q.options && q.options[q.answer - 1]) {
-        keyList = q.options[q.answer - 1]
-          .split(/[\s·,()]+/)
-          .filter((w) => w.length >= 2);
-      }
-      const hit = keyList.some((k) =>
-        userInput.includes(normalize(k))
-      );
-      answeredCount++;
-      if (hit) {
-        feedbackEl.textContent = "키워드 인정! 정답 처리 ✅";
-        feedbackEl.className = "correct";
-        correctCount++;
-        combo++;
-        score += 5;
-        if (combo > bestCombo) bestCombo = combo;
-      } else {
-        feedbackEl.textContent =
-          "핵심 키워드가 부족해… 해설 보고 다시 외우자 😢";
-        feedbackEl.className = "wrong";
-        addWrongNote(q, userInput);
-        combo = 0;
-        score = Math.max(0, score - 1);
-      }
-      updateStats();
-      nextBtn.disabled = false;
-    }
-
-    function gotoNext() {
-      if (currentIndex < filteredQuestions.length - 1) {
-        currentIndex++;
-        renderQuestion();
-        updateStats();
-      } else {
-        feedbackEl.textContent =
-          "모든 문제를 풀었어요! 🎉 문제를 더 추가하거나 다시 섞어서 복습해봐.";
-        feedbackEl.className = "correct";
-        nextBtn.disabled = true;
-      }
-    }
-
-    checkBtn.addEventListener("click", () => {
-      if (filteredQuestions.length === 0) {
-        feedbackEl.textContent =
-          "먼저 questionBank에 문제를 추가해야 합니다.";
-        feedbackEl.className = "wrong";
-        return;
-      }
-      if (mode === "quiz") {
-        checkQuizAnswer();
-      } else {
-        checkRecallAnswer();
-      }
-    });
-
-    nextBtn.addEventListener("click", () => {
-      gotoNext();
-    });
-
-    shuffleBtn.addEventListener("click", () => {
-      applyFilter();
-    });
-
-    categorySelect.addEventListener("change", () => {
-      applyFilter();
-    });
-
-    modeQuizBtn.addEventListener("click", () => {
-      mode = "quiz";
-      modeQuizBtn.classList.add("active");
-      modeRecallBtn.classList.remove("active");
-      recallRow.style.display = "none";
-      optionsListEl.style.display = "flex";
-      renderQuestion();
-    });
-
-    modeRecallBtn.addEventListener("click", () => {
-      mode = "recall";
-      modeRecallBtn.classList.add("active");
-      modeQuizBtn.classList.remove("active");
-      renderQuestion();
-    });
-
-    recallCheckBtn.addEventListener("click", () => {
-      if (filteredQuestions.length === 0) {
-        feedbackEl.textContent =
-          "먼저 questionBank에 문제를 추가해야 합니다.";
-        feedbackEl.className = "wrong";
-        return;
-      }
-      checkRecallAnswer();
-    });
-
-    if (recallInput) {
-      recallInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          if (filteredQuestions.length === 0) {
-            feedbackEl.textContent =
-              "먼저 questionBank에 문제를 추가해야 합니다.";
-            feedbackEl.className = "wrong";
-            return;
-          }
-          checkRecallAnswer();
-        }
-      });
-    }
-
-    // 🔹 초기 로딩
-    applyFilter();
-    updateStats();
-    renderWrongList();
+    renderChecklist();
   </script>
 </body>
 </html>
-
