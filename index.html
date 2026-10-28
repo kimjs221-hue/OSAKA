@@ -1,1196 +1,1985 @@
 <!DOCTYPE html>
-<html lang="ko" class="scroll-smooth">
+<html lang="ko" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-  <title>2026 오사카 여행 (11.08 출발)</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Pretendard Font -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
-          },
-          colors: {
-            brand: {
-              50: '#eff6ff',
-              100: '#dbeafe',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-              900: '#1e3a8a',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    body {
-      font-family: 'Pretendard', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    /* Custom Scrollbar for horizontal tabs */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    /* Boarding Pass Cutout Effect */
-    .ticket-notch-left {
-      position: absolute;
-      left: -12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-    }
-    .ticket-notch-right {
-      position: absolute;
-      right: -12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>2026 오사카 마스터 슈퍼앱</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<style>
+  /* =========================================================
+     1. 다크모드(기본) & 라이트모드 컬러 시스템 (고급 앱 감성)
+     ========================================================= */
+  :root[data-theme="dark"] {
+    --bg-main: #090d16;
+    --bg-elevated: #131b2e;
+    --bg-card: rgba(22, 31, 51, 0.85);
+    --bg-glass: rgba(15, 23, 42, 0.78);
+    --bg-chip: #1e293b;
+    --text-main: #f8fafc;
+    --text-sub: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: rgba(255, 255, 255, 0.09);
+    --primary: #6366f1;
+    --primary-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+    --out-grad: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    --ret-grad: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.45);
+    --warn-bg: rgba(245, 158, 11, 0.12);
+    --warn-text: #fcd34d;
+    --danger-bg: rgba(239, 68, 68, 0.14);
+    --danger-text: #fca5a5;
+  }
+
+  :root[data-theme="light"] {
+    --bg-main: #f1f5f9;
+    --bg-elevated: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.95);
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --bg-chip: #e2e8f0;
+    --text-main: #0f172a;
+    --text-sub: #475569;
+    --text-muted: #64748b;
+    --border-color: rgba(15, 23, 42, 0.08);
+    --primary: #4f46e5;
+    --primary-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+    --out-grad: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    --ret-grad: linear-gradient(135deg, #ea580c 0%, #e11d48 100%);
+    --shadow-card: 0 8px 24px -4px rgba(15, 23, 42, 0.07);
+    --warn-bg: #fffbeb;
+    --warn-text: #b45309;
+    --danger-bg: #fef2f2;
+    --danger-text: #b91c1c;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.5;
+    padding-bottom: 110px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    overflow-x: hidden;
+  }
+
+  /* 스크롤바 숨김 (모바일 네이티브 앱 느낌) */
+  ::-webkit-scrollbar { display: none; }
+
+  /* =========================================================
+     2. 상단 글래스 헤더 & 오직 2개만 노출되는 로드맵 스위치
+     ========================================================= */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 16px 12px;
+  }
+
+  .header-inner {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--primary-grad);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  }
+
+  .brand-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 600;
+  }
+
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .icon-pill {
+    background: var(--bg-chip);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 6px 11px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.15s;
+  }
+  .icon-pill:active { transform: scale(0.94); }
+
+  /* 오직 2개만 표시되는 메인 로드맵 세그먼트 */
+  .roadmap-switch {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    background: var(--bg-chip);
+    padding: 4px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .switch-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 800;
+    padding: 10px 6px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    letter-spacing: -0.2px;
+  }
+
+  .switch-btn.active-out {
+    background: var(--out-grad);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+  }
+
+  .switch-btn.active-ret {
+    background: var(--ret-grad);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+  }
+
+  /* =========================================================
+     3. 모바일 최적화 레이아웃 & 카드 디자인
+     ========================================================= */
+  .container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 16px 14px;
+  }
+
+  .view-section { display: none; }
+  .view-section.active {
+    display: block;
+    animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 22px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(10px);
+  }
+
+  /* 비지트 재팬 웹 히어로 카드 */
+  .vjw-card {
+    background: linear-gradient(145deg, rgba(79, 70, 229, 0.18), rgba(236, 72, 153, 0.12));
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vjw-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .vjw-badge {
+    display: inline-block;
+    background: var(--primary-grad);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 99px;
+    margin-bottom: 5px;
+  }
+
+  .vjw-link-btn {
+    background: #4f46e5;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 9px 13px;
+    border-radius: 12px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+  }
+
+  .copy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .copy-chip {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text-main);
+    transition: transform 0.12s;
+  }
+  .copy-chip:active { transform: scale(0.97); }
+  .copy-chip-top {
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+  }
+  .copy-chip-val {
+    font-size: 12px;
+    font-weight: 800;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 보딩패스 스타일 항공권 카드 */
+  .boarding-pass {
+    border-radius: 24px;
+    padding: 20px;
+    color: #fff;
+    margin-bottom: 18px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+  }
+  .bp-out { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1d4ed8 100%); }
+  .bp-ret { background: linear-gradient(135deg, #431407 0%, #9a3412 50%, #e11d48 100%); }
+
+  .bp-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0.85;
+    margin-bottom: 14px;
+  }
+
+  .bp-route {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bp-code { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; }
+  .bp-time { font-size: 14px; font-weight: 800; color: #fde047; margin-top: 2px; }
+  .bp-term { font-size: 11px; opacity: 0.85; margin-top: 2px; }
+  .bp-plane {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.9;
+    padding: 0 10px;
+  }
+  .bp-line {
+    height: 2px;
+    background: rgba(255,255,255,0.3);
+    margin: 6px 0;
+    position: relative;
+  }
+
+  /* 타임라인 디자인 */
+  .timeline {
+    position: relative;
+    padding-left: 20px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    background: linear-gradient(to bottom, #6366f1, #ec4899);
+    border-radius: 2px;
+  }
+  .tl-card {
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .tl-dot {
+    position: absolute;
+    left: -20px;
+    top: 20px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid var(--bg-main);
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .tl-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .tl-thumb {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
+  }
+  .tl-time-badge {
+    display: inline-block;
+    background: rgba(99, 102, 241, 0.18);
+    color: #818cf8;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+  :root[data-theme="light"] .tl-time-badge {
+    background: #e0e7ff;
+    color: #4338ca;
+  }
+  .tl-title {
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+  .tl-list {
+    font-size: 13px;
+    color: var(--text-sub);
+    padding-left: 16px;
+    margin-bottom: 10px;
+  }
+  .tl-list li { margin-bottom: 5px; }
+  .tl-list strong { color: var(--text-main); }
+
+  .alert-box {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 11px 13px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 10px 0;
+  }
+
+  /* 버튼 그룹 */
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.12s;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn-gmap { background: #3b82f6; color: #fff; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+  .btn-naver { background: #03c75a; color: #fff; }
+  .btn-kakao { background: #fee500; color: #191919; }
+  .btn-ghost {
+    background: var(--bg-chip);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+  }
+
+  /* =========================================================
+     4. 사진이 포함된 50선 미디어 카드 (모바일 1~2열 반응형)
+     ========================================================= */
+  .search-box {
+    position: relative;
+    margin-bottom: 10px;
+  }
+  .search-input {
+    width: 100%;
+    background: var(--bg-elevated);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--primary); }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    margin: 8px 0 5px 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .chip-scroll {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+  }
+  .chip {
+    white-space: nowrap;
+    padding: 7px 13px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--bg-chip);
+    color: var(--text-sub);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chip.active {
+    background: var(--primary-grad);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  }
+  .chip-area.active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  /* 모바일에서 사진과 글이 한눈에 들어오는 가로형 미디어 카드 */
+  .media-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .media-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 12px;
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.2s;
+  }
+  .media-card.in-cart {
+    border: 2px solid #8b5cf6;
+    background: rgba(139, 92, 246, 0.08);
+  }
+  .media-img-wrap {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    border-radius: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--bg-chip);
+  }
+  .media-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .media-num {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .media-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .tag-cat {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(99, 102, 241, 0.16);
+    color: #818cf8;
+  }
+  :root[data-theme="light"] .tag-cat { background: #e0e7ff; color: #4338ca; }
+  .tag-area {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+  }
+  :root[data-theme="light"] .tag-area { background: #d1fae5; color: #047857; }
+
+  .media-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+  .media-meta {
+    font-size: 11px;
+    font-weight: 700;
+    color: #f59e0b;
+    margin-bottom: 4px;
+  }
+  .media-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .media-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .media-price {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+
+  /* =========================================================
+     5. 하단 고정 플로팅 독 & '홈업(Home Up)' 블러 폴더 모달
+     ========================================================= */
+  .bottom-dock {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    width: calc(100% - 24px);
+    max-width: 440px;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 26px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  }
+
+  .dock-item {
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    padding: 4px 8px;
+    text-decoration: none;
+  }
+
+  .homeup-trigger {
+    background: var(--primary-grad);
+    color: #fff;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 18px;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.45);
+    transition: transform 0.15s;
+  }
+  .homeup-trigger:active { transform: scale(0.94); }
+
+  /* 홈업(Home Up) 블러 폴더 오버레이 */
+  .homeup-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(6, 10, 20, 0.65);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+  }
+  .homeup-backdrop.open {
+    display: flex;
+    animation: fadeIn 0.2s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .homeup-folder {
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 34px;
+    padding: 24px 18px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(30px);
+  }
+
+  .folder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 0 6px;
+  }
+  .folder-title {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.4px;
+  }
+  .folder-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-chip);
+    color: var(--text-main);
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .folder-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .folder-app {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 22px;
+    padding: 14px 6px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .folder-app:active { transform: scale(0.93); }
+
+  .app-squircle {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  }
+
+  .app-name {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+    text-align: center;
+  }
+  .app-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  /* 토스트 알림 */
+  #toast {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-grad);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 800;
+    z-index: 200;
+    display: none;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.45);
+  }
+</style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen pb-24 transition-colors duration-200">
+<body>
 
-  <!-- Toast Notification for Clipboard Copy -->
-  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform -translate-y-2">
-    <div class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 text-sm font-semibold">
-      <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 dark:text-emerald-600"></i>
-      <span id="toast-msg">복사되었습니다!</span>
+<div id="toast">복사되었습니다!</div>
+
+<!-- =========================================================
+     상단 고정 헤더: 다크모드 버튼 + 오직 출국/귀국 로드맵 2개만 표시
+     ========================================================= -->
+<header>
+  <div class="header-inner">
+    <div class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">✈️</div>
+        <div>
+          <div class="brand-title">OSAKA 2026</div>
+          <div class="brand-sub">11.08(일) ~ 11.11(수) · 도미인 다니마치</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-pill" onclick="openApp('cart')">🛒 <span id="cartCount">0</span></button>
+        <button class="icon-pill" id="themeBtn" onclick="toggleTheme()">☀️ 라이트</button>
+      </div>
+    </div>
+
+    <!-- 상단에는 오직 출국 로드맵과 귀국 로드맵 2개만 표시 -->
+    <div class="roadmap-switch">
+      <button id="tabOut" class="switch-btn active-out" onclick="openApp('outbound')">
+        🛫 1일차 출국 로드맵 (11/08)
+      </button>
+      <button id="tabRet" class="switch-btn" onclick="openApp('return')">
+        🛬 4일차 귀국 로드맵 (11/11)
+      </button>
     </div>
   </div>
+</header>
 
-  <!-- Top Sticky Header -->
-  <header class="sticky top-0 z-30 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
-          <i data-lucide="plane-takeoff" class="w-5 h-5"></i>
-        </div>
+<div class="container">
+
+  <!-- =========================================================
+       VIEW 1: 1일차 출국 로드맵 (11/08) + 비지트 재팬 웹 바로가기
+       ========================================================= -->
+  <section id="view-outbound" class="view-section active">
+
+    <!-- 첫 화면 필수: 비지트 재팬 웹(Visit Japan Web) 바로가기 & 1초 복사 -->
+    <div class="card vjw-card">
+      <div class="vjw-head">
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-bold text-base sm:text-lg leading-tight">2026 오사카 올인원 가이드</h1>
-            <span id="d-day-badge" class="px-2 py-0.5 text-xs font-extrabold rounded-full bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
-              D-Day 계산중
-            </span>
-          </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400">2026.11.08 (일) 12:40 출발 · 도미 인 오사카 다니마치</p>
+          <span class="vjw-badge">입국 심사 1순위 필수</span>
+          <h2 style="font-size:16px; font-weight:900;">📲 비지트 재팬 웹 1초 복사 & 이동</h2>
+          <p style="font-size:12px; color:var(--text-sub); margin-top:2px;">아래 칩을 터치하면 복사됩니다. 공식 사이트에 바로 붙여넣으세요.</p>
         </div>
+        <a href="https://vjw-lp.digital.go.jp/ko/" target="_blank" class="vjw-link-btn">공식 사이트 ↗</a>
       </div>
-
-      <div class="flex items-center gap-1.5">
-        <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" aria-label="테마 변경">
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+      <div class="copy-grid">
+        <button class="copy-chip" onclick="copyText('BX331', '출국 편명(BX331)')">
+          <div class="copy-chip-top"><span>출국 편명</span><span>📋 복사</span></div>
+          <div class="copy-chip-val">BX331 (에어부산)</div>
+        </button>
+        <button class="copy-chip" onclick="copyText('5400026', '숙소 우편번호(5400026)')">
+          <div class="copy-chip-top"><span>숙소 우편번호</span><span>📋 복사</span></div>
+          <div class="copy-chip-val">5400026</div>
+        </button>
+        <button class="copy-chip" onclick="copyText('2-1-9 Uchihonmachi, Chuo-ku, Osaka', '숙소 영문주소')">
+          <div class="copy-chip-top"><span>숙소 영문주소</span><span>📋 복사</span></div>
+          <div class="copy-chip-val">2-1-9 Uchihonmachi</div>
+        </button>
+        <button class="copy-chip" onclick="copyText('Dormy Inn Osaka Tanimachi', '호텔 영문명')">
+          <div class="copy-chip-top"><span>호텔명 / 전화번호</span><span>📋 복사</span></div>
+          <div class="copy-chip-val">Dormy Inn Tanimachi</div>
         </button>
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
-    <div class="max-w-5xl mx-auto px-4">
-      <nav class="flex space-x-1 overflow-x-auto no-scrollbar py-1.5" aria-label="Tabs">
-        <button onclick="switchTab('tab-roadmap')" id="btn-tab-roadmap" class="tab-btn active-tab whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
-          <i data-lucide="map-pin" class="w-4 h-4"></i>
-          1일차 로드맵 & 구글맵
-        </button>
-        <button onclick="switchTab('tab-checklist')" id="btn-tab-checklist" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
-          <i data-lucide="check-square" class="w-4 h-4"></i>
-          숙소·필수 준비물
-        </button>
-        <button onclick="switchTab('tab-vjw')" id="btn-tab-vjw" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
-          <i data-lucide="qr-code" class="w-4 h-4"></i>
-          비지트 재팬 웹
-        </button>
-        <button onclick="switchTab('tab-wallet')" id="btn-tab-wallet" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
-          <i data-lucide="credit-card" class="w-4 h-4"></i>
-          트래블월렛 & 교통
-        </button>
-        <button onclick="switchTab('tab-esim')" id="btn-tab-esim" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 transition">
-          <i data-lucide="smartphone" class="w-4 h-4"></i>
-          eSIM 구매 & 설정
-        </button>
-      </nav>
+    <!-- 출국 보딩패스 카드 -->
+    <div class="boarding-pass bp-out">
+      <div class="bp-top">
+        <span>2026. 11. 08 (일) · 에어부산 BX331</span>
+        <span>예약번호: KIBNSL · 위탁 15kg</span>
+      </div>
+      <div class="bp-route">
+        <div>
+          <div class="bp-code">ICN</div>
+          <div class="bp-time">12:40 출발</div>
+          <div class="bp-term">인천 제2터미널(T2)</div>
+        </div>
+        <div class="bp-plane">
+          <div>2시간 00분 직항</div>
+          <div class="bp-line"></div>
+          <div>✈️ AIR BUSAN</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="bp-code">KIX</div>
+          <div class="bp-time">14:40 도착</div>
+          <div class="bp-term">간사이 제1터미널(T1)</div>
+        </div>
+      </div>
     </div>
-  </header>
 
-  <!-- Main Content Container -->
-  <main class="max-w-5xl mx-auto px-4 pt-4 space-y-6">
+    <!-- 1일차 상세 타임라인 (사진 포함) -->
+    <div class="timeline">
 
-    <!-- Flight Boarding Pass & Quick Info Card (Always visible on top) -->
-    <section class="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-      <!-- Top Bar -->
-      <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 px-5 py-3 text-white flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 text-xs font-extrabold bg-white/20 rounded-md backdrop-blur-sm">AIR BUSAN</span>
-          <span class="font-bold text-sm sm:text-base">에어부산 BX331</span>
-          <span class="text-xs text-blue-100">(일반석 Q · 위탁수하물 15kg)</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-blue-100">예약번호:</span>
-          <button onclick="copyText('KIBNSL', '항공권 예약번호(KIBNSL)가 복사되었습니다.')" class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1 rounded-lg text-xs font-mono font-bold flex items-center gap-1">
-            KIBNSL <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Ticket Body -->
-      <div class="p-4 sm:p-5">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
-          <!-- Flight Route -->
-          <div class="lg:col-span-7 flex items-center justify-between bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200/70 dark:border-slate-800">
-            <div class="text-left">
-              <span class="text-xs font-semibold text-blue-600 dark:text-blue-400 block">출발 · 2026.11.08 (일)</span>
-              <div class="text-2xl sm:text-3xl font-black tracking-tight mt-0.5">12:40</div>
-              <div class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">ICN 인천</div>
-              <span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 rounded-md">제2여객터미널 (T2)</span>
-            </div>
-
-            <div class="flex flex-col items-center px-2 sm:px-4">
-              <span class="text-[11px] font-semibold text-slate-400">비행 2시간 00분</span>
-              <div class="w-20 sm:w-28 flex items-center my-1.5">
-                <div class="h-2 w-2 rounded-full bg-blue-600"></div>
-                <div class="flex-1 h-0.5 border-b-2 border-dashed border-blue-400 dark:border-blue-600 mx-1"></div>
-                <i data-lucide="plane" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
-                <div class="flex-1 h-0.5 border-b-2 border-dashed border-blue-400 dark:border-blue-600 mx-1"></div>
-                <div class="h-2 w-2 rounded-full bg-indigo-600"></div>
-              </div>
-              <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">직항 · 수하물 15kg</span>
-            </div>
-
-            <div class="text-right">
-              <span class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 block">도착 · 2026.11.08 (일)</span>
-              <div class="text-2xl sm:text-3xl font-black tracking-tight mt-0.5">14:40</div>
-              <div class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">KIX 간사이</div>
-              <span class="inline-block mt-1 px-2 py-0.5 text-[11px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 rounded-md">제1터미널 (T1)</span>
-            </div>
-          </div>
-
-          <!-- Hotel Quick Action Box -->
-          <div class="lg:col-span-5 flex flex-col justify-between bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/60 rounded-xl p-3.5 space-y-2.5">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">숙소 (Hotel)</span>
-                <h2 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">도미 인 오사카 다니마치</h2>
-                <p class="text-xs text-slate-500 dark:text-slate-400">天然温泉 浪華の湯 ドーミーイン大阪谷町</p>
-              </div>
-              <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="shrink-0 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm transition">
-                <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 숙소 길찾기
-              </a>
-            </div>
-            <div class="flex flex-wrap gap-1.5 pt-1">
-              <button onclick="copyText('大阪府大阪市中央区内本町２丁目１−9', '숙소 일본어 주소가 복사되었습니다.')" class="flex-1 min-w-[120px] py-1.5 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium flex items-center justify-center gap-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400"></i> 일본어 주소 복사
-              </button>
-              <button onclick="copyText('天然温泉 浪華の湯 ドーミーイン大阪谷町', '숙소 일본어 이름이 복사되었습니다.')" class="flex-1 min-w-[120px] py-1.5 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium flex items-center justify-center gap-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-400"></i> 호텔명 복사
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- TAB 1: DAY 1 ROADMAP & GOOGLE MAPS         -->
-    <!-- ========================================== -->
-    <div id="tab-roadmap" class="tab-content space-y-6">
-      
-      <!-- GPS Navigation Helper Banner -->
-      <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="flex items-start gap-3">
-          <div class="p-2 rounded-xl bg-blue-600 text-white shrink-0 mt-0.5">
-            <i data-lucide="compass" class="w-5 h-5"></i>
-          </div>
+      <div class="card tl-card">
+        <div class="tl-dot"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1542296332-2e4473faf563?auto=format&fit=crop&w=240&q=80" alt="인천공항">
           <div>
-            <h3 class="font-bold text-sm sm:text-base text-blue-950 dark:text-blue-200">실시간 현재 위치 연동 구글맵 길찾기 안내</h3>
-            <p class="text-xs text-blue-800/80 dark:text-blue-300/80 mt-0.5 leading-relaxed">
-              각 일정의 <span class="font-bold underline">"📍 현재 위치에서 길찾기"</span> 버튼을 누르면 스마트폰 GPS 기준 현재 서 있는 위치에서 해당 목적지까지 최적의 지하철/도보 경로가 구글맵 앱으로 즉시 실행됩니다. 완료한 일정은 체크박스를 눌러 표시해 보세요!
-            </p>
+            <span class="tl-time-badge">08:50 ~ 09:40</span>
+            <div class="tl-title">🚗 인천 동암역 출발 ➔ 인천공항 T2 주차장</div>
           </div>
         </div>
-        <button onclick="resetTimelineProgress()" class="self-end sm:self-center shrink-0 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:underline px-2 py-1">
-          진행률 초기화
-        </button>
+        <ul class="tl-list">
+          <li><strong>이동 경로:</strong> 동암역 자차 출발 ➔ 경인고속도로(서인천IC) ➔ 인천국제공항고속도로 (약 45~50분 소요)</li>
+          <li><strong>제2터미널 진입:</strong> 에어부산은 <strong>제2여객터미널(T2)</strong>에서 출발합니다. 공항고속도로 분기점에서 반드시 <strong>T2 방향 차선</strong>으로 진입하세요.</li>
+          <li><strong>주차장 팁:</strong> 장기주차장 이용 시 터미널까지 셔틀버스로 약 15~20분 소요되므로 09:40까지 주차를 마치는 것이 여유롭습니다.</li>
+        </ul>
+        <div class="alert-box">
+          ⚠️ <strong>[귀국일 터미널 불일치 주의]</strong> 11/11(수) 귀국편 제주항공은 <strong>제1터미널(T1)</strong>에 도착합니다! 귀국 날 T1에서 공항철도(6분)나 무료 셔틀로 T2 주차장으로 넘어와야 하니 <strong>오늘 주차한 구역 기둥 번호를 꼭 사진 찍어두세요.</strong>
+        </div>
+        <div class="btn-group">
+          <a href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B5%AD%EC%A0%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C2%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90%20%EC%A3%BC%EC%B0%A8%EC%9E%A5" target="_blank" class="btn btn-naver">🟢 네이버지도 T2 주차장</a>
+          <a href="https://map.kakao.com/?q=%EC%9D%B8%EC%B2%9C%EA%B5%AD%EC%A0%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C2%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90" target="_blank" class="btn btn-kakao">🟡 카카오맵 T2</a>
+        </div>
       </div>
 
-      <!-- Timeline Steps Container -->
-      <div class="relative pl-4 sm:pl-6 border-l-2 border-blue-200 dark:border-slate-800 space-y-6">
-
-        <!-- STEP 1: 동암역 -> 인천공항 T2 -->
-        <div class="relative group" data-step="step-1">
-          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-blue-600 ring-4 ring-white dark:ring-slate-950"></div>
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-extrabold text-xs rounded-lg">08:50 - 09:40</span>
-                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">자차 이동 (약 45~50분)</span>
-              </div>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
-                <input type="checkbox" onchange="toggleStep('step-1')" id="chk-step-1" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
-                완료
-              </label>
-            </div>
-
-            <h3 class="font-bold text-base sm:text-lg mt-2">🚗 인천 동암역 출발 → 인천공항 제2여객터미널 주차장</h3>
-            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
-              경인고속도로(서인천IC) 및 인천국제공항고속도로를 이용해 이동합니다. 에어부산은 <strong class="text-rose-600 dark:text-rose-400">반드시 제2여객터미널(T2)</strong>로 진입해야 합니다! 장기주차장 이용 시 주차 후 터미널까지 셔틀버스 이동 시간(15~20분)이 추가되므로 <strong>09:40까지 주차 완료</strong>를 권장합니다.
-            </p>
-
-            <div class="mt-3 p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-900/50 text-xs text-amber-900 dark:text-amber-200">
-              💡 <strong>한국 내 내비게이션 팁:</strong> 대한민국 내에서는 법률상 구글맵 자동차 길찾기가 제한됩니다. 동암역에서 출발할 때는 아래 <strong>네이버 지도 / 카카오맵</strong> 버튼을 누르거나 차량 내비게이션에 <strong>"인천공항 제2여객터미널 단기/장기주차장"</strong>을 검색하세요.
-            </div>
-
-            <!-- Action Map Buttons -->
-            <div class="mt-3.5 flex flex-wrap gap-2">
-              <a href="https://map.naver.com/p/search/%EC%9D%B8%EC%B2%9C%EA%B5%AD%EC%A0%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C2%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90%20%EC%A3%BC%EC%B0%A8%EC%9E%A5" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
-                <i data-lucide="navigation-2" class="w-3.5 h-3.5"></i> 네이버지도: T2 주차장 검색
-              </a>
-              <a href="https://map.kakao.com/?q=%EC%9D%B8%EC%B2%9C%EA%B5%AD%EC%A0%9C%EA%B3%B5%ED%95%AD%20%EC%A0%9C2%EC%97%AC%EA%B0%9D%ED%84%B0%EB%AF%B8%EB%84%90%20%EC%A3%BC%EC%B0%A8%EC%9E%A5" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
-                <i data-lucide="map" class="w-3.5 h-3.5"></i> 카카오맵: T2 주차장 검색
-              </a>
-              <a href="https://www.google.com/maps/dir/?api=1&destination=Incheon+International+Airport+Terminal+2&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i> 구글맵 위치 확인 (T2)
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 2: 출국 수속 -->
-        <div class="relative group" data-step="step-2">
-          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-blue-600 ring-4 ring-white dark:ring-slate-950"></div>
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-extrabold text-xs rounded-lg">10:00 - 12:10</span>
-                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">인천공항 T2 출국장</span>
-              </div>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
-                <input type="checkbox" onchange="toggleStep('step-2')" id="chk-step-2" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
-                완료
-              </label>
-            </div>
-
-            <h3 class="font-bold text-base sm:text-lg mt-2">🛂 탑승 수속 · 수하물 위탁(15kg) 및 출국 심사</h3>
-            <ul class="mt-2 space-y-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 list-disc list-inside">
-              <li>에어부산 카운터에서 위탁수하물(무료 15kg) 위탁 (보조배터리·전자담배는 반드시 기내 휴대!)</li>
-              <li><strong>인천공항 스마트패스(ICN Smartpass)</strong> 앱 사전 등록 시 안면인식으로 빠른 출국장 입장 가능</li>
-              <li>출국 심사 통과 후 대기하다가 <strong>12:10까지</strong> 해당 탑승구 앞에서 탑승 대기</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- STEP 3: 비행 및 간사이공항 입국 -->
-        <div class="relative group" data-step="step-3">
-          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-indigo-600 ring-4 ring-white dark:ring-slate-950"></div>
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-extrabold text-xs rounded-lg">12:40 - 15:40</span>
-                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">비행 2시간 + 입국 수속 1시간</span>
-              </div>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
-                <input type="checkbox" onchange="toggleStep('step-3')" id="chk-step-3" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
-                완료
-              </label>
-            </div>
-
-            <h3 class="font-bold text-base sm:text-lg mt-2">✈️ 간사이 국제공항(KIX T1) 도착 및 난카이 전철역 이동</h3>
-            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
-              14:40 착륙 직후 비행기 안에서 <strong>해외 eSIM 활성화 및 데이터 로밍 ON</strong>을 켭니다. 입국 심사 시 <strong>Visit Japan Web QR코드</strong>를 제시하고, 수하물을 찾은 뒤 1층 도착로비에서 에스컬레이터로 <strong>2층 연결 통로</strong>로 올라가 다리를 건너면 바로 <strong>간사이공항역(난카이 전철/JR)</strong>이 나옵니다.
-            </p>
-
-            <div class="mt-3.5 flex flex-wrap gap-2">
-              <a href="https://www.google.com/maps/dir/?api=1&destination=Kansai+Airport+Station&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
-                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 간사이공항역(전철) 길찾기
-              </a>
-              <button onclick="switchTab('tab-vjw')" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
-                <i data-lucide="qr-code" class="w-3.5 h-3.5 text-indigo-500"></i> 비지트 재팬 입력정보 보기
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 4: 간사이공항 -> 도미 인 오사카 다니마치 지하철 이동 (핵심 구간) -->
-        <div class="relative group" data-step="step-4">
-          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-rose-600 ring-4 ring-white dark:ring-slate-950"></div>
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border-2 border-blue-500/80 dark:border-blue-500/60 shadow-md transition">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 font-extrabold text-xs rounded-lg">15:50 - 16:55</span>
-                <span class="text-xs font-bold px-2 py-0.5 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded">핵심 지하철 이동 (환승 1회 · 총 60분)</span>
-              </div>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
-                <input type="checkbox" onchange="toggleStep('step-4')" id="chk-step-4" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
-                완료
-              </label>
-            </div>
-
-            <h3 class="font-bold text-base sm:text-lg mt-2">🚇 간사이공항역 → 숙소(도미 인 오사카 다니마치) 지하철 완벽 로드맵</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              복잡한 난바역 환승 대신 <strong>덴가차야역(Tengachaya)</strong>에서 환승하면 캐리어를 끌고 평지로 바로 갈아탈 수 있어 가장 빠르고 쾌적합니다!
-            </p>
-
-            <!-- Sub-steps for Transit -->
-            <div class="mt-3 space-y-2.5">
-              <!-- Sub 1 -->
-              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-extrabold text-orange-600 dark:text-orange-400">1구간 · 난카이 전철 (주황색 간판)</span>
-                  <span class="text-[11px] font-semibold text-slate-500">약 34~40분 소요</span>
-                </div>
-                <p class="text-xs sm:text-sm font-bold mt-1">간사이공항역 탑승 → <span class="text-orange-600 dark:text-orange-400 underline">덴가차야역 (Tengachaya / 天下茶屋駅)</span> 하차</p>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  • <strong>난카이 공항급행(Airport Express)</strong>: 예약 없이 트래블월렛 터치결제 또는 교통카드(ICOCA)로 바로 개찰구 찍고 탑승 (970엔, 약 40분)<br/>
-                  • <strong>특급 라피트(Rapi:t)</strong>: 지정석 좌석 열차, 클룩/마이리얼트립 등에서 QR바우처 구매 후 좌석 지정 (약 34분)
-                </p>
-              </div>
-
-              <!-- Sub 2 -->
-              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-extrabold text-amber-800 dark:text-amber-400">2구간 · 오사카 메트로 사카이스지선 (갈색 노선 · K)</span>
-                  <span class="text-[11px] font-semibold text-slate-500">5정거장 · 약 11분 소요</span>
-                </div>
-                <p class="text-xs sm:text-sm font-bold mt-1">덴가차야역 환승 → <span class="text-amber-700 dark:text-amber-400 underline">사카이스지혼마치역 (Sakaisuji-Hommachi / 堺筋本町駅)</span> 하차</p>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  • 덴가차야역 에스컬레이터/엘리베이터로 내려와 개찰구를 나가면 바로 정면에 <strong>Osaka Metro 사카이스지선(갈색 K 노선)</strong> 입구가 있습니다.<br/>
-                  • 북쪽 방향(덴진바시스지로쿠초메/기타센리 행) 열차 탑승 후 5번째 역인 <strong>사카이스지혼마치역(K15)</strong>에서 하차합니다.
-                </p>
-              </div>
-
-              <!-- Sub 3 -->
-              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">3구간 · 도보 이동 (약 6~7분)</span>
-                  <span class="text-[11px] font-semibold text-slate-500">평지 직진 위주</span>
-                </div>
-                <p class="text-xs sm:text-sm font-bold mt-1">사카이스지혼마치역 <span class="text-emerald-600 dark:text-emerald-400">12번 출구(또는 1번 출구)</span> → 도미 인 오사카 다니마치</p>
-                <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  • 역에서 나와 동쪽(오사카성 방향)으로 약 450m 걸어가면 호텔 도착! (대안: 주오선으로 1정거장 더 가서 <strong>다니마치 4초메역 4번 출구</strong>에서 도보 4분 이동도 가능)
-                </p>
-              </div>
-            </div>
-
-            <!-- Google Maps Direct Navigation Buttons -->
-            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-800">
-              <div class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-2">👇 클릭 시 현재 내 위치에서 바로 구글맵 경로 안내가 시작됩니다:</div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
-                  <i data-lucide="navigation" class="w-4 h-4"></i> 📍 현위치 → 숙소 전체 지하철 길찾기
-                </a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=Tengachaya+Station+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
-                  <i data-lucide="train" class="w-4 h-4 text-orange-500"></i> 📍 현위치 → 1차 환승 '덴가차야역'
-                </a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=Sakaisuji-Hommachi+Station+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
-                  <i data-lucide="train" class="w-4 h-4 text-amber-600"></i> 📍 현위치 → 하차역 '사카이스지혼마치역'
-                </a>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm transition">
-                  <i data-lucide="footprints" class="w-4 h-4"></i> 📍 역 출구(현위치) → 숙소 도보 길찾기
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 5: 숙소 체크인 -->
-        <div class="relative group" data-step="step-5">
-          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-amber-500 ring-4 ring-white dark:ring-slate-950"></div>
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-extrabold text-xs rounded-lg">17:00 - 17:30</span>
-                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">체크인 및 휴식</span>
-              </div>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
-                <input type="checkbox" onchange="toggleStep('step-5')" id="chk-step-5" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
-                완료
-              </label>
-            </div>
-
-            <h3 class="font-bold text-base sm:text-lg mt-2">🏨 도미 인 오사카 다니마치 체크인 & 숙소 포인트</h3>
-            <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800">
-                <span class="font-bold text-amber-600 dark:text-amber-400 block">♨️ 13층 천연온천 대욕장</span>
-                15:00~익일 10:00 운영 (사우나 포함). 객실 내 비치된 타월을 지참해 올라갑니다.
-              </div>
-              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800">
-                <span class="font-bold text-rose-600 dark:text-rose-400 block">🍜 무료 야식 요나키 소바</span>
-                매일 밤 <strong>21:30 ~ 23:00</strong> 레스토랑에서 투숙객 전원 무료 간장 라멘 제공!
-              </div>
-              <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800">
-                <span class="font-bold text-blue-600 dark:text-blue-400 block">🍦 무료 아이스크림/요구르트</span>
-                대욕장 앞에서 밤에는 아이스크림, 아침에는 유산균 음료를 무료로 꺼내 먹을 수 있습니다.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- STEP 6: 첫날 저녁 코스 (A/B 선택형) -->
-        <div class="relative group" data-step="step-6">
-          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-purple-600 ring-4 ring-white dark:ring-slate-950"></div>
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 font-extrabold text-xs rounded-lg">17:30 - 21:30</span>
-                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">첫날 저녁 일정 (원하는 코스 선택)</span>
-              </div>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
-                <input type="checkbox" onchange="toggleStep('step-6')" id="chk-step-6" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
-                완료
-              </label>
-            </div>
-
-            <h3 class="font-bold text-base sm:text-lg mt-2">🌃 첫날 저녁 추천 동선 & 스시 맛집 (현재 위치 구글맵 연동)</h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              컨디션에 따라 <strong>코스 A(도보 오사카성 야경 산책)</strong> 또는 <strong>코스 B(도톤보리·신사이바시 번화가 & 스시 맛집)</strong>를 선택해 버튼을 눌러 바로 이동하세요.
-            </p>
-
-            <!-- Course Switcher -->
-            <div class="mt-3 grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
-              <button onclick="switchEveningCourse('B')" id="btn-course-B" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm transition">
-                🍣 코스 B: 도톤보리 & 신사이바시 스시
-              </button>
-              <button onclick="switchEveningCourse('A')" id="btn-course-A" class="py-2 px-3 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition">
-                🏯 코스 A: 오사카성 야경 산책
-              </button>
-            </div>
-
-            <!-- COURSE B CONTENT (Default) -->
-            <div id="course-B-content" class="mt-4 space-y-3">
-              <div class="p-3.5 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/70 dark:border-blue-900/50">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <div>
-                    <span class="text-[11px] font-extrabold text-blue-600 dark:text-blue-400">번화가 야경 핵심 스팟 (지하철 2정거장 · 3분)</span>
-                    <h4 class="font-bold text-sm sm:text-base">도톤보리 (글리코상) & 신사이바시 상점가</h4>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">사카이스지혼마치역에서 사카이스지선 탑승 → 닛폰바시역(2정거장) 하차 후 도보 이동</p>
-                  </div>
-                  <div class="flex gap-1.5">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=Dotonbori+Glico+Sign+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm transition">
-                      <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> 📍 도톤보리 길찾기
-                    </a>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=Umeda+Sky+Building+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1 transition">
-                      <i data-lucide="building-2" class="w-3.5 h-3.5"></i> 📍 우메다 스카이빌딩
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="text-xs font-bold text-slate-500 dark:text-slate-400 pt-1">🍣 신사이바시·미나미 첫날 저녁 추천 스시집 5선 (21:30 호텔 야식 라멘을 위해 18:00~19:00 식사 추천!)</div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                <!-- Sushi 1 -->
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
-                  <div>
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm">1. 스시로 신사이바시점</span>
-                      <span class="text-[11px] px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded font-bold">가성비 회전초밥</span>
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">한국어 패드 주문 지원, 원하는 접시만큼 조절해 먹기 좋아 밤에 호텔 요나키 소바 먹을 배를 남기기 최적! (10:30~23:00)</p>
-                  </div>
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=Sushiro+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
-                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 스시로 길찾기
-                  </a>
-                </div>
-
-                <!-- Sushi 2 -->
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
-                  <div>
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm">2. 우오신 (어심) 신사이바시점</span>
-                      <span class="text-[11px] px-2 py-0.5 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 rounded font-bold">대왕 네타 스시</span>
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">밥이 안 보일 정도로 큼직하고 두툼한 생선회를 올려주는 현지 인기 스시집. 생맥주와 궁합 최고! (주말 11:30~23:00)</p>
-                  </div>
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=Uoshin+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
-                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 우오신 길찾기
-                  </a>
-                </div>
-
-                <!-- Sushi 3 -->
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
-                  <div>
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm">3. Sushi YOSAKURA Shinsaibashi</span>
-                      <span class="text-[11px] px-2 py-0.5 bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded font-bold">고평점 정통 스시</span>
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">신사이바시 중심가에서 정갈하고 수준 높은 스시를 맛볼 수 있는 곳. 저녁 18:00~22:00 운영.</p>
-                  </div>
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=Sushi+YOSAKURA+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="w-full py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
-                    <i data-lucide="navigation" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 YOSAKURA 길찾기
-                  </a>
-                </div>
-
-                <!-- Sushi 4 & 5 -->
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex flex-col justify-between gap-2">
-                  <div>
-                    <div class="flex items-center justify-between">
-                      <span class="font-bold text-sm">4. Sushi Akasu / 스시 엔(En)</span>
-                      <span class="text-[11px] px-2 py-0.5 bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded font-bold">에도마에/오마카세</span>
-                    </div>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">붉은 식초 샤리를 쓰는 Akasu 또는 히가시신사이바시의 아늑한 스시 엔 (모두 18:00~23:00 운영).</p>
-                  </div>
-                  <div class="grid grid-cols-2 gap-1.5">
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=Sushi+Akasu+Shinsaibashi+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
-                      📍 Akasu 길찾기
-                    </a>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=Shinsaibashi+Sushi+En+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="py-2 bg-white dark:bg-slate-900 hover:bg-blue-50 border border-slate-200 dark:border-slate-700 rounded-lg text-[11px] font-bold text-blue-600 dark:text-blue-400 flex items-center justify-center gap-1 transition">
-                      📍 스시 엔 길찾기
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- COURSE A CONTENT (Hidden by default) -->
-            <div id="course-A-content" class="hidden mt-4 space-y-3">
-              <div class="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50">
-                <span class="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400">숙소에서 도보 15~20분 힐링 산책 코스</span>
-                <h4 class="font-bold text-sm sm:text-base mt-0.5">오테몬(정문) → 오사카 성 공원 → 오사카성 천수각 라이트업 야경</h4>
-                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                  전철을 탈 필요 없이 도미 인 오사카 다니마치에서 동쪽으로 걸어가면 바로 오사카성 정문(오테몬)이 나옵니다. 천수각 내부 박물관은 18:00에 마감되지만, 일몰 후 조명이 켜진 천수각과 해자(연못) 야경은 24시간 무료로 산책하며 감상할 수 있습니다.
-                </p>
-                <div class="mt-3 flex flex-wrap gap-2">
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=Otemon+Gate+Osaka+Castle&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
-                    <i data-lucide="footprints" class="w-3.5 h-3.5"></i> 📍 1. 오테몬(정문) 도보 길찾기
-                  </a>
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=Osaka+Castle+Main+Keep&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition">
-                    <i data-lucide="castle" class="w-3.5 h-3.5"></i> 📍 2. 오사카성 천수각 도보 길찾기
-                  </a>
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=JO-TERRACE+OSAKA&travelmode=walking" target="_blank" rel="noopener noreferrer" class="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
-                    <i data-lucide="utensils" class="w-3.5 h-3.5"></i> 📍 3. 조 테라스(식당/카페) 길찾기
-                  </a>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- STEP 7: 숙소 복귀 & 요나키 소바 & 온천 -->
-        <div class="relative group" data-step="step-7">
-          <div class="absolute -left-[25px] sm:-left-[33px] top-1 w-4 h-4 rounded-full bg-emerald-600 ring-4 ring-white dark:ring-slate-950"></div>
-          <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm transition">
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-extrabold text-xs rounded-lg">21:30 - 23:00</span>
-                <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-slate-600 dark:text-slate-400">1일차 마무리</span>
-              </div>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none text-xs font-bold text-slate-500 dark:text-slate-400">
-                <input type="checkbox" onchange="toggleStep('step-7')" id="chk-step-7" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500" />
-                완료
-              </label>
-            </div>
-
-            <h3 class="font-bold text-base sm:text-lg mt-2">🍜 숙소 복귀 · 무료 요나키 소바 & 천연온천 힐링</h3>
-            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1.5 leading-relaxed">
-              숙소 앞 세븐일레븐이나 패밀리마트에서 내일 아침 간식/음료를 사서 복귀합니다. <strong>21:30~23:00</strong> 사이에 무료 야식 소바를 먹고, 천연온천 대욕장에서 첫날 피로를 싹 푼 뒤 무료 아이스크림으로 완벽하게 하루를 마무리하세요!
-            </p>
-            <div class="mt-3">
-              <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition">
-                <i data-lucide="home" class="w-3.5 h-3.5"></i> 📍 현재 위치에서 숙소(도미 인 다니마치)로 복귀 길찾기
-              </a>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- TAB 2: PACKING & AIRBNB/HOTEL CHECKLIST    -->
-    <!-- ========================================== -->
-    <div id="tab-checklist" class="tab-content hidden space-y-6">
-      <!-- Progress Header -->
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div class="flex items-center justify-between mb-2">
+      <div class="card tl-card">
+        <div class="tl-dot"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=240&q=80" alt="비행기">
           <div>
-            <h2 class="font-bold text-base sm:text-lg">🎒 출국 필수 준비물 & 숙소(에어비앤비/셀프체류형) 꿀템</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">체크한 내역은 브라우저에 자동 저장됩니다. 나만의 준비물도 추가해 보세요!</p>
-          </div>
-          <div class="text-right">
-            <span id="checklist-percent" class="text-2xl font-black text-blue-600 dark:text-blue-400">0%</span>
-            <button onclick="resetChecklist()" class="block text-[11px] text-slate-400 hover:text-rose-500 underline ml-auto">초기화</button>
+            <span class="tl-time-badge">10:00 ~ 14:40</span>
+            <div class="tl-title">🧳 수하물 위탁(15kg) & 오사카 비행 (2시간)</div>
           </div>
         </div>
-        <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-          <div id="checklist-bar" class="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-300" style="width: 0%"></div>
-        </div>
-
-        <!-- Add Custom Item -->
-        <form onsubmit="addCustomItem(event)" class="mt-4 flex gap-2">
-          <input type="text" id="custom-item-input" placeholder="추가할 준비물을 입력하세요 (예: 카메라 충전기, 우산)" class="flex-1 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shrink-0 transition">
-            + 추가
-          </button>
-        </form>
+        <ul class="tl-list">
+          <li><strong>무료 수하물:</strong> 위탁수하물 <strong>15kg</strong> + 기내 10kg. 보조배터리와 전자담배는 반드시 기내에 휴대하세요.</li>
+          <li><strong>출발 전 필수:</strong> 한국 공항 와이파이 연결 상태에서 <strong>해외 eSIM QR코드</strong>를 미리 등록해 두면 간사이공항 착륙 즉시 데이터가 터집니다.</li>
+        </ul>
       </div>
 
-      <!-- Checklist Categories Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="checklist-container">
-        <!-- Rendered dynamically by JS -->
-      </div>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- TAB 3: VISIT JAPAN WEB PERFECT GUIDE       -->
-    <!-- ========================================== -->
-    <div id="tab-vjw" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+      <div class="card tl-card">
+        <div class="tl-dot"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=240&q=80" alt="난카이 전철">
           <div>
-            <span class="px-2.5 py-0.5 text-xs font-extrabold bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 rounded-md">필수 사전 등록</span>
-            <h2 class="font-bold text-lg sm:text-xl mt-1">📲 비지트 재팬 웹 (Visit Japan Web) 1분 복사 가이드</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">입국심사와 세관신고를 통합 QR코드 하나로 통과합니다. 아래 복사 버튼을 눌러 그대로 붙여넣으세요!</p>
+            <span class="tl-time-badge">14:40 ~ 16:30</span>
+            <div class="tl-title">🚆 [1구간] 간사이공항역 ➔ 덴가차야역 (난카이 전철)</div>
           </div>
-          <a href="https://services.digital.go.jp/ko/visit-japan-web/" target="_blank" rel="noopener noreferrer" class="shrink-0 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow-sm transition">
-            <i data-lucide="external-link" class="w-4 h-4"></i> 공식 사이트 바로가기
-          </a>
         </div>
+        <ul class="tl-list">
+          <li><strong>전철역 이동:</strong> 입국 심사 후 2층 연결 통로를 건너 <strong>간사이공항역(난카이 전철 붉은색 간판)</strong>으로 이동합니다.</li>
+          <li><strong>핵심 환승역:</strong> 복잡한 난바역까지 가지 말고 <strong>덴가차야역(Tengachaya / 天下茶屋駅)</strong>에서 하차하세요! (공항급행 40분 / 라피트 34분 소요)</li>
+          <li><strong>트래블월렛 터치:</strong> 표를 살 필요 없이 개찰구 신용카드 터치패드에 트래블월렛 실물카드를 태그하면 바로 탑승됩니다 (970엔).</li>
+        </ul>
+        <div class="btn-group">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Kansai+Airport+Station&travelmode=walking" target="_blank" class="btn btn-gmap">📍 간사이공항역 길찾기</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Tengachaya+Station+Osaka&travelmode=transit" target="_blank" class="btn btn-ghost">🚇 덴가차야역 경로</a>
+        </div>
+      </div>
 
-        <!-- Warning Box -->
-        <div class="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-900 dark:text-rose-200 space-y-1">
-          <div class="font-bold flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
-            <i data-lucide="alert-triangle" class="w-4 h-4"></i> 주의사항 (필독!)
+      <div class="card tl-card">
+        <div class="tl-dot"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=240&q=80" alt="도미인 호텔">
+          <div>
+            <span class="tl-time-badge">16:30 ~ 17:00</span>
+            <div class="tl-title">🏨 [2구간] 덴가차야역 ➔ 사카이스지혼마치역 ➔ 숙소 도착</div>
           </div>
-          <p>• 비지트 재팬 웹은 <strong>100% 무료</strong>이며 별도의 앱이 아닌 <strong>웹사이트(digital.go.jp)</strong>에서 등록합니다. 앱스토어의 유료 사칭 앱에 절대 결제하지 마세요!</p>
-          <p>• 간사이공항 도착 직후 와이파이나 로밍 연결이 지연될 수 있으니, 발급된 <strong>QR코드를 반드시 휴대폰 사진첩에 캡처(스크린샷)</strong>해 두세요.</p>
         </div>
+        <ul class="tl-list">
+          <li><strong>초간편 평지 환승:</strong> 덴가차야역 개찰구를 나오면 정면 맞은편에 <strong>오사카 메트로 사카이스지선(갈색 노선)</strong> 개찰구가 있어 캐리어 이동이 매우 편합니다.</li>
+          <li><strong>하차 및 출구:</strong> 5정거장(11분) 이동 후 <strong>사카이스지혼마치역</strong> 하차 ➔ <strong>12번 출구(엘리베이터)</strong> 또는 1번 출구에서 도보 6분 직진하면 <strong>도미 인 오사카 다니마치</strong> 도착!</li>
+        </ul>
+        <div class="btn-group">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Dormy+Inn+Osaka+Tanimachi&travelmode=transit" target="_blank" class="btn btn-gmap">📍 현위치 ➔ 도미 인 오사카 다니마치 길찾기</a>
+        </div>
+      </div>
 
-        <!-- Copy-Paste Table for VJW -->
+      <div class="card tl-card">
+        <div class="tl-dot"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=240&q=80" alt="도톤보리 야경">
+          <div>
+            <span class="tl-time-badge">17:30 ~ 23:00</span>
+            <div class="tl-title">🍣 첫날 저녁(도톤보리/오사카성) & 이온마트 반값털이 & 온천</div>
+          </div>
+        </div>
+        <ul class="tl-list">
+          <li><strong>17:30 첫날 저녁 코스:</strong> 숙소 앞 사카이스지선 2정거장(3분)인 <strong>도톤보리·신사이바시</strong>에서 글리코상 인증샷 & 스시 저녁 식사 (또는 도보 15분 <strong>오사카성 야경 산책</strong>).</li>
+          <li><strong>20:30 이온마트(KOHYO) 야간 반값:</strong> 숙소 도보 2분 거리 <strong>KOHYO 우치혼마치점</strong>에서 50% 반액(半額) 스티커가 붙은 초밥·과일·푸딩 쇼핑!</li>
+          <li><strong>21:30 ~ 23:00 도미인 특권:</strong> 2층 무료 야식 라멘 <strong>'요나키 소바'</strong> 식사 후 13층 천연 온천 대욕장 & 무료 아이스크림!</li>
+        </ul>
+        <div class="btn-group">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Dotonbori+Glico+Sign+Osaka&travelmode=transit" target="_blank" class="btn btn-gmap">📍 도톤보리 글리코상</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=KOHYO+Uchihonmachi+Osaka&travelmode=walking" target="_blank" class="btn btn-ghost">🛒 숙소 옆 이온마트(KOHYO)</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Osaka+Castle&travelmode=walking" target="_blank" class="btn btn-ghost">🏯 오사카성 야경</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 2: 4일차 귀국 로드맵 (11/11 수요일)
+       ========================================================= -->
+  <section id="view-return" class="view-section">
+
+    <!-- 귀국 보딩패스 카드 -->
+    <div class="boarding-pass bp-ret">
+      <div class="bp-top">
+        <span>2026. 11. 11 (수) · 제주항공 7C1394</span>
+        <span>예약번호: ZJCE9H · 위탁 1 PC</span>
+      </div>
+      <div class="bp-route">
         <div>
-          <h3 class="font-bold text-sm sm:text-base mb-3">📋 이번 여행(11/08 BX331 & 도미 인 오사카 다니마치) 입력값 그대로 복사하기</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] text-slate-400 block">탑승 항공기 편명 (항공사: BX / 편명: 331)</span>
-                <span class="font-mono font-bold text-sm sm:text-base">BX331</span>
-              </div>
-              <button onclick="copyText('331', '편명(331)이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 편명 복사
-              </button>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] text-slate-400 block">일본 도착 예정일 / 출발지</span>
-                <span class="font-mono font-bold text-sm sm:text-base">2026-11-08 (ICN 인천)</span>
-              </div>
-              <button onclick="copyText('2026-11-08', '도착일이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 날짜 복사
-              </button>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] text-slate-400 block">숙소 우편번호 (숫자만 입력 후 자동입력 클릭!)</span>
-                <span class="font-mono font-bold text-sm sm:text-base text-blue-600 dark:text-blue-400">5400026</span>
-              </div>
-              <button onclick="copyText('5400026', '우편번호(5400026)가 복사되었습니다.')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-700 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 우편번호 복사
-              </button>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] text-slate-400 block">도도부현 / 시구정촌 (우편번호 검색시 자동완성)</span>
-                <span class="font-bold text-xs sm:text-sm">OSAKA / CHUO-KU OSAKA-SHI</span>
-              </div>
-              <button onclick="copyText('CHUO-KU OSAKA-SHI', '시구정촌이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 복사
-              </button>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] text-slate-400 block">정·초메·번지·호 (상세주소 영문)</span>
-                <span class="font-mono font-bold text-sm sm:text-base">2-1-9 Uchihonmachi</span>
-              </div>
-              <button onclick="copyText('2-1-9 Uchihonmachi', '상세주소(2-1-9 Uchihonmachi)가 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 상세주소 복사
-              </button>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
-              <div>
-                <span class="text-[11px] text-slate-400 block">호텔명 / 숙소명 (영문)</span>
-                <span class="font-mono font-bold text-sm sm:text-base">Dormy Inn Osaka Tanimachi</span>
-              </div>
-              <button onclick="copyText('Dormy Inn Osaka Tanimachi', '호텔 영문명이 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 호텔명 복사
-              </button>
-            </div>
-
-            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 flex items-center justify-between sm:col-span-2">
-              <div>
-                <span class="text-[11px] text-slate-400 block">일본 내 연락 가능한 전화번호 (호텔 전화번호)</span>
-                <span class="font-mono font-bold text-sm sm:text-base">0669455489</span>
-              </div>
-              <button onclick="copyText('0669455489', '호텔 전화번호(0669455489)가 복사되었습니다.')" class="px-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-50 transition">
-                <i data-lucide="copy" class="w-3.5 h-3.5"></i> 전화번호 복사
-              </button>
-            </div>
-
-          </div>
+          <div class="bp-code">KIX</div>
+          <div class="bp-time">17:00 출발</div>
+          <div class="bp-term">⚠️간사이 제2터미널(T2)</div>
+        </div>
+        <div class="bp-plane">
+          <div>2시간 10분 직항</div>
+          <div class="bp-line"></div>
+          <div>✈️ JEJU air</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="bp-code">ICN</div>
+          <div class="bp-time">19:10 도착</div>
+          <div class="bp-term">⚠️인천 제1터미널(T1)</div>
         </div>
       </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- TAB 4: TRAVEL WALLET & TRANSIT GUIDE       -->
-    <!-- ========================================== -->
-    <div id="tab-wallet" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
-        <div>
-          <span class="px-2.5 py-0.5 text-xs font-extrabold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded-md">환전·결제·지하철 올인원</span>
-          <h2 class="font-bold text-lg sm:text-xl mt-1">💳 트래블월렛(Travel Wallet) 오사카 200% 활용 가이드</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">환전 수수료 0%, 해외 결제 수수료 0%, 오사카 지하철 터치 탑승까지 완벽 정리!</p>
+    <div class="timeline">
+
+      <div class="card tl-card">
+        <div class="tl-dot" style="background:#f97316; box-shadow:0 0 0 2px #f97316;"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=240&q=80" alt="온천">
+          <div>
+            <span class="tl-time-badge">08:30 ~ 10:30</span>
+            <div class="tl-title">♨️ 모닝 온천 & 요구르트 ➔ 수하물 패킹 ➔ 체크아웃</div>
+          </div>
         </div>
+        <ul class="tl-list">
+          <li><strong>모닝 서비스:</strong> 13층 대욕장 아침 온천 후 무료 유산균 요구르트를 챙겨 드세요.</li>
+          <li><strong>수하물 분리 주의:</strong> 제주항공 위탁수하물(1 PC, 15kg)에 <strong>곤약젤리(파우치형), 주류, 화장품, 액체류</strong>를 모두 넣고, 보조배터리는 반드시 기내에 들고 타세요.</li>
+        </ul>
+      </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Card 1 -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
-            <h3 class="font-bold text-sm sm:text-base">오사카 지하철 & 난카이 전철 터치 탑승!</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              <strong>난카이 전철(공항급행)</strong>과 <strong>오사카 메트로(사카이스지선, 주오선, 다니마치선 등 전 노선)</strong> 개찰구에서 이코카(ICOCA) 교통카드 없이도 <strong>트래블월렛 실물 카드(컨택리스 와이파이 로고)</strong>를 개찰구 흰색/은색 리더기에 터치해 바로 탑승할 수 있습니다!
-            </p>
-            <div class="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[11px] text-blue-800 dark:text-blue-200">
-              💡 팁: 일반 승차권 넣는 개찰구 중 <strong>와이파이 모양(컨택리스 패드)</strong>이 붙어 있는 개찰구를 이용하세요.
-            </div>
+      <div class="card tl-card">
+        <div class="tl-dot" style="background:#f97316; box-shadow:0 0 0 2px #f97316;"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=240&q=80" alt="구로몬 시장">
+          <div>
+            <span class="tl-time-badge">10:30 ~ 13:20</span>
+            <div class="tl-title">🍣 난바역 코인락커 ➔ 구로몬 시장 아점 & 다카시마야 쇼핑</div>
           </div>
+        </div>
+        <ul class="tl-list">
+          <li><strong>짐 보관:</strong> 사카이스지혼마치역 ➔ 닛폰바시역(또는 난카이 난바역) 이동 후 코인락커에 캐리어 보관.</li>
+          <li><strong>11:00 구로몬 시장 & 난바 야사카 신사:</strong> 참치 대뱃살 초밥·가리비 구이로 아점 식사 후 거대 사자머리 신사 인증샷!</li>
+          <li><strong>12:20 다카시마야 백화점 B1F:</strong> 난카이 난바역 직결 식품관에서 <strong>551 호라이 만두, 도지마롤, 바톤도르</strong> 선물 구매.</li>
+        </ul>
+        <div class="btn-group">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Kuromon+Ichiba+Market+Osaka&travelmode=transit" target="_blank" class="btn btn-gmap">📍 구로몬 시장</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Namba+Yasaka+Jinja+Osaka&travelmode=walking" target="_blank" class="btn btn-ghost">🦁 난바 야사카 신사</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Takashimaya+Osaka&travelmode=walking" target="_blank" class="btn btn-ghost">🛍️ 다카시마야 백화점</a>
+        </div>
+      </div>
 
-          <!-- Card 2 -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">2</div>
-            <h3 class="font-bold text-sm sm:text-base">현지 ATM 엔화(현금) 인출은 '세븐일레븐' 또는 '이온(AEON)'</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              일본은 전통 시장(구로몬 시장), 일부 개인 라멘집, 자판기, 코인락커에서 현금이 필요합니다. <strong>세븐일레븐 내 Seven Bank ATM</strong> 또는 <strong>이온(AEON) ATM</strong>을 이용하면 한국어 지원 및 출금 수수료 혜택을 받을 수 있습니다.
-            </p>
-            <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-[11px] text-emerald-800 dark:text-emerald-200">
-              ⚠️ 로손(Lawson), 패밀리마트(E-net) ATM은 기기 수수료(110~220엔)가 부과될 수 있으며, 인출 시 통화 선택 화면이 나오면 무조건 <strong>JPY(엔화)</strong>를 선택하세요!
-            </div>
+      <div class="card tl-card">
+        <div class="tl-dot" style="background:#f97316; box-shadow:0 0 0 2px #f97316;"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=240&q=80" alt="공항 셔틀">
+          <div>
+            <span class="tl-time-badge">13:30 ~ 14:40</span>
+            <div class="tl-title">🚆 난카이 난바역 출발 ➔ 간사이공항 ⚠️제2터미널(T2) 이동</div>
           </div>
+        </div>
+        <div class="alert-box">
+          🚨 <strong>[간사이공항 제2터미널(T2) 이동 필수 체크]</strong><br>
+          제주항공(7C1394)은 <strong>제2터미널(T2)</strong>에서 출발합니다! 난카이 전철 하차 후 개찰구 왼쪽 <strong>'에어로플라자(Aeroplaza)'</strong> 통로로 건너가 <strong>1층 승강장에서 무료 셔틀버스(약 8분 소요)</strong>를 타야 제2터미널에 도착합니다.
+        </div>
+        <div class="btn-group">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Nankai+Namba+Station&travelmode=walking" target="_blank" class="btn btn-gmap">📍 난카이 난바역</a>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Aeroplaza+Kansai+Airport&travelmode=walking" target="_blank" class="btn btn-ghost">🚌 에어로플라자(T2 셔틀)</a>
+        </div>
+      </div>
 
-          <!-- Card 3 -->
-          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 space-y-2">
-            <div class="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold">3</div>
-            <h3 class="font-bold text-sm sm:text-base">출국 전 필수 점검 3가지</h3>
-            <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
-              <li>트래블월렛 앱 → <strong>실물 카드 ON(활성화)</strong> 및 <strong>해외 오프라인 결제 허용</strong> 켜두기</li>
-              <li>ATM 출금을 위해 <strong>카드 비밀번호(4자리)</strong> 미리 확인해 두기</li>
-              <li>비상시를 대비해 <strong>토스뱅크 외화통장 카드 / 트래블로그 / 일반 VISA·Master 신용카드 1장</strong>을 서브 카드로 함께 챙기기</li>
-            </ul>
+      <div class="card tl-card">
+        <div class="tl-dot" style="background:#f97316; box-shadow:0 0 0 2px #f97316;"></div>
+        <div class="tl-header">
+          <img class="tl-thumb" src="https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=240&q=80" alt="주차장 복귀">
+          <div>
+            <span class="tl-time-badge">17:00 ~ 21:00</span>
+            <div class="tl-title">✈️ 인천 T1 도착(19:10) ➔ ⚠️T2 주차장 차량 픽업 ➔ 동암역</div>
           </div>
+        </div>
+        <div class="alert-box">
+          🚗 <strong>[인천공항 T1 도착 ➔ T2 주차장 이동 방법]</strong><br>
+          첫날 차는 <strong>제2터미널(T2)</strong>에 주차하셨고, 귀국편 제주항공은 <strong>제1터미널(T1)</strong>에 내립니다!<br>
+          • <strong>가장 빠른 이동:</strong> T1 지하 1층 <strong>공항철도 일반열차</strong> 탑승 ➔ 제2터미널역 하차 (6분 소요, 약 1,000원)<br>
+          • <strong>무료 셔틀버스:</strong> T1 3층 출국장 <strong>8번 게이트 앞</strong>에서 T2행 무료 셔틀 탑승 (약 15~20분 소요)
+        </div>
+        <div class="btn-group">
+          <a href="https://map.naver.com/p/search/%EB%8F%99%EC%95%94%EC%97%AD" target="_blank" class="btn btn-naver">🟢 네이버지도 동암역 귀가 내비</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 3: 사진 + 지역별/종류별 필터가 탑재된 50선 카탈로그 뷰
+       ========================================================= -->
+  <section id="view-catalog" class="view-section">
+    <div class="card" style="background:linear-gradient(135deg, rgba(79,70,229,0.22), rgba(236,72,153,0.15));">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+        <div>
+          <h2 id="catTitle" style="font-size:18px; font-weight:900;">🍣 타베로그 맛집 & 카페 50선</h2>
+          <p id="catSubtitle" style="font-size:12px; color:var(--text-sub); margin-top:2px;">사진과 함께 위치별·종류별로 필터링하고 바로 길찾기를 실행하세요.</p>
+        </div>
+        <button class="btn btn-ghost" onclick="openHomeUp()" style="white-space:nowrap;">📂 폴더 메뉴</button>
+      </div>
+
+      <!-- 면세 게이지 바 -->
+      <div style="margin-top:12px; background:var(--bg-elevated); padding:10px 12px; border-radius:14px; border:1px solid var(--border-color);">
+        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:800;">
+          <span>장바구니: <strong id="barYen" style="color:#f59e0b;">¥0</strong> (<span id="barKrw">0원</span>)</span>
+          <span id="barTaxStatus" style="color:var(--text-sub);">면세(¥5,500)까지 ¥5,500 남음</span>
+        </div>
+        <div style="width:100%; height:6px; background:var(--bg-chip); border-radius:99px; margin-top:6px; overflow:hidden;">
+          <div id="barFill" style="width:0%; height:100%; background:var(--primary-grad); transition:width 0.25s;"></div>
         </div>
       </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- TAB 5: ESIM COMPARISON & SETUP GUIDE       -->
-    <!-- ========================================== -->
-    <div id="tab-esim" class="tab-content hidden space-y-6">
-      <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-5">
-        <div>
-          <span class="px-2.5 py-0.5 text-xs font-extrabold bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 rounded-md">유심 교체 없이 QR로 끝</span>
-          <h2 class="font-bold text-lg sm:text-xl mt-1">📶 일본 eSIM 추천 구매처 & 스마트폰 설정 완벽 가이드</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">한국 유심은 그대로 두고(문자 수신 무료), 데이터만 일본 현지망으로 빠르고 쾌적하게 쓰는 방법!</p>
-        </div>
+    <div class="search-box">
+      <input type="text" id="catSearch" class="search-input" placeholder="🔍 메뉴, 상품명, 지역, 키워드 검색 (50선)..." oninput="renderCatalog()">
+    </div>
 
-        <!-- eSIM Providers Comparison -->
-        <div>
-          <h3 class="font-bold text-sm sm:text-base mb-3">🛒 대표 일본 eSIM 구매처 비교 (클릭 시 이동)</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            
-            <a href="https://www.wifidosirak.com/" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-blue-500 transition flex flex-col justify-between">
-              <div>
-                <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400">한국어 카톡 상담 최고</span>
-                <h4 class="font-bold text-sm mt-0.5">도시락 eSIM</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">SoftBank/KDDI 로컬망 및 듀얼망 상품 다양. 초보자도 카카오톡 고객센터 연결이 빨라 안심.</p>
-              </div>
-              <span class="text-xs font-bold text-blue-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
-            </a>
+    <!-- 타베로그 맛집 / 명소 선택 시에만 노출되는 '위치별(지역별) 필터' -->
+    <div id="areaFilterWrap" style="display:none;">
+      <div class="filter-label">📍 위치별(지역별) 모아보기</div>
+      <div id="areaChips" class="chip-scroll"></div>
+    </div>
 
-            <a href="https://www.klook.com/ko/" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-orange-500 transition flex flex-col justify-between">
-              <div>
-                <span class="text-[11px] font-bold text-orange-600 dark:text-orange-400">가성비 & 앱 내 즉시 활성화</span>
-                <h4 class="font-bold text-sm mt-0.5">클룩(Klook) / 마이리얼트립</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">라피트 열차권이나 주유패스 살 때 함께 구매하기 좋으며, '로컬망(SoftBank/KDDI) 완전 무제한' 가격이 저렴함.</p>
-              </div>
-              <span class="text-xs font-bold text-orange-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
-            </a>
+    <div class="filter-label">🏷️ 카테고리 분류</div>
+    <div id="subChips" class="chip-scroll"></div>
 
-            <a href="https://www.usimsa.com/" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 transition flex flex-col justify-between">
-              <div>
-                <span class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">국내 대표 eSIM 플랫폼</span>
-                <h4 class="font-bold text-sm mt-0.5">유심사 (USIMSA) / 핀다이렉트</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">네이버 스마트스토어 및 전용 앱으로 구매 즉시 1분 내 QR코드 발급. 일 2GB/3GB/무제한 선택 폭 넓음.</p>
-              </div>
-              <span class="text-xs font-bold text-emerald-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
-            </a>
+    <div id="mediaList" class="media-list" style="margin-top:10px;"></div>
+  </section>
 
-            <a href="https://www.airalo.com/ko" target="_blank" rel="noopener noreferrer" class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-800 hover:border-purple-500 transition flex flex-col justify-between">
-              <div>
-                <span class="text-[11px] font-bold text-purple-600 dark:text-purple-400">글로벌 1위 eSIM 앱</span>
-                <h4 class="font-bold text-sm mt-0.5">에어알로 (Airalo)</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">QR 스캔 없이 앱에서 버튼 하나로 바로 설치 가능. KDDI + SoftBank 듀얼망 지원으로 음영지역 최소화.</p>
-              </div>
-              <span class="text-xs font-bold text-purple-600 mt-3 flex items-center gap-1">사이트 보기 <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i></span>
-            </a>
+  <!-- =========================================================
+       VIEW 4: 숙소 앞 '덴마바시역' 직통 교토 당일치기 가이드
+       ========================================================= -->
+  <section id="view-kyoto" class="view-section">
+    <div class="card" style="background:linear-gradient(135deg,#064e3b,#047857); color:#fff;">
+      <span class="vjw-badge" style="background:#10b981;">도미 인 다니마치 숙소 특권</span>
+      <h2 style="font-size:18px; font-weight:900; margin-top:4px;">⛩️ 덴마바시역 ➔ 교토 환승 없는 직통 코스</h2>
+      <p style="font-size:12px; opacity:0.9; margin-top:4px;">숙소에서 도보 10분 거리인 <strong>게이한 본선 '덴마바시역'</strong>에서 특급열차를 타면 복잡한 우메다를 거치지 않고 <strong>후시미이나리(여우신사)·기온시조(청수사)</strong>까지 앉아서 한 번에 이동합니다!</p>
+      <div class="btn-group">
+        <a href="https://www.google.com/maps/dir/?api=1&destination=Tenmabashi+Station+Osaka&travelmode=walking" target="_blank" class="btn" style="background:#fff; color:#064e3b;">📍 현위치 ➔ 덴마바시역 도보 길찾기</a>
+      </div>
+    </div>
 
+    <div class="media-list">
+      <div class="media-card">
+        <div class="media-img-wrap"><img class="media-img" src="https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&w=300&q=80" alt="여우신사"></div>
+        <div class="media-body">
+          <div class="badge-row"><span class="tag-area">09:15 도착</span><span class="tag-cat">후시미이나리역</span></div>
+          <div class="media-title">후시미 이나리 대사 (여우신사)</div>
+          <div class="media-desc">수천 개의 붉은 도리이 터널(센본도리이)을 걸으며 인생샷을 남기는 교토 대표 명소. 역에서 도보 5분!</div>
+          <div class="media-foot">
+            <span class="media-price">입장료 무료</span>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Fushimi+Inari+Taisha+Kyoto&travelmode=transit" target="_blank" class="btn btn-gmap" style="padding:6px 10px;">📍 길찾기</a>
           </div>
         </div>
+      </div>
 
-        <!-- Step by Step Setup Guide (Galaxy / iPhone) -->
-        <div class="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/60 space-y-3">
-          <h3 class="font-bold text-sm sm:text-base text-indigo-950 dark:text-indigo-200">📱 실패 없는 eSIM 등록 & 간사이공항 착륙 후 활성화 4단계</h3>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <span class="font-extrabold text-blue-600 dark:text-blue-400 block mb-1">STEP 1. 출국 전 (한국 집 또는 인천공항 와이파이 상태)</span>
-              • <strong>갤럭시(Z폴드 등):</strong> 설정 → 연결 → SIM 관리자 → <strong>[+ eSIM 추가]</strong> → 구매한 QR코드 스캔<br/>
-              • <strong>아이폰:</strong> 설정 → 셀룰러 → <strong>[eSIM 추가]</strong> → QR코드 스캔<br/>
-              • 등록이 완료되면 이름을 '일본여행'으로 바꾸고, 한국에서는 일단 <strong>eSIM을 OFF(꺼짐)</strong> 해둡니다.
-            </div>
-
-            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <span class="font-extrabold text-indigo-600 dark:text-indigo-400 block mb-1">STEP 2. 간사이공항 착륙 직후 (비행기 안)</span>
-              • 설정 → 연결 → SIM 관리자에서 <strong>등록해둔 eSIM을 ON(켜기)</strong> 합니다.<br/>
-              • 같은 화면 하단의 <strong>[모바일 데이터]</strong> 항목을 주회선(SIM 1)에서 <strong>[eSIM 1 (일본여행)]</strong>으로 변경합니다.
-            </div>
-
-            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <span class="font-extrabold text-emerald-600 dark:text-emerald-400 block mb-1">STEP 3. 데이터 로밍 켜기 (가장 중요!)</span>
-              • eSIM이 일본 통신사 전파를 잡으려면 <strong>설정 → 연결 → 해외 로밍 → [데이터 로밍]을 ON(켜기)</strong> 해야 합니다.<br/>
-              • 안심하세요! 앞 단계에서 '모바일 데이터'를 eSIM으로 지정했기 때문에 한국 유심에는 데이터 요금이 부과되지 않습니다.
-            </div>
-
-            <div class="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-              <span class="font-extrabold text-amber-600 dark:text-amber-400 block mb-1">STEP 4. 한국 카드 결제 문자 & 본인인증 받기</span>
-              • 기존 한국 유심(SIM 1)은 끄지 말고 켜둔 상태로 두면, 일본에서도 <strong>한국 문자(SMS) 수신은 100% 무료</strong>입니다! (단, 한국 유심으로 전화를 걸거나 받으면 로밍 통화료가 나오니 주의하세요.)
-            </div>
+      <div class="media-card">
+        <div class="media-img-wrap"><img class="media-img" src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=300&q=80" alt="청수사"></div>
+        <div class="media-body">
+          <div class="badge-row"><span class="tag-area">11:00 도착</span><span class="tag-cat">기온시조역</span></div>
+          <div class="media-title">기요미즈데라 (청수사) & 산넨자카·니넨자카</div>
+          <div class="media-desc">11월 단풍이 절정을 이루는 절벽 위 목조 본당과 전통 목조 거리 산책 & 말차 디저트 투어.</div>
+          <div class="media-foot">
+            <span class="media-price">입장료 500엔</span>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Kiyomizu-dera+Kyoto&travelmode=transit" target="_blank" class="btn btn-gmap" style="padding:6px 10px;">📍 길찾기</a>
           </div>
         </div>
       </div>
     </div>
+  </section>
 
-  </main>
+  <!-- =========================================================
+       VIEW 5: 숙소·필수 준비물 체크리스트 & 트래블월렛·eSIM
+       ========================================================= -->
+  <section id="view-prep" class="view-section">
+    <div class="card">
+      <h2 style="font-size:17px; font-weight:900; margin-bottom:4px;">🎒 출국 & 숙소 필수 준비물 체크리스트</h2>
+      <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px;">터치하면 체크 상태가 브라우저에 자동 저장됩니다.</p>
+      <div id="prepGrid" class="media-list"></div>
+    </div>
 
-  <!-- Sticky Bottom Quick Map Bar (Easy one-handed access while walking with luggage) -->
-  <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-3 py-2 shadow-lg">
-    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
-      <span class="text-[11px] font-extrabold text-slate-400 shrink-0 hidden sm:inline">원클릭 현위치 길찾기:</span>
-      <a href="https://www.google.com/maps/dir/?api=1&destination=Kansai+Airport+Station&travelmode=walking" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 text-xs font-bold text-center flex items-center justify-center gap-1">
-        <i data-lucide="train" class="w-3.5 h-3.5 text-blue-600"></i> 간사이공항역
-      </a>
-      <a href="https://www.google.com/maps/dir/?api=1&destination=Tengachaya+Station+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 text-xs font-bold text-center flex items-center justify-center gap-1">
-        <i data-lucide="repeat" class="w-3.5 h-3.5 text-orange-500"></i> 덴가차야(환승)
-      </a>
-      <a href="https://www.google.com/maps/dir/?api=1&destination=%E5%A4%A9%E7%84%B6%E6%B8%A9%E6%B3%89+%E6%B5%AA%E8%8F%AF%E3%81%AE%E6%B9%AF+%E3%83%89%E3%83%BC%E3%83%9F%E3%83%BC%E3%82%A4%E3%83%B3%E5%A4%A7%E9%98%AA%E8%B0%B7%E7%94%BA&travelmode=transit" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold text-center flex items-center justify-center gap-1 shadow-sm">
-        <i data-lucide="hotel" class="w-3.5 h-3.5"></i> 도미 인(숙소)
-      </a>
-      <a href="https://www.google.com/maps/dir/?api=1&destination=Dotonbori+Glico+Sign+Osaka&travelmode=transit" target="_blank" rel="noopener noreferrer" class="flex-1 whitespace-nowrap py-2 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 text-xs font-bold text-center flex items-center justify-center gap-1">
-        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-purple-500"></i> 도톤보리
-      </a>
+    <div class="card">
+      <h2 style="font-size:17px; font-weight:900; margin-bottom:8px;">💳 트래블월렛 & 📱 해외 eSIM 핵심 요약</h2>
+      <ul class="tl-list">
+        <li><strong>수수료 0원 ATM 인출:</strong> 숙소 도보 2분 <strong>이온마트(KOHYO 우치혼마치점) 내 이온은행 ATM</strong>과 <strong>세븐일레븐 ATM</strong>에서 수수료 없이 엔화를 출금할 수 있습니다.</li>
+        <li><strong>지하철 컨택리스 탑승:</strong> 난카이 전철과 오사카 메트로 전 노선은 개찰구 터치패드에 트래블월렛 실물카드를 태그해 바로 탑승 가능합니다.</li>
+        <li><strong>eSIM 개통 3단계:</strong> ① 한국 출발 전 공항 와이파이에서 QR코드 스캔 등록 ➔ ② 오사카 착륙 후 모바일 데이터를 eSIM으로 변경 ➔ ③ <strong>데이터 로밍 켜기(ON)</strong> 활성화!</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 6: 일본어 포인팅 회화 & 면세 계산기 & 주변 1초 검색
+       ========================================================= -->
+  <section id="view-tools" class="view-section">
+    <div class="card">
+      <h2 style="font-size:17px; font-weight:900; margin-bottom:8px;">🧮 실시간 엔화 환율 & 면세(¥5,500) 계산기</h2>
+      <input type="number" id="calcInput" class="search-input" placeholder="엔화 금액 입력 (예: 4200)" oninput="runCalc()">
+      <div id="calcOutput" style="font-size:13px; font-weight:800; padding:12px; background:var(--bg-elevated); border-radius:14px; margin-top:8px;">
+        원화 환산: <strong>0원</strong> · 면세(¥5,500)까지 <strong>¥5,500</strong> 남음
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:17px; font-weight:900; margin-bottom:8px;">🚨 내 주변 급할 때 1초 구글맵 검색</h2>
+      <div class="btn-group">
+        <a href="https://www.google.com/maps/search/public+toilet+near+me" target="_blank" class="btn btn-gmap">🚽 주변 화장실</a>
+        <a href="https://www.google.com/maps/search/Seven+Bank+ATM+near+me" target="_blank" class="btn btn-ghost">🏧 세븐일레븐 ATM</a>
+        <a href="https://www.google.com/maps/search/coin+locker+near+me" target="_blank" class="btn btn-ghost">🛅 코인락커</a>
+        <a href="https://www.google.com/maps/search/drugstore+near+me" target="_blank" class="btn btn-ghost">💊 드럭스토어</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:17px; font-weight:900; margin-bottom:10px;">🗣️ 점원에게 바로 보여주는 일본어 카드</h2>
+      <div id="phraseList" class="media-list"></div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VIEW 7: 장바구니
+       ========================================================= -->
+  <section id="view-cart" class="view-section">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h2 style="font-size:17px; font-weight:900;">🛒 내가 담은 쇼핑 장바구니</h2>
+        <button class="btn btn-ghost" onclick="clearCart()">전체 비우기</button>
+      </div>
+      <div id="cartList" class="media-list"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- =========================================================
+     하단 고정 플로팅 독 & '홈업(Home Up)' 블러 폴더 오버레이
+     ========================================================= -->
+<div class="bottom-dock">
+  <button class="dock-item" onclick="openApp('outbound')">
+    <span style="font-size:17px;">🛫</span>
+    <span>출국로드맵</span>
+  </button>
+  <button class="dock-item" onclick="openApp('return')">
+    <span style="font-size:17px;">🛬</span>
+    <span>귀국로드맵</span>
+  </button>
+  <button class="homeup-trigger" onclick="openHomeUp()">
+    <span>🏠</span>
+    <span>홈업 메뉴</span>
+  </button>
+  <button class="dock-item" onclick="openCatalog('food')">
+    <span style="font-size:17px;">🍣</span>
+    <span>맛집50선</span>
+  </button>
+  <a href="https://www.google.com/maps/dir/?api=1&destination=Dormy+Inn+Osaka+Tanimachi&travelmode=transit" target="_blank" class="dock-item">
+    <span style="font-size:17px;">🏨</span>
+    <span>숙소길찾기</span>
+  </a>
+</div>
+
+<!-- 홈업(Home Up) 배경 블러 폴더 런처 -->
+<div id="homeUpModal" class="homeup-backdrop" onclick="if(event.target===this) closeHomeUp()">
+  <div class="homeup-folder">
+    <div class="folder-header">
+      <div>
+        <div class="folder-title">📂 오사카 올인원 폴더</div>
+        <div style="font-size:11px; color:var(--text-sub); font-weight:700;">원하는 앱 아이콘을 터치해 바로 여세요</div>
+      </div>
+      <button class="folder-close" onclick="closeHomeUp()">✕</button>
+    </div>
+
+    <div class="folder-grid">
+      <button class="folder-app" onclick="openCatalog('food')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#f97316,#dc2626);">🍣</div>
+        <div class="app-name">타베로그 맛집</div>
+        <div class="app-badge">위치별·사진 50선</div>
+      </button>
+      <button class="folder-app" onclick="openCatalog('aeon')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#ec4899,#be185d);">🛒</div>
+        <div class="app-name">이온마트</div>
+        <div class="app-badge">숙소옆 추천 50선</div>
+      </button>
+      <button class="folder-app" onclick="openCatalog('konbini')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#10b981,#047857);">🏪</div>
+        <div class="app-name">3대 편의점</div>
+        <div class="app-badge">세븐·로손·패미마 50</div>
+      </button>
+      <button class="folder-app" onclick="openCatalog('donki')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#eab308,#ca8a04);">🐧</div>
+        <div class="app-name">돈키호테</div>
+        <div class="app-badge">필수 쇼핑템 50선</div>
+      </button>
+      <button class="folder-app" onclick="openCatalog('spots')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">📸</div>
+        <div class="app-name">명소·쇼핑·축제</div>
+        <div class="app-badge">11월축제·쇼핑 50</div>
+      </button>
+      <button class="folder-app" onclick="openApp('kyoto')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#14b8a6,#0f766e);">⛩️</div>
+        <div class="app-name">교토 직통코스</div>
+        <div class="app-badge">덴마바시역 출발</div>
+      </button>
+      <button class="folder-app" onclick="openApp('prep')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);">🎒</div>
+        <div class="app-name">숙소·준비물</div>
+        <div class="app-badge">트래블월렛·eSIM</div>
+      </button>
+      <button class="folder-app" onclick="openApp('tools')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#64748b,#334155);">🗣️</div>
+        <div class="app-name">일본어·면세</div>
+        <div class="app-badge">환율·주변검색</div>
+      </button>
+      <button class="folder-app" onclick="openApp('cart')">
+        <div class="app-squircle" style="background:linear-gradient(135deg,#6366f1,#4338ca);">🛍️</div>
+        <div class="app-name">장바구니</div>
+        <div class="app-badge">면세 자동계산</div>
+      </button>
     </div>
   </div>
+</div>
 
-  <script>
-    // Initialize Lucide icons
-    lucide.createIcons();
+<script>
+// =========================================================
+// 1. 음식·상품·장소별 고화질 썸네일 사진 매핑 풀 (Unsplash 큐레이션)
+// =========================================================
+const IMG_POOL = {
+  sushi: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=300&q=80",
+  ramen: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=300&q=80",
+  udon: "https://images.unsplash.com/photo-1618841557871-b4664fbf0cb3?auto=format&fit=crop&w=300&q=80",
+  meat: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=300&q=80",
+  katsu: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=300&q=80",
+  okonomi: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=300&q=80",
+  cafe: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=300&q=80",
+  dessert: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=300&q=80",
+  bento: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=80",
+  fruit: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?auto=format&fit=crop&w=300&q=80",
+  snack: "https://images.unsplash.com/photo-1581798459219-318e76aecc7b?auto=format&fit=crop&w=300&q=80",
+  beer: "https://images.unsplash.com/photo-1535958636474-b021ee887b13?auto=format&fit=crop&w=300&q=80",
+  sando: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=300&q=80",
+  chicken: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=300&q=80",
+  cosmetic: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=300&q=80",
+  med: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=300&q=80",
+  castle: "https://images.unsplash.com/photo-1590253230532-a67f6bc61c9e?auto=format&fit=crop&w=300&q=80",
+  night: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=300&q=80",
+  shop: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=300&q=80"
+};
 
-    // 1. D-Day Calculation (Target: 2026-11-08 12:40 KST)
-    function updateDDay() {
-      const targetDate = new Date('2026-11-08T00:00:00+09:00');
-      const now = new Date();
-      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const diffTime = targetDate - todayStart;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      const badge = document.getElementById('d-day-badge');
-      if (diffDays > 0) {
-        badge.textContent = `D-${diffDays}`;
-      } else if (diffDays === 0) {
-        badge.textContent = `D-DAY 출발일!`;
-      } else {
-        badge.textContent = `여행 D+${Math.abs(diffDays)}`;
-      }
-    }
-    updateDDay();
+function pickImage(catKey, sub, name) {
+  const n = (name + sub).toLowerCase();
+  if (catKey === 'food') {
+    if (n.includes('스시') || n.includes('회전') || n.includes('카이센')) return IMG_POOL.sushi;
+    if (n.includes('우동')) return IMG_POOL.udon;
+    if (n.includes('라멘') || n.includes('면') || n.includes('소바')) return IMG_POOL.ramen;
+    if (n.includes('카츠') || n.includes('양식') || n.includes('오므')) return IMG_POOL.katsu;
+    if (n.includes('고기') || n.includes('야키니쿠') || n.includes('규카츠')) return IMG_POOL.meat;
+    if (n.includes('카페') || n.includes('커피')) return IMG_POOL.cafe;
+    if (n.includes('디저트') || n.includes('케이크') || n.includes('도지마')) return IMG_POOL.dessert;
+    return IMG_POOL.okonomi;
+  }
+  if (catKey === 'aeon') {
+    if (sub.includes('초밥') || n.includes('초밥')) return IMG_POOL.sushi;
+    if (sub.includes('도시락')) return IMG_POOL.bento;
+    if (sub.includes('과일') || sub.includes('유제품')) return IMG_POOL.fruit;
+    if (sub.includes('주류') || sub.includes('음료')) return IMG_POOL.beer;
+    if (sub.includes('식재료')) return IMG_POOL.ramen;
+    return IMG_POOL.snack;
+  }
+  if (catKey === 'konbini') {
+    if (n.includes('샌드') || n.includes('빵') || n.includes('번')) return IMG_POOL.sando;
+    if (n.includes('치키') || n.includes('치킨') || n.includes('가라아게') || n.includes('꼬치')) return IMG_POOL.chicken;
+    if (n.includes('라멘') || n.includes('탄탄') || n.includes('우동')) return IMG_POOL.ramen;
+    return IMG_POOL.dessert;
+  }
+  if (catKey === 'donki') {
+    if (n.includes('파스') || n.includes('약') || n.includes('안약') || n.includes('카베진') || n.includes('이브')) return IMG_POOL.med;
+    if (n.includes('스낵') || n.includes('젤리') || n.includes('초코') || n.includes('위스키') || n.includes('고구마')) return IMG_POOL.snack;
+    return IMG_POOL.cosmetic;
+  }
+  if (catKey === 'spots') {
+    if (sub.includes('쇼핑')) return IMG_POOL.shop;
+    if (sub.includes('축제') || n.includes('야경') || n.includes('도톤보리')) return IMG_POOL.night;
+    return IMG_POOL.castle;
+  }
+  return IMG_POOL.castle;
+}
 
-    // 2. Dark / Light Theme Toggle
-    function initTheme() {
-      const savedTheme = localStorage.getItem('osaka_theme_2026');
-      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      }
-    }
-    function toggleTheme() {
-      document.documentElement.classList.toggle('dark');
-      const isDark = document.documentElement.classList.contains('dark');
-      localStorage.setItem('osaka_theme_2026', isDark ? 'dark' : 'light');
-    }
-    initTheme();
+// =========================================================
+// 2. 5대 카테고리 x 50개 = 250개 데이터베이스 (위치 정보 포함)
+// 포맷: 분류|지역(위치)|이름|일본어/평점|가격/영업시간|핵심 설명 및 베스트 메뉴
+// =========================================================
+const RAW_DB = {
+  food: [
+    "스시·해산물|신사이바시|스시 아카스 신사이바시|★3.58 · 예약가능|18:00~23:00|붉은 식초(아카샤리) 밥을 쓰는 정통 에도마에 숙성 스시 코스",
+    "스시·해산물|신사이바시|우오신 스시 신사이바시점|★3.48 · 현장대기|11:30~23:00|밥이 안 보일 정도로 거대하고 두툼한 횟감을 올리는 원조 부치치기 스시",
+    "스시·해산물|신사이바시|스시 요사쿠라 신사이바시|★3.52 · 예약가능|18:00~22:00|첫날 저녁으로 방문하기 좋은 정갈한 신사이바시 스시 전문점",
+    "스시·해산물|신사이바시|스시 엔 (Sushi En) 신사이바시|★3.55 · 예약권장|18:00~23:00|조용하고 프라이빗한 카운터에서 즐기는 하이엔드 스시",
+    "스시·해산물|신사이바시|스시로 신사이바시점|★3.15 · 앱예약가능|10:30~23:00|한국어 터치패드로 부담 없이 즐기는 가성비 최고 대형 회전초밥",
+    "스시·해산물|우메다·기타|하루코마 본점 (텐마)|★3.62 · 웨이팅필수|11:00~21:30|현지인들이 줄 서서 먹는 가성비 폭발 대왕 네타 로컬 스시집",
+    "스시·해산물|난바·도톤보리|쿠라스시 글로벌 플래그십 도톤보리|★3.20 · 앱예약가능|11:00~23:00|접시 5개마다 캡슐 뽑기 게임이 열리는 즐거운 회전초밥",
+    "스시·해산물|난바·도톤보리|다이키수산 회전초밥 도톤보리점|★3.35 · 현장대기|11:00~22:30|당일 해체한 생참치 초밥이 유명한 오사카 대표 회전초밥",
+    "스시·해산물|난바·도톤보리|카이센야 타이치 (구로몬 시장)|★3.45 · 예약불가|09:00~17:00|구로몬 시장에서 아침으로 성게알(우니)·참치 카이센동을 즐기기 좋은 곳",
+    "스시·해산물|신사이바시|사카에 스시 (신사이바시)|★3.50 · 현장대기|17:00~01:00|새벽까지 영업해 밤늦게 맥주와 초밥을 곁들이기 좋은 로컬 맛집",
+    "우동·라멘|숙소주변(다니마치)|토쿠마사 우동 우치혼마치점|★3.65 · 숙소도보4분|11:00~21:00|도미인 다니마치 바로 근처! 진한 카레우동과 계란밥 세트 필수",
+    "우동·라멘|숙소주변(다니마치)|타니마치 후루사토 우동|★3.68 · 숙소도보7분|11:30~14:30|숙소 근처 현지인들이 극찬하는 쫄깃한 수타 사누키 우동 명점",
+    "우동·라멘|우메다·기타|인류모두면류 (진루이 미나 멘루이)|★3.78 · 백명점1위|10:00~03:00|오사카 라멘 부동의 1위! 조개 육수 '마이크로/매크로' 라멘과 두툼한 차슈",
+    "우동·라멘|난바·도톤보리|카마타케 우동 (난바/신사이바시)|★3.74 · 백명점|11:00~16:00|미슐랭 빕구르망 출신! 어묵·반숙계란 튀김이 올라간 치쿠타마텐 붓카케 우동",
+    "우동·라멘|우메다·기타|무기토 멘스케 (나카츠/우메다)|★3.86 · 백명점|11:00~15:30|미슐랭 등재! 토종닭과 오리 육수로 뽑아낸 예술적인 중화소바",
+    "우동·라멘|우메다·기타|모에요 멘스케 (후쿠시마)|★3.84 · 백명점|11:00~15:00|기슈 오리 고기와 깊은 풍미의 간장·조개 라멘 명점",
+    "우동·라멘|난바·도톤보리|카도야 식당 본점|★3.82 · 백명점|10:30~17:00|오사카 3대 라멘으로 꼽히는 깔끔한 츠케소바와 중화소바",
+    "우동·라멘|난바·도톤보리|하나마루켄 난바 호젠지점|★3.54 · 24시간영업|00:00~24:00|푹 삶은 돼지 연골 갈비가 통째로 올라간 '행복 라멘(시아와세 라멘)'",
+    "우동·라멘|난바·도톤보리|킨류라멘 (금룡라멘) 도톤보리점|★3.32 · 24시간영업|00:00~24:00|무료 부추·김치·마늘을 듬뿍 넣어 다진 고기 육수로 해장하는 오사카 명물",
+    "우동·라멘|난바·도톤보리|츠루동탄 소에몬초점|★3.49 · 예약가능|11:00~03:00|세숫대야만 한 그릇에 나오는 명란 크림 우동과 유부우동",
+    "고기·양식|숙소주변(다니마치)|뉴 베이브 (New Babe) 사카이스지혼마치|★3.64 · 숙소도보5분|11:00~20:30|도미인 다니마치 바로 근처! 저온 조리해 육즙이 살아있는 명품 돈카츠",
+    "고기·양식|숙소주변(다니마치)|요쇼쿠 코니시 (양식당)|★3.58 · 숙소도보6분|11:30~21:00|숙소 인근 직장인들이 사랑하는 수제 함박스테이크와 비프카츠",
+    "고기·양식|신사이바시|야키니쿠 리키마루 신사이바시점|★3.48 · 예약필수|16:00~24:00|숯불에 구워 먹는 프리미엄 와규·우설 무한리필(타베호다이) 최고 인기점",
+    "고기·양식|신세카이·기타|만제 (Manger) 돈카츠 (야오시)|★3.95 · 전국1위급|11:00~20:30|아침 일찍 현장 대장 작성이 필수인 일본 최고봉 도쿄X 특상 로스가츠",
+    "고기·양식|우메다·기타|에페 (Epais) 키타신치|★3.76 · 백명점/예약|11:00~20:00|미슐랭 빕구르망 선정! 트러플 소금으로 찍어 먹는 부드러운 히레카츠",
+    "고기·양식|우메다·기타|그릴 론 (Grill Ron) 우메다 한큐삼번가|★3.68 · 백명점|11:00~21:30|육즙 가득 함박스테이크, 새우튀김, 크림고로케가 한 접시에 나오는 C세트",
+    "고기·양식|신사이바시|중헌 (Chuken) 신사이바시|★3.71 · 백명점|11:00~20:30|반숙 계란후라이가 올라간 오므라이스와 비프 스튜의 노포 양식당",
+    "고기·양식|신사이바시|호쿠세이 (Hokkyokusei) 신사이바시 본점|★3.61 · 전통다다미|11:30~21:30|1922년 세계 최초로 오므라이스를 개발한 정원 있는 전통 목조 본점",
+    "고기·양식|난바·도톤보리|야키니쿠 호르몬 사카가미 우라난바|★3.59 · 예약권장|17:00~24:00|직원이 철판 위에서 구워주는 특제 대창·곱창과 파 듬뿍 우설",
+    "고기·양식|난바·도톤보리|규카츠 모토무라 난바점|★3.46 · 현장대기|11:00~22:00|미니 화로 돌판에 소고기를 취향껏 구워 와사비에 먹는 규카츠",
+    "오사카소울푸드|난바·도톤보리|미즈노 (Mizuno) 오코노미야키|★3.71 · 백명점|11:00~22:00|밀가루 대신 100% 참마 반죽으로 구워내는 도톤보리 1위 오코노미야키",
+    "오사카소울푸드|난바·도톤보리|후쿠타로 본점 (난바)|★3.73 · 백명점|17:00~23:00|파가 듬뿍 들어간 바삭하고 고소한 '스지 네기야키(소힘줄 파전)' 명점",
+    "오사카소울푸드|난바·도톤보리|치보 (Chibo) 도톤보리 빌딩점|★3.49 · 예약가능|11:00~23:00|화려한 마요네즈 아트를 눈앞에서 보여주는 쾌적한 대형 오코노미야키",
+    "오사카소울푸드|난바·도톤보리|아지노야 본점 (도톤보리)|★3.65 · 백명점|11:00~22:00|미슐랭 가이드에 소개된 양배추 식감이 살아있는 정통 오코노미야키",
+    "오사카소울푸드|난바·도톤보리|와나카 타코야키 센니치마에 본점|★3.68 · 백명점|10:30~21:00|4가지 맛(소금·간장·소스·명란마요)을 한 번에 맛보는 '오오이리' 강추",
+    "오사카소울푸드|난바·도톤보리|쿠쿠루 (Kukuru) 도톤보리 본점|★3.42 · 테이크아웃|10:00~21:00|큼직한 문어가 들어간 촉촉하고 부드러운 크리미 타코야키",
+    "오사카소울푸드|우메다·기타|하나다코 (우메다 신우메다식도가)|★3.64 · 인기1위|10:00~22:00|타코야키 위에 산더미처럼 파와 마요네즈를 올려주는 '네기마요' 명물",
+    "오사카소울푸드|신세카이·기타|다루마 쿠시카츠 신세카이 총본점|★3.48 · 회전율빠름|11:00~22:30|바삭한 고기·새우·치즈 튀김 꼬치를 달콤한 간장 소스에 찍어 먹는 명물",
+    "오사카소울푸드|신세카이·기타|야에카츠 (신세카이)|★3.69 · 백명점|10:30~20:30|현지인들이 다루마보다 더 사랑하는 가볍고 바삭한 쿠시카츠 & 도테야키",
+    "오사카소울푸드|난바·도톤보리|551 호라이 난바 본점|★3.62 · 포장/식사|10:00~21:30|육즙 가득한 부타만(돼지고기 만두)과 슈마이! 본점 2층 식사 가능",
+    "감성카페·디저트|숙소주변(다니마치)|모토 커피 (MOTO COFFEE) 키타하마|★3.66 · 숙소도보12분|11:00~18:00|도미인 숙소에서 걸어가는 강변 테라스 카페! 수제 티라미수 & 라떼",
+    "감성카페·디저트|숙소주변(다니마치)|브루클린 로스팅 컴퍼니 키타하마|★3.64 · 숙소도보12분|08:00~20:00|오전 8시 오픈해 숙소 아침 산책 코스로 최고인 강변 스페셜티 카페",
+    "감성카페·디저트|숙소주변(다니마치)|노스쇼어 (NORTHSHORE) 키타하마|★3.55 · 숙소도보12분|07:00~18:00|신선한 과일 팬케이크와 푸짐한 샌드위치를 즐기는 강변 브런치",
+    "감성카페·디저트|숙소주변(다니마치)|엘머스 그린 카페 (키타하마)|★3.63 · 백명점|10:00~19:00|숙소 인근 유럽풍 건축물에서 즐기는 계절 타르트와 핸드드립 커피",
+    "감성카페·디저트|우메다·기타|그르니에 (Grenier) 우메다 한큐앞|★3.68 · 테이크아웃|10:00~20:00|바삭한 파이 위에 커스터드 크림과 딸기가 올라간 브륄레 밀푀유",
+    "감성카페·디저트|난바·도톤보리|리쿠로 오지상 난바 본점|★3.59 · 갓구운치즈케이크|09:00~20:00|종이 울리며 갓 구워져 나오는 폭신폭신 수플레 치즈케이크",
+    "감성카페·디저트|신사이바시|하브스 (HARBS) 다이마루 신사이바시점|★3.58 · 디저트카페|10:00~20:00|제철 과일 6겹이 크레이프 사이에 가득 찬 명품 '밀크레이프' 케이크",
+    "감성카페·디저트|우메다·기타|타이야키 카메야 (나카자키초)|★3.52 · 레트로골목|11:00~19:00|나카자키초 골목 산책 중 사 먹는 얇고 바삭한 수제 단팥 붕어빵",
+    "감성카페·디저트|우메다·기타|아마란스 (나카자키초 고택 카페)|★3.54 · 빈티지감성|12:00~19:00|100년 된 목조 가옥을 개조한 레트로 카페의 수제 푸딩과 크림소다",
+    "감성카페·디저트|우메다·기타|몽슈슈 도지마롤 본점 (도지마)|★3.67 · 백명점|10:00~19:00|촉촉한 시트 속에 순수 우유 생크림이 꽉 찬 원조 도지마롤"
+  ],
+  aeon: [
+    "도시락·초밥|숙소옆마트|야간 반값 연어·참치 모둠초밥|半額 にぎり寿司|490|20시 이후 50% 반액(半額) 스티커 필수 공략 1순위",
+    "도시락·초밥|숙소옆마트|와규 로스트비프 덮밥|ローストビーフ丼|540|부드러운 소고기와 특제 양파 소스가 어우러진 인기 도시락",
+    "도시락·초밥|숙소옆마트|가츠동 (수제 돈카츠 덮밥)|ロースかつ重|398|두툼한 돈카츠에 달짝지근한 계란물이 촉촉하게 밴 가성비 한끼",
+    "도시락·초밥|숙소옆마트|야키토리 숯불 닭꼬치 모둠|焼き鳥盛り合わせ|450|숙소에서 캔맥주 안주로 먹기 최고의 짭조름한 꼬치 세트",
+    "도시락·초밥|숙소옆마트|가라아게 (일본식 닭튀김)|若鶏の唐揚げ|320|간장 마늘 밑간이 잘 배어 식어도 바삭하고 맛있는 마트 총채",
+    "도시락·초밥|숙소옆마트|야키소바 철판 볶음면|ソース焼きそば|298|가쓰오부시와 아오노리가 듬뿍 올라간 정통 오사카식 야키소바",
+    "도시락·초밥|숙소옆마트|명란 마요 주먹밥 세트|明太マヨおにぎり|240|아침 대용으로 먹기 좋은 감칠맛 폭발 주먹밥",
+    "도시락·초밥|숙소옆마트|장어구이 덮밥 (우나기동)|うな重|880|야간 마감할인 시 반값으로 득템할 수 있는 보양식 도시락",
+    "도시락·초밥|숙소옆마트|새우 튀김 (에비 후라이)|海老フライ|380|타르타르 소스가 동봉된 통통한 새우튀김 팩",
+    "도시락·초밥|숙소옆마트|타코야키 마트 팩 (8구)|たこ焼き|350|가성비 좋게 야식으로 곁들이기 좋은 오사카 소울푸드",
+    "과일·유제품|숙소옆마트|11월 제철 샤인머스캣 팩|シャインマスカット|980|11월 가을 시즌 당도가 최고조에 달하는 알맹이 굵은 포도",
+    "과일·유제품|숙소옆마트|일본산 컷팅 사과·배 팩|カットりんご・梨|298|깎을 필요 없이 포크로 바로 집어 먹는 신선 과일 팩",
+    "과일·유제품|숙소옆마트|오하요 브륄레 아이스크림|BRULEE ブリュレ|368|설탕 코팅을 스푼으로 깨 먹는 마트 1순위 프리미엄 아이스크림",
+    "과일·유제품|숙소옆마트|글리코 푸칭푸딩 (대용량 3개입)|プッチンプリン|238|편의점 낱개보다 훨씬 저렴한 탱글탱글 국민 커스터드 푸딩",
+    "과일·유제품|숙소옆마트|메이지 불가리아 요구르트|明治ブルガリア|198|여행 중 장 건강을 챙겨주는 진하고 고소한 플레인 요거트",
+    "과일·유제품|숙소옆마트|모리나가 알로에 요거트|アロエヨーグルト|168|탱글한 알로에 과육이 씹히는 상큼한 디저트 요거트",
+    "과일·유제품|숙소옆마트|키리 크림치즈 포션 (6조각)|Kiri クリームチーズ|340|와인이나 하이볼 안주로 최고인 진한 프랑스산 크림치즈",
+    "과일·유제품|숙소옆마트|홋카이도 특선 우유 (1L)|北海道牛乳|258|고소하고 진한 풍미로 빵이나 시리얼과 찰떡궁합",
+    "과일·유제품|숙소옆마트|크래프트 사케치즈 (찢어먹는 치즈)|さけるチーズ|218|결대로 찢어 먹는 재미와 쫄깃한 식감의 맥주 단짝 안주",
+    "과일·유제품|숙소옆마트|피노(Pino) 초코 아이스크림 볼|ピノ チョコアソート|420|한 입 크기 바닐라 아이스크림에 초콜릿이 코팅된 멀티팩",
+    "과자·베이커리|숙소옆마트|탑밸류 버터 스틱 빵 (6개입)|バタースティック|158|이온 PB상품! 결대로 찢어지는 고소한 버터 풍미의 간식 빵",
+    "과자·베이커리|숙소옆마트|야마자키 런치팩 (땅콩·계란·돈카츠)|ランチパック|148|테두리 없는 촉촉한 식빵 속에 다양한 필링이 가득한 국민 빵",
+    "과자·베이커리|숙소옆마트|기무라야 단팥빵 & 소보로빵|木村屋總本店 あんぱん|160|전통 주종 발효 방식으로 만든 깊고 부드러운 단팥빵",
+    "과자·베이커리|숙소옆마트|가루미 (Calbee) 자가리코 대용량팩|じゃがりこ サラダ|298|오독오독 씹히는 중독성 강한 감자 스틱 마트 번들",
+    "과자·베이커리|숙소옆마트|부르봉 알포트 미니 초콜릿 대용량|アルフォート ファミリーサイズ|328|통밀 다이제 비스킷과 밀크초콜릿의 완벽한 조화 (기념품 1순위)",
+    "과자·베이커리|숙소옆마트|부르봉 루만도 크레이프 과자|ルマンド|178|겹겹이 쌓인 바삭한 코코아 크레이프 쿠키 (돈키보다 마트가 저렴)",
+    "과자·베이커리|숙소옆마트|킷캣 미니 오토나노 아마사 (말차/다크)|キットカット 抹茶|348|이온마트가 드럭스토어나 공항보다 상시 저렴한 필수 쇼핑템",
+    "과자·베이커리|숙소옆마트|코로로 젤리 (청포도/복숭아/거봉)|コロロ グミ|138|실제 과일 과육을 씹는 듯한 식감의 젤리 (마트 최저가)",
+    "과자·베이커리|숙소옆마트|메이지 마카다미아 초콜릿|マカダミアチョコ|218|통 마카다미아 너트가 들어간 고급스러운 초콜릿",
+    "과자·베이커리|숙소옆마트|해피턴 (Happy Turn) 마법의 가루 쌀과자|ハッピーターン|188|단짠단짠 시즈닝 가루가 중독적인 일본 국민 쌀과자",
+    "주류·음료|숙소옆마트|산토리 생맥주 트리플 생(生)|サントリー生ビール|210|청량한 목넘김과 깊은 몰트 향의 최신 인기 캔맥주",
+    "주류·음료|숙소옆마트|아사히 슈퍼드라이 생조끼캔|アサヒ 生ジョッキ缶|225|캔 뚜껑이 통째로 열리며 생맥주 거품이 솟아오르는 맥주",
+    "주류·음료|숙소옆마트|호로요이 11월 가을 한정 맛|ほろよい 限定|138|도수 3%로 알쓰도 맛있게 즐기는 복숭아·서양배·단감 츄하이",
+    "주류·음료|숙소옆마트|산토리 가쿠 하이볼 캔 (진한맛)|角ハイボール 濃いめ|215|이자카야에서 마시던 위스키 하이볼 맛을 그대로 구현",
+    "주류·음료|숙소옆마트|이온 탑밸류 레몬 사와 (가성비 1위)|トップバリュ レモンサワー|108|1,000원대 가격에 깔끔한 상큼함을 자랑하는 PB 츄하이",
+    "주류·음료|숙소옆마트|이로하스 복숭아·샤인머스캣 물|い・ろ・は・す もも|118|편의점보다 30~40엔 저렴하게 쟁여두는 과일향 생수",
+    "주류·음료|숙소옆마트|오이오차 진한 녹차 (카테킨 녹차)|お〜いお茶 濃い茶|108|기름진 음식 먹은 뒤 입가심으로 최고인 무설탕 진한 녹차",
+    "주류·음료|숙소옆마트|보스(BOSS) 라떼 베이스 무당/가당|ボス カフェベース|278|우유만 부으면 바로 고급 카페라떼가 완성되는 농축액",
+    "주류·음료|숙소옆마트|오로나민C / 리포비탄D 박스|オロナミンC|498|하루 2만 보 걷는 오사카 여행 피로회복제 멀티팩",
+    "주류·음료|숙소옆마트|아야타카 카페 말차 라떼|綾鷹カフェ 抹茶ラテ|148|교토 우지 말차를 사용해 쌉싸름하고 부드러운 패트 음료",
+    "식재료·기념품|숙소옆마트|S&B 골든카레 / 바몬드카레 고형|ゴールデンカレー|218|한국보다 절반 가격에 사 오는 일본 정통 고형 카레 블록",
+    "식재료·기념품|숙소옆마트|이치란 라멘 밀키트 (5인분 박스)|一蘭 ラーメン 博多細麺|2000|집에서 끓여 먹는 이치란 생면 세트",
+    "식재료·기념품|숙소옆마트|닛신 돈베이 유부우동 (서일본 한정)|どん兵衛 きつねうどん(西)|198|오사카(서일본) 한정 다시마·가쓰오 육수의 큼직한 유부우동",
+    "식재료·기념품|숙소옆마트|닛신 UFO 야키소바 컵라면|日清焼そば U.F.O.|198|진한 소스와 마요네즈 토핑이 일품인 일본 1위 볶음 컵라면",
+    "식재료·기념품|숙소옆마트|나가타니엔 오차즈케 김·연어 스프|永谷園 お茶漬け海苔|228|따뜻한 밥에 물만 부어 후루룩 먹는 아침 해장 필수템",
+    "식재료·기념품|숙소옆마트|마루코메 즉석 미소장국 (유부/두부)|マルコメ 即席みそ汁|198|12개입 대용량으로 한국 가져와서 먹기 좋은 된장국 블럭",
+    "식재료·기념품|숙소옆마트|큐피(Kewpie) 명란 마요네즈|キユーピー 明太マヨ|278|감자샐러드나 토스트에 뿌려 먹는 고소한 일본 마요네즈",
+    "식재료·기념품|숙소옆마트|하우스 생와사비 튜브 (혼와사비)|本生 本わさび|178|코끝이 찡하고 향긋한 진짜 생와사비 튜브",
+    "식재료·기념품|숙소옆마트|타마고 카케 고항 간장 (계란밥 전용)|卵かけごはん専用醤油|298|날계란과 버터만 비벼도 천상의 맛을 내는 달짝지근한 간장",
+    "식재료·기념품|숙소옆마트|오타후쿠 오코노미야키 & 타코야키 소스|オタフク お好みソース|258|오사카 본고장의 달콤짭짤한 과일 야채 풍미 소스"
+  ],
+  konbini: [
+    "세븐일레븐|전지역|세븐 스무디 (베리베리/망고/그린)|セブンカフェ スムージー|300|냉동 과일 컵을 전용 기계에 넣어 1분 만에 갈아 마시는 1티어 음료",
+    "세븐일레븐|전지역|세븐 프리미엄 골든 타마고 샌드위치|たまごサンド|280|진하고 고소한 계란 샐러드가 식빵 끝까지 꽉 찬 부동의 1위",
+    "세븐일레븐|전지역|세븐 저지우유 푸딩 (밀크 푸딩)|ジャージー牛乳プリン|210|입안에서 사르르 녹는 극강의 우유 풍미 디저트",
+    "세븐일레븐|전지역|나나치키 (세븐일레븐 순살 치킨)|ななチキ|240|후추와 스파이스 향이 매력적인 겉바속촉 계산대 핫푸드",
+    "세븐일레븐|전지역|메이플 버터 팬케이크 (2개입)|メープル＆マーガリン|150|전자레인지 15초 데우면 버터가 녹아내리는 단짠 팬케이크",
+    "세븐일레븐|전지역|세븐 랑그드샤 화이트 초코 쿠키|ホワイトチョコ ラングドシャ|218|홋카이도 유명 면세점 과자 '시로이 코이비토' 완벽 대체품",
+    "세븐일레븐|전지역|세븐 버터 치킨 카레 & 난|バターチキンカレー|450|전문점 못지않은 퀄리티의 세븐 골드 냉장 카레",
+    "세븐일레븐|전지역|세븐 초코 바움쿠헨|チョコバウムクーヘン|210|촉촉한 바움쿠헨 위에 초콜릿 코팅이 듬뿍 발린 커피 단짝",
+    "세븐일레븐|전지역|세븐 직화구이 연어 오니기리|直火焼しゃけ おにぎり|185|진짜 연어 살코기가 큼직하게 들어간 고급 주먹밥",
+    "세븐일레븐|전지역|모코모코 슈크림 (계절 한정 맛)|もこ シュークリーム|190|쫄깃한 슈 피 안에 크림이 터질 듯 들어있는 세븐 시그니처",
+    "세븐일레븐|전지역|세븐 돈코츠 라멘 (잇푸도 콜라보)|一風堂 豚骨ラーメン|320|유명 라멘집 잇푸도의 진한 사골 국물을 그대로 재현한 컵라면",
+    "세븐일레븐|전지역|세븐 카츠샌드 (두툼한 돈카츠 샌드)|ロースカツサンド|420|특제 과일 소스가 촉촉하게 밴 든든한 돈카츠 샌드위치",
+    "세븐일레븐|전지역|세븐 슈가 버터 트리 과자|シュガーバターの木|280|바삭한 시리얼 파이에 화이트 초코가 샌드된 선물용 인기 과자",
+    "세븐일레븐|전지역|세븐 냉동 탄탄멘|担々麺|350|땅콩 소스와 고추기름의 조화가 예술인 전자레인지 조리식",
+    "세븐일레븐|전지역|세븐 어묵 (오뎅) 무·곤약·계란|セブンのおでん|360|11월 쌀쌀한 밤 숙소 들어가기 전 국물과 함께 사 가는 겨울 별미",
+    "세븐일레븐|전지역|세븐 아몬드 볼 쿠키|アーモンドボール|198|슈가파우더가 솔솔 뿌려진 고소한 한 입 쿠키",
+    "세븐일레븐|전지역|세븐 말차 초콜릿 바 아이스크림|抹茶チョコレートバー|238|진한 우지 말차 아이스크림과 화이트 초코 크런치의 조화",
+    "로손(LAWSON)|전지역|모찌롤 (우치카페 밀크 크림 롤케이크)|もち食感ロール|350|로손 디저트 부동의 1위! 쫀득한 시트와 생크림의 환상 조합",
+    "로손(LAWSON)|전지역|가라아게군 (레드/레귤러/치즈)|からあげクン レッド|259|계산대 앞에서 무조건 주문해야 하는 한 입 치킨 너겟 (매콤한 레드 추천)",
+    "로손(LAWSON)|전지역|로손 더블 치즈케이크 (바스크풍)|バスチー|285|꾸덕꾸덕하고 진한 크림치즈 풍미와 캬라멜라이징 표면",
+    "로손(LAWSON)|전지역|로손 생(生) 가토쇼콜라|生ガトーショコラ|255|밀가루를 줄여 생초콜릿처럼 진하고 촉촉한 초코 디저트",
+    "로손(LAWSON)|전지역|로손 도라모찌 (생크림 단팥 도라야키)|どらもっち|200|쫄깃한 팬케이크 피 속에 팥앙금과 우유 생크림이 가득",
+    "로손(LAWSON)|전지역|로손 구운 푸딩 타르트|焼きプリンタルト|230|바삭한 타르트지 위에 달콤 쌉싸름한 커스터드 푸딩",
+    "로손(LAWSON)|전지역|로손 고디바(GODIVA) 콜라보 쇼콜라|Uchi Café×GODIVA|390|명품 초콜릿 고디바와 협업한 시즌 한정 프리미엄 케이크",
+    "로손(LAWSON)|전지역|로손 햄 에그 치즈 브리또|ハム＆チーズ ブリトー|280|전자레인지에 돌리면 모짜렐라 치즈가 쭉 늘어나는 아침 간식",
+    "로손(LAWSON)|전지역|로손 록포르 치즈 케이크 바|濃厚チーズケーキ|240|와인 안주로도 손색없는 진한 치즈 스틱",
+    "로손(LAWSON)|전지역|로손 큰 주먹밥 (참치마요 & 명란)|大きなおにぎり|210|성인 남성도 1개면 든든한 대용량 오니기리",
+    "로손(LAWSON)|전지역|로손 호르몬 나베 (곱창전골) 밀키트|ホルモン鍋|480|알루미늄 용기째 데워 먹는 얼큰 짭조름한 소주·맥주 안주",
+    "로손(LAWSON)|전지역|로손 카페라떼 M사이즈 (마치카페)|マチカフェ カフェラテ|210|원두와 우유 스팀 퀄리티가 일본 편의점 중 최고 수준",
+    "로손(LAWSON)|전지역|로손 말차 모찌롤|お抹茶もち食感ロール|380|교토산 말차 크림이 들어간 쌉싸름하고 쫀득한 롤케이크",
+    "로손(LAWSON)|전지역|로손 크림 듬뿍 멜론빵|絶品メロンパン|160|겉은 바삭한 쿠키 크러스트, 속은 부드러운 생크림",
+    "로손(LAWSON)|전지역|로손 명란 치즈 감자구이|明太ポテトチーズ焼き|360|맥주 안주로 완벽한 짭조름한 그라탕",
+    "로손(LAWSON)|전지역|로손 자이언트 포키 한정판|ポッキー ローソン限定|220|가볍게 집어 먹기 좋은 스낵",
+    "패밀리마트|전지역|패미치키 (패밀리마트 뼈없는 치킨)|ファミチキ|230|육즙이 팡 터지는 닭다리살 패티! 패밀리마트 방문 이유 1순위",
+    "패밀리마트|전지역|패미치키 전용 버거 번|ファミチキバンズ|98|타르타르 소스가 발린 빵 사이에 패미치키를 끼우면 즉석 치킨버거 완성!",
+    "패밀리마트|전지역|수플레 푸딩 (치즈 수플레 + 커스터드)|スフレ・プリン|320|폭신한 치즈 수플레 케이크 아래에 부드러운 푸딩이 깔린 2단 디저트",
+    "패밀리마트|전지역|크림 타마고 샌드위치|たまごサンド (ファミマ)|275|부드러운 스크램블과 삶은 계란 마요가 동시에 들어간 샌드위치",
+    "패밀리마트|전지역|쫀득 생크림 타이야키 (붕어빵)|クリームたい焼き|185|차갑게 먹는 쫄깃한 타피오카 전분 반죽의 커스터드 붕어빵",
+    "패밀리마트|전지역|패밀리마트 시그니처 양말|ラインソックス|429|초록·파랑 시그니처 스트라이프와 도톰한 타월 바닥으로 여행객 대인기",
+    "패밀리마트|전지역|패밀리마트 에끌레어 (초코 커스터드)|濃厚カスタードエクレア|198|진한 초콜릿 코팅과 바닐라빈이 박힌 커스터드 크림",
+    "패밀리마트|전지역|패밀리마트 멜론빵|ファミマ・ザ・メロンパン|158|프랑스산 발효 버터를 사용해 향이 진한 베스트셀러 빵",
+    "패밀리마트|전지역|패밀리마트 생(生) 카눌레|生カヌレケーキ|210|겉은 쫀득하고 속은 촉촉한 럼주 향 디저트",
+    "패밀리마트|전지역|패밀리마트 매콤 크리스피 치킨|クリスピーチキン|198|패미치키보다 덜 느끼하고 매콤 바삭한 닭가슴살 치킨",
+    "패밀리마트|전지역|패밀리마트 야키토리 (소금/타레 닭꼬치)|炭火焼きとり|180|계산대 핫푸드 코너에서 골라 먹는 큼직한 숯불 닭꼬치",
+    "패밀리마트|전지역|패밀리마트 말차 프라페|宇治抹茶フラッペ|350|커피 머신의 따뜻한 우유를 부어 주물러 마시는 슬러시 음료",
+    "패밀리마트|전지역|패밀리마트 바움쿠헨|しっとりバウムクーヘン|180|계란 풍미가 진하고 목 막힘 없이 촉촉한 정통 바움쿠헨",
+    "패밀리마트|전지역|패밀리마트 명란 파스타 샐러드|明太子パスタサラダ|330|야식으로 부담 없이 먹기 좋은 냉파스타 샐러드",
+    "패밀리마트|전지역|패밀리마트 타르타르 피쉬 버거|フィッシュバーガー|260|바삭한 생선가스와 타르타르 소스의 조화",
+    "패밀리마트|전지역|패밀리마트 구운 연어 하라스 오니기리|鮭はらす おにぎり|215|기름진 연어 뱃살이 통째로 들어간 프리미엄 삼각김밥",
+    "패밀리마트|전지역|찰떡 아이스 (유키미 다이후쿠)|雪見だいふく|170|쫀득한 찹쌀떡 속에 바닐라 아이스크림이 들어간 국민 디저트"
+  ],
+  donki: [
+    "관광객필수|의약품|동전파스 로이히츠보코 (156매)|ロイヒつぼ膏|698|뭉친 어깨·허리·종아리에 붙이는 온열 파스 부동의 1위",
+    "관광객필수|의약품|휴족시간 (발바닥 쿨링 시트 18매)|休足時間|598|하루 2만 보 걷는 오사카 여행 밤에 종아리와 발바닥에 붙이는 필수템",
+    "관광객필수|의약품|샤론파스 (140매)|サロンパス|980|넓은 부위에 붙이기 좋고 냄새가 덜한 진통 소염 파스",
+    "관광객필수|의약품|카베진 코와 알파 (300정)|キャベジンコーワα|1880|양배추 유래 성분으로 위장 장애·소화불량을 잡아주는 국민 위장약",
+    "관광객필수|의약품|오타이산 위장약 (분말 48포)|太田胃散 分包|1380|과식·과음 다음 날 1포 털어 넣으면 속이 확 풀리는 생약 소화제",
+    "관광객필수|의약품|이브 퀵 (EVE Quick DX 40정)|イブクイック頭痛薬DX|1280|두통·생리통에 빠른 효과를 내며 위 보호 성분이 포함된 진통제",
+    "관광객필수|의약품|페어 아크네 크림 W (여드름 연고)|ペアアクネクリームW|980|화농성 트러블 위에 톡 찍어 바르면 빠르게 진정되는 연고",
+    "관광객필수|의약품|안구건조 안약 산테 FX 네오|サンテFX ネオ|498|넣는 순간 눈이 뻥 뚫리는 시원함! 피로한 눈 회복 안약",
+    "관광객필수|의약품|로토 리세 안약 (렌즈용/일반용)|ロートリセ|550|충혈 제거와 수분 공급에 탁월한 핑크빛 케이스 안약",
+    "관광객필수|의약품|인공눈물 로토 C큐브 (4개입 세트)|ロートCキューブ|598|가성비 최고! 렌즈 착용 중에도 넣을 수 있는 순한 수분 안약",
+    "관광객필수|뷰티·화장품|비오레 UV 아쿠아 리치 워터리 선크림|ビオレUV アクアリッチ|798|백탁 현상 없이 수분크림처럼 발리는 일본 판매 1위 선크림",
+    "관광객필수|뷰티·화장품|아네사 퍼펙트 UV 선크림 (금장)|アネッサ パーフェクトUV|2480|한국보다 훨씬 저렴한 자외선 차단 끝판왕 선밀크",
+    "관광객필수|뷰티·화장품|퍼펙트 휩 클렌징폼 (화이트클레이)|専科 パーフェクトホイップ|450|쫀쫀한 생크림 거품 세안제 (돈키호테 묶음 할인가 추천)",
+    "관광객필수|뷰티·화장품|멜라노 CC 집중 대책 에센스|メラノCC 美容液|980|순수 비타민C 성분으로 잡티와 모공 케어에 유명한 가성비 앰플",
+    "관광객필수|뷰티·화장품|하다라보 고쿠쥰 히알루론산 로션|肌ラボ 極潤|698|속건조를 꽉 잡아주는 국민 토너",
+    "관광객필수|뷰티·화장품|시세이도 피노(Fino) 헤어마스크|フィーノ ヘアマスク|798|손상모를 한 번에 코팅해 주는 빨간 뚜껑 국민 헤어팩",
+    "관광객필수|뷰티·화장품|츠바키 프리미엄 리페어 마스크 (금장)|TSUBAKI プレミアムEX|980|기다릴 필요 없이 바로 헹궈도 클리닉 효과를 내는 헤어팩",
+    "관광객필수|뷰티·화장품|모모프리 복숭아 나이트 팩 / 로션|ももぷり|880|은은한 복숭아 향과 유산균 보습 성분의 수분 젤크림",
+    "관광객필수|생활·식품|메구리즘 스팀 아이마스크 (12매)|めぐりズム|980|비행기 안이나 자기 전 눈가에 착용하면 40도 온열 스팀으로 꿀잠 보장",
+    "관광객필수|의약품|비오페르민 S정 (유산균 350정)|新ビオフェルミンS錠|1980|온 가족이 먹는 순한 3종 유산균 장 영양제",
+    "관광객필수|의약품|구내염 패치 다이쇼 A|口内炎パッチ大正A|880|피곤해서 입안이 헐었을 때 바로 붙여 통증을 막아주는 패치",
+    "관광객필수|생활·식품|산리오/치이카와 캐릭터 동전지갑|キャラクターポーチ|980|동전이 많이 생기는 일본 여행에서 바로 사서 쓰는 캐릭터 지갑",
+    "관광객필수|생활·식품|산토리 가쿠빈 위스키 (700ml)|サントリー 角瓶|1680|하이볼 만들어 마시는 거북이 등껍질 모양 위스키 (위탁수하물 필수)",
+    "관광객필수|생활·식품|오리히로 곤약젤리 파우치 (12개입)|ぷるんと蒟蒻ゼリー|198|짜 먹는 파우치형이라 기내 반입 불가, 반드시 위탁수하물(15kg)에 넣으세요!",
+    "관광객필수|생활·식품|우마이봉 대용량 번들 (30개입)|うまい棒 30本入|398|콘포타쥬·명란·타코야키 맛 등 선물용으로 인기 만점",
+    "현지인추천|생활·식품|돈키 PB 표고버섯 스낵 (시이타케)|しいたけスナック|645|돈키호테에서 요즘 가장 잘 팔리는 1위 안주! 바삭하고 짭조름한 통버섯 과자",
+    "현지인추천|생활·식품|돈키 PB 참깨 마늘 만능 조미료|ごまにんにく|398|밥, 고기, 라멘, 샐러드 어디에 뿌려도 맛있는 현지인 쟁여템 1위",
+    "현지인추천|생활·식품|돈키 PB 꿀 홍차 (하치미츠 코차)|はちみつ紅茶|498|설탕 없이도 진한 아카시아 꿀 향이 퍼지는 달콤한 힐링 티백",
+    "현지인추천|생활·식품|돈키 입구 온장고 군고구마 (야키이모)|ドン・キホーテ 焼き芋|198|계산대 근처 온장고에서 파는 꿀이 뚝뚝 떨어지는 달콤한 군고구마",
+    "현지인추천|뷰티·화장품|케아나 나데시코 쌀 마스크팩 (10매)|毛穴撫子 お米のマスク|715|100% 일본산 쌀 세럼으로 모공을 쫀쫀하게 조여주는 현지 1위 팩",
+    "현지인추천|뷰티·화장품|퀄리티 퍼스트 더마 레이저 마스크팩|ダーマレーザー|770|비타민C 고농축 시트로 일본 드럭스토어 어워드 1위를 휩쓴 팩",
+    "현지인추천|생활·식품|오니얀마 (잠자리 모양 벌레 퇴치기)|おにやんま君|1180|캠핑·야외 산책 시 모기나 벌이 근처에 오지 못하게 막는 신박템",
+    "현지인추천|생활·식품|고바야시 브레스케어 (입냄새 캡슐)|噛むブレスケア|398|마늘·교자·야키니쿠 먹은 뒤 씹어 삼키면 뱃속부터 상쾌해지는 캡슐",
+    "현지인추천|생활·식품|고바야시 변기 세정 꽃잎 스탬프|ブルーレット スタンプ|298|변기 안쪽에 꽃 모양 젤을 찍어두면 물 내릴 때마다 향기와 세정 효과",
+    "현지인추천|생활·식품|노니오(NONIO) 혀 클리너 & 전용 젤|NONIO 舌クリーナー|450|자극 없이 백태를 완벽하게 제거해 주는 일본 치과 추천 베스트셀러",
+    "현지인추천|의약품|어린이 포켓몬/호빵맨 모기 패치|ムヒパッチA|498|벌레 물린 곳에 붙이면 긁지 않게 해주는 귀여운 캐릭터 패치",
+    "현지인추천|의약품|로이히츠보코 쿨(Cool) 동전파스|ロイヒつぼ膏 クール|698|기존 온열 파스가 뜨거웠던 분들에게 딱 맞는 시원한 파란색 동전파스",
+    "현지인추천|뷰티·화장품|미노(MINON) 아미노 모이스트 크림|ミノン アミノモイスト|1980|민감성 피부 현지인들이 환절기(11월)에 가장 많이 찾는 장벽 크림",
+    "현지인추천|뷰티·화장품|엑셀(Excel) 스키니 리치 섀도우|スキニーリッチシャドウ|1650|백화점 명품 섀도우 못지않은 밀착력과 데일리 브라운 컬러 조합",
+    "현지인추천|뷰티·화장품|캔메이크 마시멜로 피니쉬 파우더|マシュマロフィニッシュパウダー|1034|모공을 블러 처리한 듯 보송하게 잡아주는 국민 팩트",
+    "현지인추천|뷰티·화장품|세잔느 내추럴 치크 & 하이라이터|パールグロウハイライト|660|6천 원대 가격으로 영롱한 윤광을 만들어주는 가성비 끝판왕",
+    "현지인추천|뷰티·화장품|사보리노 모닝 페이셜 마스크 (아침팩)|サボリーノ 目ざまシート|1430|아침에 일어나 1분만 붙이면 세안+스킨케어+쿨링이 끝나는 팩",
+    "현지인추천|뷰티·화장품|루루룬(LuLuLun) 오사카 한정 마스크팩|ルルルン 大阪限定|1760|간사이 지역에서만 파는 달콤한 믹스주스 향 선물용 마스크팩",
+    "현지인추천|뷰티·화장품|유스케아(Yuskin) 핸드크림 & 립밤|ユースキン|698|손발이 트는 11월 가을·겨울철 일본 가정집 상비 보습 크림",
+    "현지인추천|생활·식품|바브(BUB) 탄산 입욕제 (유자/히노키)|バブ 薬用入浴剤|498|숙소 욕조나 집에서 반신욕 할 때 피로를 녹여주는 탄산 입욕제",
+    "현지인추천|생활·식품|돈키 PB 대용량 훈제 믹스너트|スモークミックスナッツ|798|참나무 훈연 향이 입혀진 아몬드·호두·캐슈넛 맥주 안주",
+    "현지인추천|생활·식품|바르는 멜론빵 스프레드|塗って焼いたらメロンパン|358|일반 식빵에 발라 구우면 바로 바삭한 멜론빵이 되는 마법 크림",
+    "현지인추천|뷰티·화장품|스고오프 클렌징 오일|スゴオフ クレンジング|780|진한 메이크업과 블랙헤드를 자극 없이 녹여내는 가성비 클렌징",
+    "현지인추천|뷰티·화장품|니베아 리치 케어 앤 컬러 립밤|ニベア リッチケア|698|자연스러운 혈색과 고보습 오일 광택을 동시에 주는 일본 내수용 립밤",
+    "현지인추천|생활·식품|타비노 야도 온천 입욕제 세트|日本の名湯 入浴剤|598|일본 유명 온천수 성분을 재현한 분말 입욕제 (부모님 선물 추천)"
+  ],
+  spots: [
+    "11월시즌축제|난바·미도스지|2026 미도스지 일루미네이션|11/3 개막 · 무료|17:00~23:00|우메다~난바 4km 은행나무 가로수길이 화려한 LED 빛으로 물드는 오사카 최대 빛 축제!",
+    "11월시즌축제|숙소주변(다니마치)|OSAKA 빛의 르네상스 (시청~나카노시마)|11월 사전점등 · 무료|17:00~22:00|숙소에서 도보 15분! 나카노시마 강변 산책로에 펼쳐지는 일루미네이션 터널",
+    "11월시즌축제|외곽·기타|만박기념공원 단풍 축제 (모미지 마츠리)|11/7 개막 · 260엔|09:30~17:00|약 1만 그루의 단풍나무가 붉게 물들고 일본 정원 특별 개방이 진행되는 가을 명소",
+    "11월시즌축제|숙소주변(다니마치)|오사카성 공원 가을 단풍 & 은행나무길|11월 초중순 절정|00:00~24:00|숙소에서 걸어가는 1km 황금빛 은행나무 가로수길과 천수각 주변 단풍 포토존",
+    "11월시즌축제|외곽·기타|미노오 폭포 (미노오 국정공원) 단풍 산책|11월 단풍명소|00:00~24:00|우메다에서 30분! 계곡 산책로를 따라 걸으며 '모미지 튀김(단풍잎 튀김)'을 맛보는 힐링 코스",
+    "11월시즌축제|베이지역·기타|유니버설 스튜디오 재팬 (USJ) 크리스마스|11월 시즌오픈|08:30~21:30|슈퍼 닌텐도 월드, 해리포터 호그와트 성 야간 쇼와 겨울 시즌 이벤트",
+    "11월시즌축제|외곽·기타|나가이 식물원 팀랩 보타니컬 가든|야간 미디어아트|18:00~21:30|11월 밤 숲속 나무와 호수가 인터랙티브 빛 예술로 변신하는 환상적인 야간 명소",
+    "11월시즌축제|우메다·기타|한큐 우메다 백화점 9층 시즌 마켓|11월 시즌오픈|10:00~20:00|대형 미러볼 트리와 아기자기한 유럽풍 오너먼트 굿즈가 열리는 실내 광장",
+    "대표명소|숙소주변(다니마치)|오사카성 천수각 & 니시노마루 정원|숙소 도보 15분|09:00~18:00|오사카의 상징! 도미 인 다니마치에서 가장 가까워 아침 산책이나 야경 감상에 최고",
+    "대표명소|난바·도톤보리|도톤보리 리버크루즈 (원더크루즈)|20분 운항|11:00~21:00|강 위에서 글리코상과 네온사인을 가장 가까이서 올려다보는 낭만 보트 투어",
+    "대표명소|우메다·기타|우메다 스카이빌딩 공중정원 전망대|지상 173m 루프탑|09:30~22:30|360도 뚫린 야외 옥상 원형 전망대에서 오사카 시내 야경과 노을을 한눈에 조망",
+    "대표명소|신세카이·기타|아베노 하루카스 300 전망대|지상 300m 초고층|09:00~22:00|통유리창 너머로 오사카만과 시내 전체가 발아래에 펼쳐지는 압도적 스케일",
+    "대표명소|베이지역·기타|해유관 (가이유칸 수족관)|주오선 오사카코역 직통|09:30~20:00|숙소 앞 주오선 한 번에 이동! 거대한 고래상어가 유영하는 세계 최대급 아쿠아리움",
+    "대표명소|베이지역·기타|덴포잔 대관람차 & 산타마리아호|해유관 바로 옆|10:00~21:00|투명 바닥 시스루 곤돌라에서 오사카 항구의 석양을 감상하는 필수 데이트 코스",
+    "대표명소|신세카이·기타|츠텐카쿠 & 타워 슬라이더 (신세카이)|레트로 랜드마크|10:00~20:00|레트로한 신세카이 거리의 상징이자 60m 높이를 10초 만에 내려오는 미끄럼틀 체험",
+    "대표명소|신세카이·기타|시텐노지 (사천왕사)|일본 최초의 관영 사찰|08:30~16:00|5층 목탑과 고즈넉한 극락정원이 어우러진 평화로운 역사 산책 코스",
+    "대표명소|외곽·기타|스미요시 타이샤 (스미요시 대사)|붉은 아치형 다리|06:00~17:00|노면전차를 타고 찾아가는 아치형 '타이고바시' 다리 반영 사진 명소",
+    "대표명소|우메다·기타|오사카 주택박물관 (기모노 체험)|텐진바시스지 6초메역|10:00~17:00|에도 시대 오사카 거리 세트를 실내에 그대로 재현해 날씨 상관없이 사진 찍기 좋은 곳",
+    "인생샷포토존|난바·도톤보리|도톤보리 글리코상 (에비스바시 & 강변테라스)|인증샷 1순위|00:00~24:00|다리 위뿐만 아니라 한 층 아래 강변 테라스 난간에 앉아 찍으면 사람 없이 깔끔하게 나옵니다!",
+    "인생샷포토존|신세카이·기타|신세카이 잔잔요코초 & 츠텐카쿠 골목|사이버펑크 야경|17:00~23:00|거대한 복어·쿠시카츠 입체 간판 사이로 빛나는 츠텐카쿠 타워를 배경으로 찍는 인생샷",
+    "인생샷포토존|난바·도톤보리|난바 야사카 신사 (거대 사자머리 에마전)|무료 입장|06:30~17:00|높이 12m의 압도적인 사자 얼굴 무대 앞에서 액운을 삼키고 금전운을 부르는 포토존",
+    "인생샷포토존|난바·도톤보리|호젠지 요코초 (물 뿌리는 부동명왕)|도톤보리 도보3분|00:00~24:00|화려한 도톤보리 바로 뒷골목에 숨겨진 초록 이끼 낀 부동명왕과 고즈넉한 홍등 골목",
+    "인생샷포토존|숙소주변(다니마치)|키타하마 레트로 빌딩 & 중앙공회당|숙소 도보 12분|09:30~21:00|르네상스 양식의 붉은 벽돌 건축물과 강변 테라스 카페가 어우러진 유럽 감성 스팟",
+    "인생샷포토존|숙소주변(다니마치)|오사카성 고쿠라쿠바시 (극락교) 반영 스팟|천수각 북쪽 다리|00:00~24:00|해자 물결 위에 천수각과 황금빛 단풍이 데칼코마니처럼 비치는 최고의 사진 명당",
+    "인생샷포토존|우메다·기타|HEP FIVE (헵파이브) 붉은 대관람차|우메다 중심가|11:00~22:45|도심 빌딩 옥상을 뚫고 돌아가는 새빨간 관람차 안에서 블루투스 음악을 틀고 찍는 셀카",
+    "인생샷포토존|외곽·기타|가쓰오지 (승왕사) 오뚝이 다루마 사찰|미노오 지역|08:00~17:00|사찰 곳곳에 수천 개의 빨간 다루마 인형이 놓여 있어 11월 단풍과 함께 찍으면 예술인 곳",
+    "인생샷포토존|숙소주변(다니마치)|나카노시마 미술관 검은 고양이 조형물|검은 모던 건축|10:00~17:00|거대한 우주복 입은 고양이 '야노베 겐지' 조형물 앞에서 찍는 힙한 감성 사진",
+    "인생샷포토존|우메다·기타|오사카역 시간의 광장 & 루쿠아 루프탑|기차역 뷰|07:00~23:00|거대한 유리 지붕 아래로 기차들이 오가는 오사카역 전경을 내려다보는 뷰 포인트",
+    "이색코스|우메다·기타|나카자키초 카페거리 & 빈티지 골목|우메다 도보 10분|11:00~19:00|전쟁 포화를 피한 100년 된 목조 주택들이 아기자기한 카페, 구제 옷가게, 소품샵으로 변신한 곳",
+    "이색코스|신사이바시|오렌지 스트리트 (타치바나도리)|신사이바시 서쪽|11:00~20:00|슈프림, 스투시, 아페쎄, 휴먼메이드, 비오톱 등 스트릿 패션과 감각적인 가구 편집샵 거리",
+    "이색코스|신사이바시|아메리카무라 (아메무라 삼각공원)|스트릿 문화 중심|11:00~21:00|빈티지 샵, 레코드 가게, 벽화 골목이 모인 오사카 서브컬처 중심지",
+    "이색코스|베이지역·기타|소라니와 온천 (OSAKA BAY TOWER)|벤텐초역 직결|11:00~23:00|아즈치모모야마 시대 거리를 재현한 대형 테마 온천! 유카타를 입고 루프탑 족욕 정원에서 인생샷",
+    "이색코스|난바·도톤보리|덴덴타운 (닛폰바시 오타로드)|피규어·레트로게임|11:00~20:00|애니메이션 피규어, 건담 프라모델, 가챠샵, 슈퍼포테이토(레트로 게임샵)가 밀집한 거리",
+    "이색코스|우메다·기타|텐마(Tenma) 시장 & 초롱불 이자카야 골목|현지인 술집 성지|16:00~24:00|관광객보다 오사카 직장인들이 퇴근 후 모이는 가성비 최고 타치노미 골목",
+    "이색코스|난바·도톤보리|우라난바 (뒷난바 미식 골목)|난바역 동쪽 뒷골목|17:00~24:00|좁은 골목마다 개성 넘치는 이자카야, 스시 바, 철판구이 집이 빼곡한 현지 미식 아지트",
+    "이색코스|신세카이·기타|츠루하시 코리아타운 & 야키니쿠 골목|츠루하시역 앞|10:00~21:00|역에 내리자마자 고기 굽는 냄새가 진동하는 오래된 야키니쿠 미로 골목",
+    "이색코스|우메다·기타|텐진바시스지 상점가 (2.6km 아케이드)|비가 와도 쾌적|10:00~20:00|남북으로 2.6km 이어진 일본에서 가장 긴 지붕 아케이드 상점가 (나카무라야 고로케 필수!)",
+    "이색코스|신세카이·기타|신세카이 스마트볼 & 레트로 오락실|100엔 동전 게임|10:00~21:00|100엔으로 구슬을 튕겨 과자 경품을 타는 쇼와 시대 감성 핀볼 게임장",
+    "쇼핑핫플|신사이바시|신사이바시 파르코(PARCO) 6층 캐릭터 존|서브컬처 성지|10:00~20:00|지브리(도토리공화국), 짱구, 치이카와, 스누피, 고질라, 레고 공식 스토어가 한 층에 집결!",
+    "쇼핑핫플|신사이바시|다이마루 백화점 신사이바시점 본관 9층|포켓몬센터 & 점프샵|10:00~20:00|파르코와 구름다리로 연결! 포켓몬센터 오사카 DX와 원피스·주술회전 점프샵이 있는 곳",
+    "쇼핑핫플|우메다·기타|한큐 백화점 우메다 본점|명품 & B1F 디저트|10:00~20:00|손수건(비비안웨스트우드·폴로), 꼼데가르송, 그리고 일본 최고 수준의 지하 1층 화과자·양과자 식품관",
+    "쇼핑핫플|우메다·기타|그랜드 프론트 오사카 & 우메다 키디랜드|우메다역 북쪽|10:00~21:00|문구, 라이프스타일 편집샵, 산리오·미피·리락쿠마 대형 키디랜드 쇼핑몰",
+    "쇼핑핫플|우메다·기타|루쿠아 (LUCUA & LUCUA 1100) 오사카|2030 패션 1번지|10:30~20:30|빔즈(BEAMS), 유나이티드 애로우즈, 코스(COS), 츠타야 서점이 입점한 오사카역 직결 몰",
+    "쇼핑핫플|난바·도톤보리|난바 파크스 (Namba Parks)|계단식 옥상 정원 몰|11:00~21:00|도심 속 협곡과 공원처럼 꾸며진 아름다운 건축의 쇼핑몰 (하브스, 캠핑·아웃도어 매장 다수)",
+    "쇼핑핫플|외곽·기타|린쿠 프리미엄 아울렛|간사이공항 1정거장|10:00~20:00|바다를 마주한 대형 아울렛! 폴로, 나이키, 르크루제, 캠퍼 등 귀국 전 들르기 좋은 쇼핑 성지",
+    "쇼핑핫플|난바·도톤보리|돈키호테 도톤보리점 / 미도스지점|24시간 면세 쇼핑|00:00~24:00|강변 관람차가 있는 본점이 붐비면 도보 3분 거리인 '도톤보리 미도스지점'이 훨씬 쾌적합니다!",
+    "쇼핑핫플|신사이바시|다이코쿠 드럭스토어 신사이바시 본점|의약품 최저가|09:00~23:00|동전파스·카베진·안약 등 의약품은 돈키호테보다 다이코쿠나 오스(OS) 드럭이 더 저렴합니다",
+    "쇼핑핫플|난바·도톤보리|빅카메라 난바점 (가전·위스키·장난감)|면세 + 추가할인|10:00~21:00|산토리 가쿠빈·히비키 등 주류 코너와 닌텐도 스위치 게임팩, 뷰티 디바이스 쇼핑 명소",
+    "쇼핑핫플|난바·도톤보리|센니치마에 도구야스지 상점가 (주방거리)|난바 다카시마야 옆|10:00~18:00|일본 장인 식도(칼), 타코야키 철판, 귀여운 술잔, 음식 모형 마그넷을 파는 요리 도구 거리",
+    "쇼핑핫플|신사이바시|무인양품(MUJI) & 유니클로 신사이바시|대형 면세 매장|11:00~21:00|한국 미출시 식품(바움쿠헨·레토르트 카레)과 간절기 경량 패딩·히트텍 면세 쇼핑"
+  ]
+};
 
-    // 3. Tab Switching
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
+const PREP_ITEMS = [
+  "여권 (유효기간 6개월 이상 필수 확인)",
+  "비지트 재팬 웹(VJW) QR코드 캡처본",
+  "항공권 이티켓 (BX331 / 7C1394) 저장",
+  "트래블월렛 실물카드 + 비상용 엔화 현금",
+  "해외 eSIM QR코드 (출국 전 공항에서 등록)",
+  "110V 돼지코 어댑터 & 멀티탭",
+  "기내 반입용 보조배터리 (위탁수하물 절대 금지)",
+  "동전지갑 (100엔·500엔 동전 분리용)",
+  "접이식 장바구니 / 에코백 (이온마트·돈키 쇼핑용)",
+  "지퍼백 (곤약젤리·액체류 위탁수하물 패킹용)",
+  "상비약 (소화제, 진통제, 대일밴드)",
+  "경량 패딩 또는 가디건 (11월 밤 일교차 대비)"
+];
 
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
-        btn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-      });
+const PHRASES = [
+  { kr: "면세(택스프리) 가능한가요?", jp: "免税(めんぜい)できますか？", pron: "멘제- 데키마스카?" },
+  { kr: "트래블월렛(터치 결제)로 할게요.", jp: "タッチ決済(けっさい)でお願いします。", pron: "탓치 켓사이데 오네가이시마스" },
+  { kr: "이 장소로 가려면 어디로 가야 하나요?", jp: "ここへ行きたいのですが、どこですか？", pron: "코코에 이키타이노데스가, 도코데스카?" },
+  { kr: "간사이공항 제2터미널 셔틀버스는 어디서 타나요?", jp: "第2ターミナル行きの無料シャトルバスはどこですか？", pron: "다이니 타-미나루 이키노 샤토루바스와 도코데스카?" },
+  { kr: "고수(파)는 빼주세요 / 와사비 적게 주세요.", jp: "パクチー(ネギ)抜きで / ワサビ少なめでお願いします。", pron: "파쿠치(네기) 누키데 / 와사비 스쿠나메데 오네가이시마스" },
+  { kr: "봉투(비닐백) 하나 주세요.", jp: "袋(ふくろ)を1枚ください。", pron: "후쿠로오 이치마이 쿠다사이" }
+];
 
-      const activeBtn = document.getElementById('btn-' + tabId);
-      if (activeBtn) {
-        activeBtn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300');
-        activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    // Set initial active tab style
-    switchTab('tab-roadmap');
+// 상태 변수
+let currentCat = 'food';
+let currentSub = '전체';
+let currentArea = '전체';
+let cart = JSON.parse(localStorage.getItem('osaka2026_v4_cart') || '{}');
+let prepState = JSON.parse(localStorage.getItem('osaka2026_v4_prep') || '{}');
 
-    // 4. Evening Course A/B Switcher
-    function switchEveningCourse(course) {
-      const contentA = document.getElementById('course-A-content');
-      const contentB = document.getElementById('course-B-content');
-      const btnA = document.getElementById('btn-course-A');
-      const btnB = document.getElementById('btn-course-B');
+// 테마 전환 (다크모드 기본 지원)
+function toggleTheme() {
+  const root = document.documentElement;
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️ 라이트' : '🌙 다크';
+  localStorage.setItem('osaka2026_theme', next);
+}
 
-      if (course === 'A') {
-        contentA.classList.remove('hidden');
-        contentB.classList.add('hidden');
-        btnA.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-sm transition';
-        btnB.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition';
-      } else {
-        contentB.classList.remove('hidden');
-        contentA.classList.add('hidden');
-        btnB.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm transition';
-        btnA.className = 'py-2 px-3 rounded-lg text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-slate-900 transition';
-      }
-    }
+(function initTheme() {
+  const saved = localStorage.getItem('osaka2026_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = saved === 'dark' ? '☀️ 라이트' : '🌙 다크';
+  });
+})();
 
-    // 5. Clipboard Copy with Toast
-    let toastTimeout;
-    function copyText(text, message) {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      try {
-        document.execCommand('copy');
-        showToast(message || '복사되었습니다!');
-      } catch (err) {
-        showToast('복사에 실패했습니다.');
-      }
-      document.body.removeChild(textarea);
-    }
+// 데이터 파서
+function getParsedList(catKey) {
+  return (RAW_DB[catKey] || []).map((row, idx) => {
+    const p = row.split('|');
+    return {
+      id: catKey + '_' + idx,
+      num: idx + 1,
+      sub: p[0],
+      area: p[1],
+      name: p[2],
+      meta: p[3],
+      priceOrTime: p[4],
+      desc: p[5],
+      img: pickImage(catKey, p[0], p[2])
+    };
+  });
+}
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      toastMsg.textContent = msg;
-      toast.classList.remove('opacity-0', '-translate-y-2');
-      toast.classList.add('opacity-100', 'translate-y-0');
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toast.classList.remove('opacity-100', 'translate-y-0');
-        toast.classList.add('opacity-0', '-translate-y-2');
-      }, 2200);
-    }
+// 화면 전환
+function openApp(viewName) {
+  closeHomeUp();
+  document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+  const target = document.getElementById('view-' + viewName);
+  if (target) target.classList.add('active');
 
-    // 6. Timeline Step Completion (LocalStorage)
-    const TIMELINE_KEY = 'osaka_2026_timeline_steps';
-    function loadTimelineSteps() {
-      const saved = JSON.parse(localStorage.getItem(TIMELINE_KEY) || '{}');
-      Object.keys(saved).forEach(stepId => {
-        const chk = document.getElementById('chk-' + stepId);
-        const card = document.querySelector(`[data-step="${stepId}"] > div:nth-child(2)`);
-        if (chk && saved[stepId]) {
-          chk.checked = true;
-          if (card) card.classList.add('opacity-60');
-        }
-      });
-    }
-    function toggleStep(stepId) {
-      const saved = JSON.parse(localStorage.getItem(TIMELINE_KEY) || '{}');
-      const chk = document.getElementById('chk-' + stepId);
-      const card = document.querySelector(`[data-step="${stepId}"] > div:nth-child(2)`);
-      if (chk) {
-        saved[stepId] = chk.checked;
-        if (card) {
-          card.classList.toggle('opacity-60', chk.checked);
-        }
-      }
-      localStorage.setItem(TIMELINE_KEY, JSON.stringify(saved));
-    }
-    function resetTimelineProgress() {
-      localStorage.removeItem(TIMELINE_KEY);
-      document.querySelectorAll('[id^="chk-step-"]').forEach(chk => {
-        chk.checked = false;
-      });
-      document.querySelectorAll('[data-step] > div:nth-child(2)').forEach(card => {
-        card.classList.remove('opacity-60');
-      });
-      showToast('타임라인 완료 표시가 초기화되었습니다.');
-    }
-    loadTimelineSteps();
+  const btnOut = document.getElementById('tabOut');
+  const btnRet = document.getElementById('tabRet');
+  btnOut.className = 'switch-btn' + (viewName === 'outbound' ? ' active-out' : '');
+  btnRet.className = 'switch-btn' + (viewName === 'return' ? ' active-ret' : '');
 
-    // 7. Interactive Packing & Airbnb/Hotel Checklist
-    const CHECKLIST_STORAGE_KEY = 'osaka_2026_checklist_v1';
-    const defaultChecklist = [
-      {
-        category: '🛂 출입국 & 결제 필수품',
-        items: [
-          { id: 'c1', text: '여권 (유효기간 6개월 이상 남았는지 확인)', checked: false },
-          { id: 'c2', text: 'Visit Japan Web 통합 QR코드 캡처본 (사진첩 저장)', checked: false },
-          { id: 'c3', text: '에어부산 E-티켓 (예약번호 KIBNSL) 및 호텔 바우처', checked: false },
-          { id: 'c4', text: '트래블월렛 실물 카드 + 비상용 서브 해외결제 카드', checked: false },
-          { id: 'c5', text: '해외 eSIM 사전 구매 및 QR코드 준비', checked: false },
-          { id: 'c6', text: '인천공항 스마트패스(Smartpass) 사전 등록', checked: false },
-        ]
-      },
-      {
-        category: '🏠 숙소·에어비앤비 감성 생활 꿀템 (강력 추천!)',
-        items: [
-          { id: 'a1', text: '110V 돼지코 어댑터 여러 개 또는 110V용 멀티탭 (폰·워치·보조배터리 동시 충전)', checked: false },
-          { id: 'a2', text: '편안한 실내 슬리퍼 / 크록스 (숙소 내 이동 및 근처 편의점 마실용)', checked: false },
-          { id: 'a3', text: '일회용 나무젓가락·포크·스푼 & 미니 물티슈 (숙소에서 편의점/마트 야식 먹을 때 필수)', checked: false },
-          { id: 'a4', text: '일회용 수세미(세제 내장형) 1~2장 (텀블러나 컵, 과일 씻을 때 cực도로 유용)', checked: false },
-          { id: 'a5', text: '지퍼백(중/대) & 비닐봉투 여러 장 (숙소 쓰레기 분리수거, 젖은 옷, 영수증 정리)', checked: false },
-          { id: 'a6', text: '접이식 옷걸이 2~3개 & 미니 빨래집게/세탁망 (양말·속옷 건조 및 코인세탁기 이용)', checked: false },
-          { id: 'a7', text: '가습 마스크 또는 미니 휴대용 가습기 (일본 숙소 특유의 건조한 난방 대비)', checked: false },
-        ]
-      },
-      {
-        category: '🧴 세면도구 & 상비약·케어',
-        items: [
-          { id: 'm1', text: '개인 칫솔/치약, 클렌징폼, 스킨/로션, 립밤, 마스크팩', checked: false },
-          { id: 'm2', text: '휴족시간 / 파스 (하루 1.5만~2만 보 도보 여행 피로 회복)', checked: false },
-          { id: 'm3', text: '상비약 (소화제, 진통제, 지사제, 감기약, 일회용 밴드)', checked: false },
-          { id: 'm4', text: '작은 목욕 바구니 또는 방수 파우치 (도미 인 13층 대욕장 갈 때 소지품 담기)', checked: false },
-        ]
-      },
-      {
-        category: '🔋 전자기기 & 쇼핑 편의용품',
-        items: [
-          { id: 'e1', text: '보조배터리 (반드시 위탁수하물 말고 기내에 들고 타기!)', checked: false },
-          { id: 'e2', text: '동전지갑 (100엔·500엔 동전이 많이 생기므로 분리 수납 필수)', checked: false },
-          { id: 'e3', text: '접이식 장바구니 / 튼튼한 에코백 (돈키호테, 편의점 봉투 유료 대비)', checked: false },
-          { id: 'e4', text: '3단 접이식 우산 또는 우비 & 11월 초 오사카 가을 겉옷(가디건/경량패딩)', checked: false },
-        ]
-      }
-    ];
+  if (viewName === 'cart') renderCart();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-    function getChecklistData() {
-      const saved = localStorage.getItem(CHECKLIST_STORAGE_KEY);
-      if (saved) {
-        try { return JSON.parse(saved); } catch (e) {}
-      }
-      return JSON.parse(JSON.stringify(defaultChecklist));
-    }
+function openHomeUp() {
+  document.getElementById('homeUpModal').classList.add('open');
+}
+function closeHomeUp() {
+  document.getElementById('homeUpModal').classList.remove('open');
+}
 
-    function saveChecklistData(data) {
-      localStorage.setItem(CHECKLIST_STORAGE_KEY, JSON.stringify(data));
-      renderChecklist();
-    }
+// 50선 카탈로그 열기
+function openCatalog(catKey) {
+  currentCat = catKey;
+  currentSub = '전체';
+  currentArea = '전체';
+  document.getElementById('catSearch').value = '';
 
-    function renderChecklist() {
-      const data = getChecklistData();
-      const container = document.getElementById('checklist-container');
-      container.innerHTML = '';
+  const headers = {
+    food: ['🍣 오사카 타베로그 맛집 & 카페 50선', '위치별(숙소주변·난바·신사이바시·우메다) 및 메뉴별로 모아보세요!'],
+    aeon: ['🛒 숙소 옆 이온마트(KOHYO) 50선', '도미 인 다니마치 도보 2분! 20시 이후 반값 할인 스티커 공략'],
+    konbini: ['🏪 3대 편의점(세븐·로손·패미마) 50선', '편의점별 1티어 디저트·치킨·샌드위치·야식 사진 리스트'],
+    donki: ['🐧 돈키호테 현지인 & 관광객 필수템 50선', '의약품·뷰티·돈키 PB 히트상품 50가지 사진 총정리'],
+    spots: ['📸 11월 축제 · 인생샷 포토존 · 쇼핑 50선', '위치별 명소, 2026 미도스지 일루미네이션, 백화점 핫플']
+  };
+  document.getElementById('catTitle').textContent = headers[catKey][0];
+  document.getElementById('catSubtitle').textContent = headers[catKey][1];
 
-      let total = 0;
-      let checkedCount = 0;
+  openApp('catalog');
+  renderFilterChips();
+  renderCatalog();
+}
 
-      data.forEach((group, gIdx) => {
-        const card = document.createElement('div');
-        card.className = 'bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3';
-        
-        const title = document.createElement('h3');
-        title.className = 'font-bold text-sm sm:text-base border-b border-slate-100 dark:border-slate-800 pb-2';
-        title.textContent = group.category;
-        card.appendChild(title);
+function renderFilterChips() {
+  const list = getParsedList(currentCat);
 
-        const list = document.createElement('div');
-        list.className = 'space-y-2';
+  // 위치별 필터 (타베로그 맛집 & 명소/쇼핑에서 활성화)
+  const areaWrap = document.getElementById('areaFilterWrap');
+  if (currentCat === 'food' || currentCat === 'spots') {
+    areaWrap.style.display = 'block';
+    const areas = ['전체', ...new Set(list.map(i => i.area))];
+    document.getElementById('areaChips').innerHTML = areas.map(a =>
+      `<button class="chip chip-area ${a === currentArea ? 'active' : ''}" onclick="setAreaFilter('${a}')">📍 ${a}</button>`
+    ).join('');
+  } else {
+    areaWrap.style.display = 'none';
+  }
 
-        group.items.forEach((item, iIdx) => {
-          total++;
-          if (item.checked) checkedCount++;
+  // 카테고리 분류 칩
+  const subs = ['전체', ...new Set(list.map(i => i.sub))];
+  document.getElementById('subChips').innerHTML = subs.map(s =>
+    `<button class="chip ${s === currentSub ? 'active' : ''}" onclick="setSubFilter('${s}')">${s}</button>`
+  ).join('');
+}
 
-          const row = document.createElement('label');
-          row.className = `flex items-start gap-2.5 p-2 rounded-xl cursor-pointer select-none transition ${item.checked ? 'bg-slate-50 dark:bg-slate-800/40 text-slate-400 line-through' : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'}`;
-          
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.checked = item.checked;
-          checkbox.className = 'mt-0.5 w-4 h-4 rounded text-blue-600 focus:ring-blue-500 shrink-0';
-          checkbox.onchange = () => {
-            data[gIdx].items[iIdx].checked = checkbox.checked;
-            saveChecklistData(data);
-          };
+function setAreaFilter(area) {
+  currentArea = area;
+  renderFilterChips();
+  renderCatalog();
+}
 
-          const span = document.createElement('span');
-          span.className = 'text-xs sm:text-sm leading-snug flex-1';
-          span.textContent = item.text;
+function setSubFilter(sub) {
+  currentSub = sub;
+  renderFilterChips();
+  renderCatalog();
+}
 
-          row.appendChild(checkbox);
-          row.appendChild(span);
-          list.appendChild(row);
-        });
+function renderCatalog() {
+  const list = getParsedList(currentCat);
+  const q = document.getElementById('catSearch').value.trim().toLowerCase();
 
-        card.appendChild(list);
-        container.appendChild(card);
-      });
+  const filtered = list.filter(i => {
+    const matchArea = currentArea === '전체' || i.area === currentArea;
+    const matchSub = currentSub === '전체' || i.sub === currentSub;
+    const matchQ = !q || i.name.toLowerCase().includes(q) || i.desc.toLowerCase().includes(q) || i.area.toLowerCase().includes(q) || i.meta.toLowerCase().includes(q);
+    return matchArea && matchSub && matchQ;
+  });
 
-      const pct = total > 0 ? Math.round((checkedCount / total) * 100) : 0;
-      document.getElementById('checklist-percent').textContent = `${pct}%`;
-      document.getElementById('checklist-bar').style.width = `${pct}%`;
-    }
+  const isPlace = (currentCat === 'food' || currentCat === 'spots');
+  const box = document.getElementById('mediaList');
 
-    function addCustomItem(e) {
-      e.preventDefault();
-      const input = document.getElementById('custom-item-input');
-      const val = input.value.trim();
-      if (!val) return;
-      const data = getChecklistData();
-      data[1].items.push({
-        id: 'custom_' + Date.now(),
-        text: val,
-        checked: false
-      });
-      input.value = '';
-      saveChecklistData(data);
-      showToast('준비물이 추가되었습니다!');
-    }
+  if (!filtered.length) {
+    box.innerHTML = `<div class="card" style="text-align:center; color:var(--text-sub);">조건에 맞는 항목이 없습니다. 다른 위치나 분류를 선택해 보세요!</div>`;
+    return;
+  }
 
-    function resetChecklist() {
-      localStorage.removeItem(CHECKLIST_STORAGE_KEY);
-      renderChecklist();
-      showToast('체크리스트가 초기화되었습니다.');
-    }
+  box.innerHTML = filtered.map(item => {
+    const inCart = !!cart[item.id];
+    const priceNum = parseInt(item.priceOrTime, 10);
+    const krw = Math.round((isNaN(priceNum) ? 0 : priceNum) * 9.1);
 
-    renderChecklist();
-  </script>
+    const actionBtn = isPlace
+      ? `<a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.name + ' Osaka')}&travelmode=transit" target="_blank" class="btn btn-gmap" style="padding:7px 11px;">📍 길찾기</a>`
+      : `<button class="btn ${inCart ? 'btn-gmap' : 'btn-ghost'}" style="padding:7px 11px;" onclick="toggleCart('${item.id}', '${item.name.replace(/'/g,"")}', ${isNaN(priceNum)?0:priceNum}, '${item.img}')">${inCart ? '✓ 담김' : '+ 담기'}</button>`;
+
+    const bottomInfo = isPlace
+      ? `<span class="media-price" style="font-size:12px;">🕒 ${item.priceOrTime}</span>`
+      : `<span class="media-price">¥${item.priceOrTime} <span style="font-size:11px; color:var(--text-sub); font-weight:600;">(약 ${krw.toLocaleString()}원)</span></span>`;
+
+    return `
+      <div class="media-card ${inCart ? 'in-cart' : ''}">
+        <div class="media-img-wrap">
+          <img class="media-img" src="${item.img}" alt="${item.name}" loading="lazy">
+          <span class="media-num">#${item.num}</span>
+        </div>
+        <div class="media-body">
+          <div class="badge-row">
+            <span class="tag-cat">${item.sub}</span>
+            <span class="tag-area">📍 ${item.area}</span>
+          </div>
+          <div class="media-title">${item.name}</div>
+          <div class="media-meta">${item.meta}</div>
+          <div class="media-desc">${item.desc}</div>
+          <div class="media-foot">
+            ${bottomInfo}
+            ${actionBtn}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 장바구니 및 면세 게이지
+function toggleCart(id, name, price, img) {
+  if (cart[id]) delete cart[id];
+  else cart[id] = { name, price, img };
+  localStorage.setItem('osaka2026_v4_cart', JSON.stringify(cart));
+  updateTaxBar();
+  renderCatalog();
+}
+
+function clearCart() {
+  cart = {};
+  localStorage.setItem('osaka2026_v4_cart', JSON.stringify(cart));
+  updateTaxBar();
+  renderCart();
+}
+
+function updateTaxBar() {
+  const keys = Object.keys(cart);
+  document.getElementById('cartCount').textContent = keys.length;
+  const totalYen = keys.reduce((acc, k) => acc + (cart[k].price || 0), 0);
+  const totalKrw = Math.round(totalYen * 9.1);
+  document.getElementById('barYen').textContent = '¥' + totalYen.toLocaleString();
+  document.getElementById('barKrw').textContent = totalKrw.toLocaleString() + '원';
+
+  const pct = Math.min(100, Math.round((totalYen / 5500) * 100));
+  document.getElementById('barFill').style.width = pct + '%';
+  const statusEl = document.getElementById('barTaxStatus');
+  if (totalYen >= 5500) {
+    statusEl.textContent = '🎉 면세(Tax-Free ¥5,500) 달성!';
+    statusEl.style.color = '#34d399';
+  } else {
+    statusEl.textContent = `면세까지 ¥${(5500 - totalYen).toLocaleString()} 남음`;
+    statusEl.style.color = 'var(--text-sub)';
+  }
+}
+
+function renderCart() {
+  const keys = Object.keys(cart);
+  const box = document.getElementById('cartList');
+  if (!keys.length) {
+    box.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-sub); font-size:13px;">장바구니가 비어 있습니다. 홈업 메뉴에서 이온마트·편의점·돈키호테 아이템을 담아보세요!</div>`;
+    return;
+  }
+  box.innerHTML = keys.map(k => `
+    <div class="media-card in-cart">
+      <div class="media-img-wrap" style="width:68px;height:68px;">
+        <img class="media-img" src="${cart[k].img || IMG_POOL.snack}" alt="">
+      </div>
+      <div class="media-body">
+        <div class="media-title">${cart[k].name}</div>
+        <div class="media-foot" style="margin-top:6px;">
+          <span class="media-price">¥${cart[k].price.toLocaleString()}</span>
+          <button class="btn btn-ghost" style="padding:5px 10px;" onclick="toggleCart('${k}','',0,''); renderCart();">삭제</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// 준비물 & 일본어 회화 렌더링
+function renderPrepAndTools() {
+  const prepBox = document.getElementById('prepGrid');
+  prepBox.innerHTML = PREP_ITEMS.map((txt, idx) => {
+    const done = !!prepState[idx];
+    return `
+      <div class="media-card ${done ? 'in-cart' : ''}" style="cursor:pointer; padding:14px;" onclick="togglePrep(${idx})">
+        <span style="font-size:18px;">${done ? '✅' : '⬜'}</span>
+        <span style="font-size:14px; font-weight:700; ${done ? 'text-decoration:line-through; color:var(--text-sub);' : ''}">${txt}</span>
+      </div>
+    `;
+  }).join('');
+
+  const phraseBox = document.getElementById('phraseList');
+  phraseBox.innerHTML = PHRASES.map(p => `
+    <div class="card" style="margin-bottom:8px; padding:14px;">
+      <div style="font-size:12px; color:#818cf8; font-weight:800;">${p.kr}</div>
+      <div style="font-size:17px; font-weight:900; margin:4px 0;">${p.jp}</div>
+      <div style="font-size:12px; color:var(--text-sub); font-weight:700;">발음: ${p.pron}</div>
+    </div>
+  `).join('');
+}
+
+function togglePrep(idx) {
+  prepState[idx] = !prepState[idx];
+  localStorage.setItem('osaka2026_v4_prep', JSON.stringify(prepState));
+  renderPrepAndTools();
+}
+
+function runCalc() {
+  const yen = parseFloat(document.getElementById('calcInput').value) || 0;
+  const krw = Math.round(yen * 9.1);
+  const diff = Math.max(0, 5500 - yen);
+  document.getElementById('calcOutput').innerHTML =
+    `원화 환산: <strong style="color:#60a5fa;">약 ${krw.toLocaleString()}원</strong> · ` +
+    (diff === 0 ? `<strong style="color:#34d399;">🎉 면세 기준(¥5,500) 달성!</strong>` : `면세까지 <strong>¥${diff.toLocaleString()}</strong> 남음`);
+}
+
+function copyText(text, label) {
+  navigator.clipboard.writeText(text).catch(() => {});
+  const t = document.getElementById('toast');
+  t.textContent = `✅ ${label} 복사 완료!`;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 1800);
+}
+
+// 초기 구동
+updateTaxBar();
+renderPrepAndTools();
+</script>
 </body>
 </html>
